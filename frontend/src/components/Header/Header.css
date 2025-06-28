@@ -1,0 +1,65 @@
+.header {
+  height: 7.5vh;
+  padding: 0px 10px;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  z-index: 10000;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.headercomponents{
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  width: 1216px;
+
+  
+}
+
+  
+.logo {
+  margin: 0;
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  
+}
+
+.logo> h1{
+  font-family: Inter, sans-serif;
+  font-weight: 650;
+  font-style: normal;
+  font-size: 1.56rem;
+ 
+}
+
+.nav {
+  display: flex;
+  gap: 3.4rem;
+  margin-left: 1rem;
+}
+
+.nav-link {
+  color: rgba(0, 0, 0, 0.648);
+  text-decoration: none;
+  font-size: 0.87rem;
+  font-family: Inter,sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.5px;
+  padding: 1rem 0rem;
+}
+
+.header-login{
+  background-color: rgb(37 99 235);
+  color: white;
+  border-width: 0px;
+  padding: 0.62rem 1rem;
+  border-radius: 0.4rem;
+  font-family: Inter, sans-serif;
+}
+  

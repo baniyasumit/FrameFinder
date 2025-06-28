@@ -1,0 +1,30 @@
+.avatar-stack {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .avatar {
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 0.4rem;
+  }
+  .avatar:hover {
+    transform: scale(1.15);
+    z-index: 105;
+  }
+  .overflow-avatar {
+    background-color: #888;
+  }
+  

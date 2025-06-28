@@ -2,6 +2,8 @@ import React from 'react';
 import './Home.css';
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { BsCamera2 } from "react-icons/bs";
+import { IoIosPeople } from "react-icons/io";
+import { FaStar,FaClock  } from "react-icons/fa6";
 import landingImage from '../../assets/images/landing-image.jpg'; 
 import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
 
@@ -12,9 +14,7 @@ const avatarUrls = [
 ];
 const Home = () => {
   return (
-    <main
-      className="home-container"
-    >
+    <main className="home-container">
       <section className='landing'>
         <div className='landing-container'>
           <div className='landing-links'>
@@ -30,8 +30,8 @@ const Home = () => {
             <p className="signup-photographer">
               Are you a photographer? <a href="/signup">Join our network</a>
             </p>
-            </div>
-            <div className='landing-picture'  style={{
+          </div>
+          <div className='landing-picture'  style={{
               backgroundImage: `url(${landingImage})`,
                 }}>
             <div className='stat photographers'>
@@ -60,9 +60,33 @@ const Home = () => {
                 </div>
               </div>
             </div>
-              </div>
           </div>
-        
+          </div>
+      </section>
+      <section className='choosing-reasons'>
+        <div className='choosing-reasons-content'>
+          <h1>Why Choose Frame Finder?</h1>
+          <p className='reason-description'>
+            <span>Connect with professional photographers who understand your vision and bring your moments to life.</span>
+          </p>
+          <div className='reasons-container'>
+            <div className='reason-card people'>
+              <div className='reason-icon-container people'><IoIosPeople className='reason-icon' /></div>
+              <div className='reason-title'>Verified Professionals</div>
+              <span className='reason-text'>All photographers are thoroughly vetted and verified for quality and professionalism.</span>
+            </div>
+            <div className='reason-card rating'>
+              <div className='reason-icon-container rating'><FaStar className='reason-icon'/></div>
+              <div className='reason-title'>Top Rated</div>
+              <span className='reason-text'>Browse through highly rated photographers with authentic reviews from real clients.</span>
+            </div>
+            <div className='reason-card time'>
+              <div className='reason-icon-container time'><FaClock className='reason-icon'/></div>
+              <div className='reason-title'>Quick Booking</div>
+              <span className='reason-text'>Book your perfect photographer in minutes with our streamlined booking process.</span>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );

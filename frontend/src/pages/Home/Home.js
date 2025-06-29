@@ -7,6 +7,7 @@ import { FaStar,FaClock  } from "react-icons/fa6";
 import landingImage from '../../assets/images/landing-image.jpg'; 
 import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
 import { Link } from 'react-router-dom';
+import Footer from '../../components/Footer/Footer';
 
 const avatarUrls = [
   'https://i.pravatar.cc/40?img=1',
@@ -15,6 +16,7 @@ const avatarUrls = [
 ];
 const Home = () => {
   return (
+    <>
     <main className="home-container">
       <section className='landing'>
         <div className='landing-container'>
@@ -102,6 +104,8 @@ const Home = () => {
         </div>
       </section>
     </main>
+    <Footer/>
+    </>
   );
 };
 

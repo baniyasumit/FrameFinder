@@ -149,15 +149,12 @@
 }
 
 .home-section{
-  
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.1);
 }
-
-
 
 .section-content{
   max-width: 1216px;

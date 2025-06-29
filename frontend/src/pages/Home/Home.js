@@ -6,6 +6,7 @@ import { IoIosPeople } from "react-icons/io";
 import { FaStar,FaClock  } from "react-icons/fa6";
 import landingImage from '../../assets/images/landing-image.jpg'; 
 import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
+import { Link } from 'react-router-dom';
 
 const avatarUrls = [
   'https://i.pravatar.cc/40?img=1',
@@ -63,10 +64,10 @@ const Home = () => {
           </div>
           </div>
       </section>
-      <section className='choosing-reasons'>
-        <div className='choosing-reasons-content'>
-          <h1>Why Choose Frame Finder?</h1>
-          <p className='reason-description'>
+      <section className='home-section reasons'>
+        <div className='section-content reasons'>
+          <h1 className='section-heading reasons'>Why Choose Frame Finder?</h1>
+          <p className='section-description reasons'>
             <span>Connect with professional photographers who understand your vision and bring your moments to life.</span>
           </p>
           <div className='reasons-container'>
@@ -85,6 +86,18 @@ const Home = () => {
               <div className='reason-title'>Quick Booking</div>
               <span className='reason-text'>Book your perfect photographer in minutes with our streamlined booking process.</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className='home-section browse'>
+        <div className='section-content browse'>
+          <h1 className='section-heading browse'>Ready to capture your moments?</h1>
+          <p className='section-description browse'>
+            <span>Join thousands of satisfied clients who found their perfect photographer through Frame Finder.</span>
+          </p>
+          <div className='section-browse-button-container'>
+            <Link href="/browse" className='section-browse-button'>Get Started Today</Link>
           </div>
         </div>
       </section>

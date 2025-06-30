@@ -74,3 +74,47 @@
   font-size: 0.9rem;
 }
   
+.nav-menu{
+  display: none;
+  transition: transform 0.2s linear;
+  font-size: 1.3rem;
+  color: black;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-menu:hover{
+  transform: scale(1.1);
+}
+.nav-menu-container{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  gap: 1rem;
+}
+ @media (max-width: 740px) {
+  .nav{
+    display: none;
+    position: absolute;
+    top: 100%; /* Show directly below the .nav-menu */
+    right: 0;
+    flex-direction: column;
+    gap: 0px;
+    background-color: white;
+    width:100%;
+    align-items: center;
+    scale:unset;
+  }
+
+  .nav-menu{
+    display: block;
+  }
+
+  .nav.show{
+    display: flex;
+  }
+
+  .nav-menu.rotated{
+    transform: rotate(-90deg);
+    transition: transform 0.2s linear;
+  }
+}

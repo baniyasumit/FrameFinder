@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../assets/contexts/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-function LoginOverlay({ onClose }) {
+function LoginOverlay() {
   const modalRef = useRef();
   const { setShowLogin, setShowRegister } = useAuth();
   const [visible, setVisible] = useState(false);

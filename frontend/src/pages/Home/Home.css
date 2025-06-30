@@ -61,6 +61,9 @@
   display: flex; 
   align-items: center;
   box-shadow: 0 10px 30px rgba(4, 31, 182, 0.253);
+  text-decoration: none;
+  width: fit-content;
+ 
 
 }
 

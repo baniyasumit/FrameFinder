@@ -26,10 +26,12 @@ const Home = () => {
               <span className='slogan second'> Our Frame</span>
             </p>
             <h2 className='browse-label'>Find your Photographer</h2>
-            <button className='browse-button'>
-              <IoSearchCircleSharp className='search-icon' />
-              <span>Find Photographers</span>
-            </button>
+          
+              <Link to="/browse" className='browse-button'>
+                <IoSearchCircleSharp className='search-icon' />
+                <span>Find Photographers</span>
+              </Link>
+            
             <p className="signup-photographer">
               Are you a photographer? <a href="/signup">Join our network</a>
             </p>

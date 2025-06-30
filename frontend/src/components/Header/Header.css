@@ -67,9 +67,10 @@
   background-color: rgb(37 99 235);
   color: white;
   border-width: 0px;
-  padding: 0.62rem 1rem;
-  border-radius: 0.4rem;
+  padding: 0.57rem 0.9rem;
+  border-radius: 0.5rem;
   font-family: Inter, sans-serif;
   text-decoration: none;
+  font-size: 0.9rem;
 }
   

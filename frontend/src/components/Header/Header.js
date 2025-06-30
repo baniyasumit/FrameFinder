@@ -1,17 +1,16 @@
-import React,{useState} from 'react';
+import React from 'react';
 import './Header.css';
 import { Link, NavLink } from 'react-router-dom';
-import LoginOverlay from './../AuthOverlay/LoginOverlay';
+import { useAuth } from '../../assets/contexts/AuthContext';
 
 const Header = () => {
-  const [showLogin, setShowLogin] = useState(false);
+  const { showLogin, setShowLogin } = useAuth();
 
   return (
-    <>
-      <header className="header">
-        <section className='headercomponents'>
+    <header className="header">
+      <section className='headercomponents'>
         <Link to="/" className="logo">
-            <h1>Frame Finder</h1>
+          <h1>Frame Finder</h1>
         </Link>
         <nav className="nav">
           <NavLink to="/" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Home</NavLink>
@@ -20,12 +19,10 @@ const Header = () => {
           <NavLink to="/contact" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"} >Contact</NavLink>
         </nav>
         <div>
-            <button className='header-login' onClick={() => setShowLogin(true)} disabled={ showLogin}>Sign In</button>
-          </div>
-          </section>
-        </header>
-        {showLogin && <LoginOverlay onClose={() => setShowLogin(false)} />}
-      </>
+          <Link className='header-login' onClick={() => setShowLogin(true)} disabled={showLogin}>Sign In</Link>
+        </div>
+      </section>
+    </header>
   );
 };
 

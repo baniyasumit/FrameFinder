@@ -23,7 +23,7 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10000px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 0 1rem 0.5rem rgba(39, 40, 40, 0.749);
+    box-shadow: 0 0 0.7rem 0.09rem rgba(39, 40, 40, 0.749);
     color: #fff;
     animation: modalZoomIn 0.4s ease-out;
     font-family: Lexend Deca, sans-serif;
@@ -91,6 +91,21 @@
 .auth-inputs::placeholder{
     font-size: 0.9rem;
 }
+
+.auth-password-container{
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.visibility-container{
+    color: white;
+}
+.auth-password-visibility{
+    color: white
+}
+
+
 .auth-options{
     display: flex;
     flex-direction: row;
@@ -141,8 +156,20 @@
     margin-top: 1rem;
     display: block;
     text-align: center;
+    
 }
 
+.auth-redirect-link{
+    color: #a4ccfd;
+    text-decoration: none;
+}
+
+
+/* Register Overlay CSS */
+.name-container{
+    display: flex;
+    gap: 0.5rem;
+}
 
 @keyframes fadeIn {
 from {

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
 import { Link, NavLink } from 'react-router-dom';
-import { useAuth } from '../../assets/contexts/AuthContext';
 import { CiMenuFries } from "react-icons/ci";
+import useAuthStore from '../../stateManagement/useAuthStore';
 
 const Header = () => {
   const headerRef = useRef(null);
-  const { showLogin, setShowLogin } = useAuth();
+  const { showLogin, setShowLogin } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {

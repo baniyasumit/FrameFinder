@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./AuthOverlay.css";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../assets/contexts/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import useAuthStore from "../../stateManagement/useAuthStore";
+import { loginUser } from "../../services/AuthServices";
 
 function LoginOverlay() {
   const modalRef = useRef();
-  const { setShowLogin, setShowRegister } = useAuth();
+  const { setShowLogin, setShowRegister } = useAuthStore();
   const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -28,10 +33,27 @@ function LoginOverlay() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setShowLogin]);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await loginUser(formData);
+      console.log("Login success:", response);
+      setShowLogin(false);
+    } catch (err) {
+      console.error("Login error:", err);
+      // show user-friendly error message
+    }
+  };
+
   return (
     <div className="overlay">
-      <div className="modal" ref={modalRef}>
-        <button className="close-icon" onClick={() => setShowLogin(false)}>
+      <form className="modal" ref={modalRef} onSubmit={handleSubmit}>
+        <button type="button" className="close-icon" onClick={() => setShowLogin(false)}>
           ×
         </button>
         <div className="auth-header">
@@ -41,12 +63,19 @@ function LoginOverlay() {
         <span className="auth-message">
           Welcome! Please log in to your account.
         </span>
-        <input className="auth-inputs" type="text" placeholder="Email" />
+        <input className="auth-inputs" type="text"
+          placeholder="Email" name="email"
+          value={formData.email}
+          onChange={handleChange} />
         <div className="auth-password-container">
-          <input className="auth-inputs" type={visible ? " text" : "password"} placeholder="Password" />
-          <Link onClick={() => setVisible(!visible)} className="visibility-container">
+          <input className="auth-inputs"
+            type={visible ? " text" : "password"}
+            placeholder="Password" name="password"
+            value={formData.password}
+            onChange={handleChange} />
+          <button type="button" onClick={() => setVisible(!visible)} className="visibility-container">
             {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
-          </Link>
+          </button>
         </div>
         <div className="auth-options">
           {/* <div className='remember-me-container'>
@@ -56,7 +85,7 @@ function LoginOverlay() {
           <Link className="forget-password-button">Forget password?</Link>
         </div>
 
-        <button className="submit-btn">Login</button>
+        <button type="submit" className="submit-btn">Login</button>
         <div className="auth-redirect-option">
           <span>Don't have an account? </span>
           <Link
@@ -69,8 +98,8 @@ function LoginOverlay() {
             Create one
           </Link>
         </div>
-      </div>
-    </div>
+      </form>
+    </div >
   );
 }
 

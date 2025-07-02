@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from "../../stateManagement/useAuthStore";
 import { loginUser, refreshUser } from "../../services/AuthServices";
+import { toast } from "sonner";
 
 function LoginOverlay() {
   const navigate = useNavigate();
   const modalRef = useRef();
-  const { setShowLogin, setShowRegister, setUser } = useAuthStore();
+  const { setShowLogin, setShowRegister, setUser, setLoginOverlayClosed } = useAuthStore();
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -27,12 +28,13 @@ function LoginOverlay() {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         setShowLogin(false);
+        setLoginOverlayClosed(true);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setShowLogin]);
+  }, [setShowLogin, setLoginOverlayClosed]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +52,7 @@ function LoginOverlay() {
       }
       setUser(userData);
       setShowLogin(false);
+      toast.success('Logged in successfully');
     } catch (err) {
       console.error("Login error:", err);
       // show user-friendly error message
@@ -59,7 +62,7 @@ function LoginOverlay() {
   return (
     <div className="overlay">
       <form className="modal" ref={modalRef} onSubmit={handleSubmit}>
-        <button type="button" className="close-icon" onClick={() => setShowLogin(false)}>
+        <button type="button" className="close-icon" onClick={() => { setShowLogin(false); setLoginOverlayClosed(true); }}>
           ×
         </button>
         <div className="auth-header">

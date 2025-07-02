@@ -10,6 +10,8 @@ import { setupInterceptors } from './services/ApiInstance';
 import { useEffect } from 'react';
 import { refreshUser } from './services/AuthServices';
 import RoleRoute from './routes/RoleRoute';
+import { Toaster } from 'sonner';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 function App() {
   const { showLogin, showRegister, setUser } = useAuthStore();
@@ -36,19 +38,20 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="bottom-center" richColors />
       <Header />
       {showLogin && <LoginOverlay />}
       {showRegister && <RegisterOverlay />}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
-          <Route path='/dashboard' element={<Home />} />
+          <Route path='/dashboard' element={<Dashboard />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['client']} />}>
-          <Route path='/checkout' element={<Home />} />
+          <Route path='/checkout' element={<Dashboard />} />
+
         </Route>
       </Routes>
-
     </Router>
   );
 }

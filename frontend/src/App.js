@@ -8,14 +8,31 @@ import LoginOverlay from './components/AuthOverlay/LoginOverlay';
 import useAuthStore from './stateManagement/useAuthStore';
 import { setupInterceptors } from './services/ApiInstance';
 import { useEffect } from 'react';
+import { refreshUser } from './services/AuthServices';
+import RoleRoute from './routes/RoleRoute';
 
 function App() {
-  const { showLogin, showRegister } = useAuthStore();
+  const { showLogin, showRegister, setUser } = useAuthStore();
   const { logout } = useAuthStore();
 
   useEffect(() => {
     setupInterceptors(logout);
   }, [logout]);
+
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await refreshUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Load User Error: ", error)
+        setUser(null);
+      }
+    };
+
+    loadUser();
+  }, [setUser]);
 
   return (
     <Router>
@@ -24,7 +41,14 @@ function App() {
       {showRegister && <RegisterOverlay />}
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route element={<RoleRoute allowedRoles={['photographer']} />}>
+          <Route path='/dashboard' element={<Home />} />
+        </Route>
+        <Route element={<RoleRoute allowedRoles={['client']} />}>
+          <Route path='/checkout' element={<Home />} />
+        </Route>
       </Routes>
+
     </Router>
   );
 }

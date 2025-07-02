@@ -6,24 +6,28 @@ const useAuthStore = create((set, get) => ({
     showLogin: false,
     showRegister: false,
     isAuthenticated: false,
+    loading: true,
 
     setShowLogin: (value) => set({ showLogin: value }),
     setShowRegister: (value) => set({ showRegister: value }),
-    setUser: (user) => set({ user, isAuthenticated: !!user }),
+    setUser: (user) => set({ user, isAuthenticated: !!user, loading: false }),
     clearUser: () => set({ user: null, isAuthenticated: false }),
 
 
     logout: async () => {
         try {
             const data = await logoutUser();
-            if (data) {
-                console.log("Hellllooo")
-            }
             get().clearUser();
+            return data.message;
         }
         catch (error) {
-
+            console.error(error)
+            throw error
         }
+    },
+
+    navigateToHome: () => {
+
     }
 }));
 

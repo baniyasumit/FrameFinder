@@ -1,4 +1,4 @@
-import jwt from 'jwtwebtoken'
+import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
     const token = req.cookies.token;
@@ -8,10 +8,16 @@ const authMiddleware = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+            return res.status(401).json({ message: "Token Expired" });
+        }
         req.user = decoded;
-        next(); // User is authenticated
+        next();
     } catch (err) {
         return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 };
+
+export default authMiddleware;

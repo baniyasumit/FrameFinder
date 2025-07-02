@@ -85,12 +85,72 @@
 .nav-menu:hover{
   transform: scale(1.1);
 }
+
+
 .nav-menu-container{
   display: flex;
   justify-content: right;
   align-items: center;
-  gap: 1rem;
+  gap: 1rem;;
 }
+
+.nav-user-avatar-container{
+  position: relative;
+}
+.nav-user-avatar{
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #2563EB;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 50%; 
+}
+
+.user-avatar{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  font-size: 2rem;
+  border-radius: 50%; 
+  color: rgba(93, 93, 93, 0.726);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 110%; /* just below the avatar */
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.profile-dropdown a,
+.profile-dropdown button {
+  padding: 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+  object-fit: cover;
+  word-break: unset;
+}
+
+.profile-dropdown a:hover,
+.profile-dropdown button:hover {
+  width:100%;
+  background-color: #f0f0f0;
+}
+
+
  @media (max-width: 740px) {
   .nav{
     display: none;

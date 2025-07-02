@@ -28,11 +28,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    isUserVerified: {
+    verified: {
         type: Boolean,
         default: false,
     },
-    userRole: {
+    role: {
         type: String,
         enum: ['client', 'photographer'],
         default: 'client',
@@ -40,6 +40,9 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+    },
+    picture: {
+        type: String,
     },
 });
 

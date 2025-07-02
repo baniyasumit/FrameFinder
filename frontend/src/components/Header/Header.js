@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { CiMenuFries } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
+import { toast } from 'sonner';
 
 const Header = () => {
   const headerRef = useRef(null);
@@ -11,6 +12,8 @@ const Header = () => {
   const { showLogin, setShowLogin, isAuthenticated, user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleClickOutside = (e) => {
 
@@ -30,8 +33,9 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const response = await logout();
-      console.log(response)
-      //put a notofication or something like that 
+      toast.success(response)
+      navigate('/', { replace: true })
+
     }
     catch (error) {
 

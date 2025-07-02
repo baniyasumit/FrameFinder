@@ -4,11 +4,13 @@ import { logoutUser } from '../services/AuthServices';
 
 const useAuthStore = create((set, get) => ({
     showLogin: false,
+    loginOverlayClosed: false,
     showRegister: false,
     isAuthenticated: false,
     loading: true,
 
     setShowLogin: (value) => set({ showLogin: value }),
+    setLoginOverlayClosed: (value) => set({ loginOverlayClosed: value }),
     setShowRegister: (value) => set({ showRegister: value }),
     setUser: (user) => set({ user, isAuthenticated: !!user, loading: false }),
     clearUser: () => set({ user: null, isAuthenticated: false }),

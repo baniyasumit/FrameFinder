@@ -30,3 +30,14 @@ export const logoutUser = async () => {
         throw error.response?.data.message;
     }
 }
+
+export const refreshUser = async () => {
+    try {
+        const response = await ApiInstance.get("/api/auth/me")
+        console.log(response.data.message)
+        return response.data.user;
+    } catch (error) {
+        console.error("Logout error")
+        throw error.response?.data.message;
+    }
+}

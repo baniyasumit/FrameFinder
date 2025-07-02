@@ -2,18 +2,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
 import { Link, NavLink } from 'react-router-dom';
 import { CiMenuFries } from "react-icons/ci";
+import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 
 const Header = () => {
   const headerRef = useRef(null);
-  const { showLogin, setShowLogin } = useAuthStore();
+  const profileNavRef = useRef(null);
+  const { showLogin, setShowLogin, isAuthenticated, user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   useEffect(() => {
     const handleClickOutside = (e) => {
 
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         setMenuOpen(false);
+      }
+      if (profileNavRef.current && !profileNavRef.current.contains(e.target)) {
+        setProfileMenuOpen(false)
       }
     };
 
@@ -21,6 +26,19 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setMenuOpen]);
 
+
+  const handleLogout = async () => {
+    try {
+      const response = await logout();
+      console.log(response)
+      //put a notofication or something like that 
+    }
+    catch (error) {
+
+    }
+
+
+  }
   return (
     <header className="header" ref={headerRef}>
       <section className='headercomponents'>
@@ -35,7 +53,27 @@ const Header = () => {
         </nav>
         <div className='nav-menu-container'>
           <Link className={`nav-menu ${menuOpen ? "rotated" : ""}`} onClick={() => setMenuOpen(!menuOpen)}><CiMenuFries /></Link>
-          <Link className='header-login' onClick={() => setShowLogin(true)} disabled={showLogin}>Sign In</Link>
+          {!isAuthenticated ?
+            <button className='header-login' onClick={() => setShowLogin(true)} disabled={showLogin || isAuthenticated}>
+              Sign In
+            </button> :
+            <div className='nav-user-avatar-container' ref={profileNavRef}>
+              <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
+                {user.userImage ? (
+                  <img className='user-avatar' src={user.picture} alt="User" />
+                ) : (
+                  <CgProfile className='user-avatar' />
+                )}
+              </div>
+
+              {profileMenuOpen && (
+                <div className='profile-dropdown' >
+                  <Link className='view-profile-navigate' to="/profile">View Profile</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
+          }
         </div>
 
       </section>

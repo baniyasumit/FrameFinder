@@ -20,12 +20,13 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ id: user._id, role: user.userRole }, JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.status(200).json({ message: "User Logged in Successfully" });
@@ -89,4 +90,19 @@ export const logoutUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getUserProfile = async (req, res) => {
+    try {
+
+        const userId = req.user.id
+        const user = await User.findOne({ _id: userId }, { password: 0, _id: 0, __v: 0 });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+        res.status(200).json({ user: user, message: "User Retrieved Successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 

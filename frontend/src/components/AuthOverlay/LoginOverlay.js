@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./AuthOverlay.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from "../../stateManagement/useAuthStore";
-import { loginUser } from "../../services/AuthServices";
+import { loginUser, refreshUser } from "../../services/AuthServices";
 
 function LoginOverlay() {
+  const navigate = useNavigate();
   const modalRef = useRef();
-  const { setShowLogin, setShowRegister } = useAuthStore();
+  const { setShowLogin, setShowRegister, setUser } = useAuthStore();
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -43,6 +44,11 @@ function LoginOverlay() {
     try {
       const response = await loginUser(formData);
       console.log("Login success:", response);
+      const userData = await refreshUser();
+      if (userData.userRole === 'photographer') {
+        navigate('/dashboard')
+      }
+      setUser(userData);
       setShowLogin(false);
     } catch (err) {
       console.error("Login error:", err);

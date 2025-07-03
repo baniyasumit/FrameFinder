@@ -17,3 +17,8 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #5177cbe6;
   }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+    
+  }

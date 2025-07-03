@@ -3,7 +3,8 @@ import './AuthOverlay.css';
 import { Link } from 'react-router-dom';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from '../../stateManagement/useAuthStore';
-import { registerUser } from '../../services/AuthServices'; // use this when you add service
+import { registerUser } from '../../services/AuthServices';
+import { toast } from 'sonner';
 
 function RegisterOverlay() {
   const modalRef = useRef();
@@ -17,6 +18,14 @@ function RegisterOverlay() {
     phoneNumber: '',
     password: '',
     confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState({
+    fullname: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: ''
   });
 
   useEffect(() => {
@@ -39,22 +48,59 @@ function RegisterOverlay() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+
+  };
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.firstname.trim() || !formData.lastname.trim()) newErrors.fullname = "Both first and last name is required";
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be 10 digits";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 10) {
+      newErrors.password = "Password must be at least 10 characters";
+    } else {
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Please confirm your password";
+      } else if (formData.confirmPassword !== formData.password) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+    }
+
+
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      console.error("Passwords do not match");
-      return;
-    }
+    if (!validate()) return;
 
     try {
-
       const response = await registerUser(formData);
       console.log("Registration Successful:", response);
+      toast.success("Account created successfully!", { position: 'top-center' });
       setShowRegister(false);
     } catch (err) {
       console.error("Register error:", err);
+
+
+      toast.error(err, { position: 'top-center' });
     }
   };
 
@@ -62,11 +108,14 @@ function RegisterOverlay() {
     <div className="overlay">
       <form className="modal" ref={modalRef} onSubmit={handleSubmit}>
         <button type="button" className="close-icon" onClick={() => setShowRegister(false)}>×</button>
+
         <div className='auth-header'>
           <img src='/title512.png' alt='title' />
           <h1 className='company-name'>Frame Finder</h1>
         </div>
+
         <span className='auth-message'>Welcome! Please register a new account.</span>
+
         <div className='name-container'>
           <input
             className='auth-inputs'
@@ -85,6 +134,8 @@ function RegisterOverlay() {
             onChange={handleChange}
           />
         </div>
+        {errors.fullname && <div className="auth-error">{errors.fullname}</div>}
+
         <input
           className='auth-inputs'
           type="text"
@@ -93,6 +144,8 @@ function RegisterOverlay() {
           value={formData.email}
           onChange={handleChange}
         />
+        {errors.email && <div className="auth-error">{errors.email}</div>}
+
         <input
           className='auth-inputs'
           type="text"
@@ -101,6 +154,7 @@ function RegisterOverlay() {
           value={formData.phoneNumber}
           onChange={handleChange}
         />
+        {errors.phoneNumber && <div className="auth-error">{errors.phoneNumber}</div>}
 
         <div className="auth-password-container">
           <input
@@ -127,6 +181,10 @@ function RegisterOverlay() {
             {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
           </button>
         </div>
+        {errors.password && <div className="auth-error">{errors.password}</div>}
+        {errors.confirmPassword && <div className="auth-error">{errors.confirmPassword}</div>}
+
+        {errors.general && <div className="auth-error">{errors.general}</div>}
 
         <button type="submit" className="submit-btn">Register</button>
 

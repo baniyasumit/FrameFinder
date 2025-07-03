@@ -85,6 +85,11 @@
 .auth-inputs:focus{
     transform: scale(1.01);
     background-color: rgb(92, 92, 92);
+    border-color: rgb(92, 92, 92);
+}
+
+.auth-inputs:focus-visible{
+    outline: none;
     
 }
 
@@ -189,4 +194,12 @@ to {
 }
 }
   
-
+.auth-error {
+    color: #ff4d4f;
+    font-size: 0.75rem;
+    margin-top: -6px;
+    padding-left: 8px;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+  }
+  

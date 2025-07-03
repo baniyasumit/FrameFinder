@@ -11,14 +11,19 @@ function LoginOverlay() {
   const modalRef = useRef();
   const { setShowLogin, setShowRegister, setUser, setLoginOverlayClosed } = useAuthStore();
   const [visible, setVisible] = useState(false);
+
   const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({
     email: '',
     password: '',
   });
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -31,7 +36,6 @@ function LoginOverlay() {
         setLoginOverlayClosed(true);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setShowLogin, setLoginOverlayClosed]);
@@ -39,23 +43,47 @@ function LoginOverlay() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 10) {
+      newErrors.password = "Password must be at least 10 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     try {
       const response = await loginUser(formData);
       console.log("Login success:", response);
       const userData = await refreshUser();
       if (userData.userRole === 'photographer') {
-        navigate('/dashboard')
+        navigate('/dashboard');
       }
       setUser(userData);
       setShowLogin(false);
       toast.success('Logged in successfully');
     } catch (err) {
       console.error("Login error:", err);
-      // show user-friendly error message
+      toast.error(err, {
+        position: 'top-center', // or 'bottom-right', 'top-left', etc.
+      });
     }
   };
 
@@ -65,36 +93,44 @@ function LoginOverlay() {
         <button type="button" className="close-icon" onClick={() => { setShowLogin(false); setLoginOverlayClosed(true); }}>
           ×
         </button>
+
         <div className="auth-header">
-          <img src="/title512.png" alt="title"></img>
+          <img src="/title512.png" alt="title" />
           <h1 className="company-name">Frame Finder</h1>
         </div>
-        <span className="auth-message">
-          Welcome! Please log in to your account.
-        </span>
-        <input className="auth-inputs" type="text"
-          placeholder="Email" name="email"
+
+        <span className="auth-message">Welcome! Please log in to your account.</span>
+
+        <input
+          className="auth-inputs"
+          type="text"
+          placeholder="Email"
+          name="email"
           value={formData.email}
-          onChange={handleChange} />
+          onChange={handleChange}
+        />
+        {errors.email && <div className="auth-error">{errors.email}</div>}
+
         <div className="auth-password-container">
-          <input className="auth-inputs"
-            type={visible ? " text" : "password"}
-            placeholder="Password" name="password"
+          <input
+            className="auth-inputs"
+            type={visible ? "text" : "password"}
+            placeholder="Password"
+            name="password"
             value={formData.password}
-            onChange={handleChange} />
+            onChange={handleChange}
+          />
           <button type="button" onClick={() => setVisible(!visible)} className="visibility-container">
             {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
           </button>
         </div>
+        {errors.password && <div className="auth-error">{errors.password}</div>}
+
         <div className="auth-options">
-          {/* <div className='remember-me-container'>
-                  <input type='checkbox' id='remember-checkbox' value="checkbox" ></input>   
-                  <label className='remember-me-label' htmlFor="remember-checkbox">Remember me</label>
-                </div> */}
           <Link className="forget-password-button">Forget password?</Link>
         </div>
-
         <button type="submit" className="submit-btn">Login</button>
+
         <div className="auth-redirect-option">
           <span>Don't have an account? </span>
           <Link
@@ -108,7 +144,7 @@ function LoginOverlay() {
           </Link>
         </div>
       </form>
-    </div >
+    </div>
   );
 }
 

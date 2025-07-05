@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 const Header = () => {
   const headerRef = useRef(null);
   const profileNavRef = useRef(null);
-  const { showLogin, setShowLogin, isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -58,9 +58,9 @@ const Header = () => {
         <div className='nav-menu-container'>
           <Link className={`nav-menu ${menuOpen ? "rotated" : ""}`} onClick={() => setMenuOpen(!menuOpen)}><CiMenuFries /></Link>
           {!isAuthenticated ?
-            <button className='header-login' onClick={() => setShowLogin(true)} disabled={showLogin || isAuthenticated}>
+            <Link className='header-login' to="/login" disabled={isAuthenticated}>
               Sign In
-            </button> :
+            </Link> :
             <div className='nav-user-avatar-container' ref={profileNavRef}>
               <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
                 {user.userImage ? (

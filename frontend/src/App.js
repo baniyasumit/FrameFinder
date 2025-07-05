@@ -3,8 +3,6 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
-import RegisterOverlay from './components/AuthOverlay/RegisterOverlay';
-import LoginOverlay from './components/AuthOverlay/LoginOverlay';
 import useAuthStore from './stateManagement/useAuthStore';
 import { setupInterceptors } from './services/ApiInstance';
 import { useEffect } from 'react';
@@ -12,9 +10,12 @@ import { refreshUser } from './services/AuthServices';
 import RoleRoute from './routes/RoleRoute';
 import { Toaster } from 'sonner';
 import Dashboard from './pages/Dashboard/Dashboard';
+import OTP from './pages/Auth/OTP';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 
 function App() {
-  const { showLogin, showRegister, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
   const { logout } = useAuthStore();
 
   useEffect(() => {
@@ -34,16 +35,19 @@ function App() {
     };
 
     loadUser();
+
   }, [setUser]);
 
   return (
     <Router>
       <Toaster position="bottom-center" richColors />
       <Header />
-      {showLogin && <LoginOverlay />}
-      {showRegister && <RegisterOverlay />}
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/otp-verification-email' element={<OTP />} />
+
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>

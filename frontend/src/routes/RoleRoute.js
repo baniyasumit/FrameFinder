@@ -1,53 +1,50 @@
-import { useEffect, useRef } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../stateManagement/useAuthStore';
 import { toast } from 'sonner';
 
 const RoleRoute = ({ allowedRoles }) => {
-    const {
-        user,
-        isAuthenticated,
-        loading,
-        setShowLogin,
-        setLoginOverlayClosed,
-        loginOverlayClosed
-    } = useAuthStore();
+    const { user, isAuthenticated, loading, } = useAuthStore();
 
     const navigate = useNavigate();
+    const isAllowed = allowedRoles.includes(user?.role)
+    const location = useLocation();
 
-    const loginModalWasOpened = useRef(false);
-
-    // 1. If not authenticated, show login modal once
+    // 1. If not authenticated, show login modal
     useEffect(() => {
-        if (!loading && !isAuthenticated && !loginModalWasOpened.current) {
+        if (!loading && !isAuthenticated) {
             toast.warning('You must be logged in to access this page.', {
                 icon: '🔐',
                 duration: 5000,
             });
-            setShowLogin(true);
-            setLoginOverlayClosed(false); // reset every time modal is shown
-            loginModalWasOpened.current = true;
+            navigate('/login', { state: { from: location } });
         }
+    }, [loading, isAuthenticated, location, navigate]);
 
-        // 2. If authenticated but role is not allowed → redirect
-        if (!loading && isAuthenticated && !allowedRoles.includes(user?.role)) {
-            toast.warning('Unauthorized access. Redirecting to home.');
-            navigate('/', { replace: true })
-        }
-    }, [loading, isAuthenticated, user, allowedRoles, setShowLogin, setLoginOverlayClosed, navigate]);
-
-
-    // 4. Actually perform redirect
+    // 2. Redirect if role is not allowed
     useEffect(() => {
-        console.log(loginOverlayClosed)
-        if (loginOverlayClosed) {
+
+        if (!loading && isAuthenticated && !isAllowed) {
+            toast.warning('Unauthorized access. Redirecting to home.');
             navigate('/', { replace: true });
         }
-    }, [navigate, loginOverlayClosed]);
+    }, [loading, isAuthenticated, user, isAllowed, navigate]);
+
+    useEffect(() => {
+        if (!loading && isAuthenticated && !user?.isVerified && isAllowed) {
+            toast.warning("Please verify your account to access this page.", {
+                icon: '📧',
+                duration: 4000
+            });
+
+            navigate('/otp-verification-email', { state: { from: location } });
+
+        }
+    }, [loading, isAuthenticated, user, navigate, isAllowed, location]);
+
 
     if (loading) return <div>Loading...</div>;
-    if (!isAuthenticated) return null; // wait while login modal is up
-    if (!allowedRoles.includes(user?.role)) return null;
+    if (!isAuthenticated || !isAllowed || !user?.isVerified) return null;
 
     return <Outlet />;
 };

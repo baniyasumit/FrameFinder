@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from '../models/User.js'
+import { generateOTP, sendOtpEmail } from '../utils/AuthUtils.js';
+import Otp from '../models/Otp.js';
 
 
 dotenv.config();
@@ -111,4 +113,75 @@ export const getUserProfile = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+export const sendOTPEmail = async (req, res) => {
+    const { purpose } = req.body;
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        await Otp.deleteMany({ user: userId, used: false, purpose });
+
+        const code = generateOTP();
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedCode = await bcrypt.hash(code, salt);
+
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+        const otpDoc = await Otp.create({
+            user: userId,
+            code: hashedCode,
+            expiresAt,
+            purpose,
+            used: false,
+        });
+
+        await sendOtpEmail(user.email, code);
+
+        res.status(200).json({ message: "OTP sent successfully" });
+
+    } catch (err) {
+        console.error("Error sending OTP:", err);
+        res.status(500).json({ message: "Server error sending OTP" });
+    }
+};
+
+
+export const verifyOtp = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const userId = req.user.id;
+        if (!otp || otp.length < 6) {
+            return res.status(400).json({ message: "Invalid OTP provided." });
+        }
+
+        // Find the latest OTP record for this user
+        const otpRecord = await Otp.findOne({ user: userId }).sort({ createdAt: -1 });
+
+        if (!otpRecord) {
+            return res.status(400).json({ message: "No OTP record found." });
+        }
+
+        if (otpRecord.expiresAt < Date.now()) {
+            await Otp.deleteMany({ userId }); // Clean up
+            return res.status(400).json({ message: "OTP has expired. Please request a new one." });
+        }
+
+        const isMatch = await bcrypt.compare(otp, otpRecord.code);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Incorrect OTP. Please try again." });
+        }
+
+        await User.findByIdAndUpdate(userId, { isVerified: true });
+
+        await Otp.deleteMany({ userId });
+
+        return res.status(200).json({ message: "Account verified successfully." });
+    } catch (error) {
+        console.error("OTP verification error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
 

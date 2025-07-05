@@ -3,18 +3,15 @@ import { create } from 'zustand';
 import { logoutUser } from '../services/AuthServices';
 
 const useAuthStore = create((set, get) => ({
-    showLogin: false,
-    loginOverlayClosed: false,
-    showRegister: false,
     isAuthenticated: false,
     loading: true,
+    hasSentOtp: false,
 
-    setShowLogin: (value) => set({ showLogin: value }),
-    setLoginOverlayClosed: (value) => set({ loginOverlayClosed: value }),
-    setShowRegister: (value) => set({ showRegister: value }),
+    setHasSentOtp: (value) => set({ hasSentOtp: value }),
     setUser: (user) => set({ user, isAuthenticated: !!user, loading: false }),
+    updateUser: (fields) => set((state) => ({ user: { ...state.user, ...fields, }, })),
     clearUser: () => set({ user: null, isAuthenticated: false }),
-
+    
 
     logout: async () => {
         try {

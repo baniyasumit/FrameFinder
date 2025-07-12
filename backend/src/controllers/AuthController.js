@@ -2,9 +2,9 @@ import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from '../models/User.js'
-import { generateOTP, sendOtpEmail } from '../utils/AuthUtils.js';
+import { generateOTP, sendOtpEmail, sendResetEmail } from '../utils/AuthUtils.js';
 import Otp from '../models/Otp.js';
-
+import crypto from 'crypto';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
@@ -93,6 +93,72 @@ export const logoutUser = async (req, res) => {
         });
 
         res.status(200).json({ message: "User logged out successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const resetEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid Email." });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 3600000;
+        await user.save();
+
+        await sendResetEmail(user.email, resetToken);
+
+        res.status(200).json({ message: "Email Sent in Successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { newPassword } = req.body
+        const { token } = req.params;
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        if (!newPassword) {
+            return res.status(400).json({ message: "New password is required" });
+        }
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        const isMatch = await bcrypt.compare(newPassword, user.password);
+        if (isMatch) {
+            return res.status(400).json({ message: "Cannot use already previous password" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+
+        res.status(200).json({ message: "Password Reset Successfully" });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });

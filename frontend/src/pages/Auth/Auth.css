@@ -111,9 +111,9 @@
 .auth-options{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     font-size: 0.82rem;
+    color: #ca81ae;
 }
 
 .remember-me-container{
@@ -139,7 +139,6 @@
 .auth-options-button{
     color: #ca81ae;
     text-decoration: none;
-
 }
 
 .submit-btn {

@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import OTP from './pages/Auth/OTP';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import ResetPassword from './pages/Auth/ResetPassword';
 
 function App() {
   const { setUser } = useAuthStore();
@@ -47,6 +48,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/otp-verification-email' element={<OTP />} />
+        <Route path='/reset-password/:token' element={<ResetPassword />} />
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
           <Route path='/dashboard' element={<Dashboard />} />

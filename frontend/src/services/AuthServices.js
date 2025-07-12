@@ -32,6 +32,7 @@ export const logoutUser = async () => {
     }
 }
 
+
 export const refreshUser = async () => {
     try {
         const response = await ApiInstance.get("/api/auth/me")
@@ -64,3 +65,26 @@ export const verifyOtp = async (otp) => {
         throw error.response?.data.message || error.message;
     }
 }
+
+export const resetPasswordEmail = async (formData) => {
+    try {
+        const response = await ApiInstance.post("/api/auth/reset-password-email", { email: formData.email })
+        console.log(response.data)
+        return response.data.message;
+    } catch (error) {
+        console.error("Logout error")
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const resetPassword = async (password, token) => {
+    try {
+        const response = await ApiInstance.post(`/api/auth/reset-password/${token}`, {
+            newPassword: password
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Registration error:", error);
+        throw error.response?.data.message || error.message;
+    }
+};

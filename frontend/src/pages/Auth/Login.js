@@ -3,16 +3,16 @@ import "./Auth.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from "../../stateManagement/useAuthStore";
-import { loginUser, refreshUser } from "../../services/AuthServices";
+import { loginUser, refreshUser, resetPasswordEmail } from "../../services/AuthServices";
 import { toast } from "sonner";
+import { IoIosArrowBack } from "react-icons/io";
 
 function Login() {
     const navigate = useNavigate();
     const { user, setUser } = useAuthStore();
     const [visible, setVisible] = useState(false);
     const location = useLocation();
-
-
+    const [showResetPassowrd, setShowResetPassword] = useState(false)
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -56,6 +56,18 @@ function Login() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const validateEmail = () => {
+        const newErrors = {};
+        if (!formData.email) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Invalid email format";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
@@ -72,14 +84,29 @@ function Login() {
         } catch (err) {
             console.error("Login error:", err);
             toast.error(err, {
-                position: 'top-center', // or 'bottom-right', 'top-left', etc.
+                position: 'top-center',
             });
         }
     };
 
+    const handleResetSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateEmail()) return;
+        try {
+            const response = await resetPasswordEmail(formData);
+            console.log("Success:", response);
+            toast.success(response);
+        } catch (err) {
+            console.error("Login error:", err);
+            toast.error(err, {
+                position: 'top-center',
+            });
+        }
+    }
+
     return (
         <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
-            <form className="auth-form" onSubmit={handleSubmit}>
+            {!showResetPassowrd ? (<form className="auth-form" onSubmit={handleSubmit}>
                 <div className="auth-header">
                     <h1 className="auth-title">Login</h1>
                 </div>
@@ -112,7 +139,7 @@ function Login() {
                 {errors.password && <div className="auth-error">{errors.password}</div>}
 
                 <div className="auth-options">
-                    <Link className="auth-options-button">Forget password?</Link>
+                    <Link className="auth-options-button" onClick={() => setShowResetPassword(true)}>Forget password?</Link>
                 </div>
                 <button type="submit" className="submit-btn">Login</button>
 
@@ -125,7 +152,35 @@ function Login() {
                         Create one
                     </Link>
                 </div>
-            </form>
+            </form >
+            ) : (
+                <form className="auth-form" onSubmit={handleResetSubmit}>
+                    <div className="auth-options">
+                        <IoIosArrowBack />
+                        <Link className="auth-options-button" onClick={() => setShowResetPassword(false)}> Login</Link>
+                    </div>
+                    <div className="auth-header">
+                        <h1 className="auth-title">Reset Password</h1>
+                    </div>
+
+                    <span className="auth-message">Enter your email to send reset password request.</span>
+
+                    <input
+                        className="auth-inputs"
+                        type="text"
+                        placeholder="Email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    {errors.email && <div className="auth-error">{errors.email}</div>}
+
+                    <button type="submit" className="submit-btn">Send Email</button>
+                </form>
+            )}
+
+
+
         </main>
     );
 }

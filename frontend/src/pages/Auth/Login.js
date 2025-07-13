@@ -23,7 +23,7 @@ function Login() {
         password: '',
     });
 
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || (user?.role === 'photographer' ? '/dashboard' : '/');;
     useEffect(() => {
         if (user) {
             navigate(from, { replace: true });
@@ -76,9 +76,6 @@ function Login() {
             const response = await loginUser(formData);
             console.log("Login success:", response);
             const userData = await refreshUser();
-            if (userData.userRole === 'photographer') {
-                navigate('/dashboard');
-            }
             setUser(userData);
             toast.success('Logged in successfully');
         } catch (err) {

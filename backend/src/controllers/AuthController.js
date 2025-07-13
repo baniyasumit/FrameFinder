@@ -43,9 +43,10 @@ export const loginUser = async (req, res) => {
 
 export const registerUser = async (req, res) => {
     try {
-        const { firstname, lastname, email, phoneNumber, password } =
-            req.body;
 
+        const { firstname, lastname, email, phoneNumber, password, role = 'client' } =
+            req.body;
+        console.log(role)
         if (!firstname || !lastname || !email || !phoneNumber || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -72,6 +73,7 @@ export const registerUser = async (req, res) => {
             email,
             phoneNumber,
             password: hashedPassword,
+            role: role
         });
 
         await newUser.save();

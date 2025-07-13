@@ -33,7 +33,7 @@ const Home = () => {
               </Link>
 
               <p className="signup-photographer">
-                Are you a photographer? <a href="/signup">Join our network</a>
+                Are you a photographer? <a href='/register-photographer'>Join our network</a>
               </p>
             </div>
             <div className='landing-picture' style={{

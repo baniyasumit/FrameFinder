@@ -6,9 +6,10 @@ import useAuthStore from '../../stateManagement/useAuthStore';
 import { registerUser } from '../../services/AuthServices';
 import { toast } from 'sonner';
 
-function Register() {
+function Register({ handleSubmit }) {
     const { user } = useAuthStore();
     const [visible, setVisible] = useState(false);
+    const [confirmVisible, setConfirmVisible] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -79,25 +80,16 @@ function Register() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = async (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
-        try {
-            const response = await registerUser(formData);
-            console.log("Registration Successful:", response);
-            toast.success("Account created successfully!", { position: 'top-center' });
-        } catch (err) {
-            console.error("Register error:", err);
-
-
-            toast.error(err, { position: 'top-center' });
-        }
+        handleSubmit(formData);
     };
 
     return (
         <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
-            <form className="auth-form" onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={onSubmit}>
 
                 <div className="auth-header">
                     <h1 className="auth-title">Create an account</h1>
@@ -144,32 +136,45 @@ function Register() {
                     onChange={handleChange}
                 />
                 {errors.phoneNumber && <div className="auth-error">{errors.phoneNumber}</div>}
+                <div className='passwords-verify-container'>
+                    <div className="auth-password-container">
+                        <input
+                            className="auth-inputs"
+                            type={visible ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
 
-                <div className="auth-password-container">
-                    <input
-                        className="auth-inputs"
-                        type={visible ? "text" : "password"}
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
-                    <input
-                        className="auth-inputs"
-                        type={visible ? "text" : "password"}
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setVisible(!visible)}
-                        className="visibility-container"
-                    >
-                        {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
-                    </button>
+                        <button
+                            type="button"
+                            onClick={() => setVisible(!visible)}
+                            className="visibility-container"
+                        >
+                            {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
+                        </button>
+                    </div>
+                    <div className="auth-password-container">
+                        <input
+                            className="auth-inputs"
+                            type={confirmVisible ? "text" : "password"}
+                            name="confirmPassword"
+                            placeholder="Confirm Password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => setConfirmVisible(!confirmVisible)}
+                            className="visibility-container"
+                        >
+                            {confirmVisible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
+                        </button>
+                    </div>
                 </div>
+
                 {errors.password && <div className="auth-error">{errors.password}</div>}
                 {errors.confirmPassword && <div className="auth-error">{errors.confirmPassword}</div>}
 

@@ -12,8 +12,9 @@ import { Toaster } from 'sonner';
 import Dashboard from './pages/Dashboard/Dashboard';
 import OTP from './pages/Auth/OTP';
 import Login from './pages/Auth/Login';
-import Register from './pages/Auth/Register';
 import ResetPassword from './pages/Auth/ResetPassword';
+import RegisterClient from './pages/Auth/RegisterClient';
+import RegisterPhotographer from './pages/Auth/RegisterPhotographer';
 
 function App() {
   const { setUser } = useAuthStore();
@@ -46,9 +47,10 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        <Route path='/register' element={<RegisterClient />} />
         <Route path='/otp-verification-email' element={<OTP />} />
         <Route path='/reset-password/:token' element={<ResetPassword />} />
+        <Route path='/register-photographer' element={<RegisterPhotographer />} />
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
           <Route path='/dashboard' element={<Dashboard />} />

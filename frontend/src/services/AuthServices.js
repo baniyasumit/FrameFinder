@@ -2,7 +2,6 @@ import { ApiInstance } from "./ApiInstance";
 
 export const loginUser = async (credentials) => {
     try {
-        console.log(credentials)
         const response = await ApiInstance.post("/api/auth/login", credentials);
         return response.data;
     } catch (error) {
@@ -11,9 +10,10 @@ export const loginUser = async (credentials) => {
     }
 };
 
-export const registerUser = async (credentials) => {
+export const registerUser = async (credentials, role) => {
     try {
-        const response = await ApiInstance.post("/api/auth/register", credentials);
+        const formData = { ...credentials, role }
+        const response = await ApiInstance.post("/api/auth/register", formData);
         return response.data;
     } catch (error) {
         console.error("Registration error:", error);
@@ -39,7 +39,7 @@ export const refreshUser = async () => {
         console.log(response.data.message)
         return response.data.user;
     } catch (error) {
-        console.error("Logout error")
+        console.error("Fetch error")
         throw error.response?.data.message || error.message;
     }
 }

@@ -15,8 +15,11 @@ import Login from './pages/Auth/Login';
 import ResetPassword from './pages/Auth/ResetPassword';
 import RegisterClient from './pages/Auth/RegisterClient';
 import RegisterPhotographer from './pages/Auth/RegisterPhotographer';
+import DefaultLayout from './routes/DefaultLayout';
+import PhotographerLayout from './routes/PhotographerLayout';
+import NotFound from './pages/NotFound/NotFound';
 
-function App() {
+const App = () => {
   const { setUser } = useAuthStore();
   const { logout } = useAuthStore();
 
@@ -43,22 +46,27 @@ function App() {
   return (
     <Router>
       <Toaster position="bottom-center" richColors />
-      <Header />
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<RegisterClient />} />
-        <Route path='/otp-verification-email' element={<OTP />} />
-        <Route path='/reset-password/:token' element={<ResetPassword />} />
-        <Route path='/register-photographer' element={<RegisterPhotographer />} />
+        <Route element={<DefaultLayout />}>
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<RegisterClient />} />
+          <Route path='/otp-verification-email' element={<OTP />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
+          <Route path='/register-photographer' element={<RegisterPhotographer />} />
+        </Route>
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
-          <Route path='/dashboard' element={<Dashboard />} />
+          <Route element={<PhotographerLayout />}>
+            <Route path='/dashboard' element={<Dashboard />} />
+          </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client']} />}>
-          <Route path='/checkout' element={<Dashboard />} />
-
+          <Route element={<DefaultLayout />}>
+            <Route path='/checkout' element={<Dashboard />} />
+          </Route>
         </Route>
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </Router>
   );

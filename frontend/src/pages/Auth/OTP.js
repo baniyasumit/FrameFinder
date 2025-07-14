@@ -4,7 +4,7 @@ import { verifyOtp, changeEmail, sendOTPEmail } from "../../services/AuthService
 import useAuthStore from "../../stateManagement/useAuthStore";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import './Auth.css'
-function OTP() {
+const OTP = () => {
     const { user, updateUser, hasSentOtp, setHasSentOtp } = useAuthStore();
     const [otp, setOtp] = useState("");
     const [error, setError] = useState("");
@@ -94,7 +94,7 @@ function OTP() {
     };
 
     return (
-        <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
+        <main className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
                 {changingEmail && (
                     <button type="button" className="back-icon" onClick={() => setChangingEmail(false)}>

@@ -5,6 +5,7 @@ import { CiMenuFries } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { toast } from 'sonner';
+import redirection from "../../assets/images/clientRedirect.png";
 
 const Header = () => {
   const headerRef = useRef(null);
@@ -61,21 +62,28 @@ const Header = () => {
             <Link className='header-login' to="/login" disabled={isAuthenticated}>
               Sign In
             </Link> :
-            <div className='nav-user-avatar-container' ref={profileNavRef}>
-              <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-                {user.userImage ? (
-                  <img className='user-avatar' src={user.picture} alt="User" />
-                ) : (
-                  <CgProfile className='user-avatar' />
+            <div className='photographer-link-container'>
+              {user?.role === 'photographer' && (
+                <Link to="/dashboard" className='photographer-link'>
+                  <img className='redirect-image' src={redirection} alt="Redirect to Client" />
+                </Link>
+              )}
+              <div className='nav-user-avatar-container' ref={profileNavRef}>
+                <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
+                  {user.userImage ? (
+                    <img className='user-avatar' src={user.picture} alt="User" />
+                  ) : (
+                    <CgProfile className='user-avatar' />
+                  )}
+                </div>
+
+                {profileMenuOpen && (
+                  <div className='profile-dropdown' >
+                    <Link className='view-profile-navigate' to="/profile">View Profile</Link>
+                    <button onClick={handleLogout}>Logout</button>
+                  </div>
                 )}
               </div>
-
-              {profileMenuOpen && (
-                <div className='profile-dropdown' >
-                  <Link className='view-profile-navigate' to="/profile">View Profile</Link>
-                  <button onClick={handleLogout}>Logout</button>
-                </div>
-              )}
             </div>
           }
         </div>

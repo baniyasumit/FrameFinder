@@ -12,6 +12,7 @@
     backdrop-filter: blur(5px); 
     background-size: cover;
     background-position: center;
+    background-image: url("../../assets/images/authBackground.jpg");
 }
 
 .auth-form{

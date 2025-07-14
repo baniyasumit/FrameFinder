@@ -6,10 +6,11 @@ import useAuthStore from "../../stateManagement/useAuthStore";
 import { toast } from "sonner";
 import { resetPassword } from "../../services/AuthServices";
 
-function ResetPassword() {
+const ResetPassword = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const [visible, setVisible] = useState(false);
+    const [confirmVisible, setConfirmVisible] = useState(false);
     const location = useLocation();
     const [formData, setFormData] = useState({
         password: '',
@@ -65,7 +66,7 @@ function ResetPassword() {
             const response = await resetPassword(formData.password, token);
             console.log("Reset Successful:", response);
             toast.success("Password reset successfully!", { position: 'top-center' });
-            navigate('/login')
+            navigate('/login', { replace: true })
         } catch (err) {
             console.error("Reset error:", err);
             toast.error(err);
@@ -74,33 +75,50 @@ function ResetPassword() {
 
 
     return (
-        <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
+        <main className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
                 <div className="auth-header">
                     <h1 className="auth-title">Reset Password</h1>
                 </div>
 
                 <span className="auth-message">Enter your new password.</span>
+                <div className="auth-password-container">
+                    <input
+                        className="auth-inputs"
+                        type={visible ? "text" : "password"}
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
 
-                <input
-                    className="auth-inputs"
-                    type={visible ? "text" : "password"}
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                />
-                {errors.password && <div className="auth-error">{errors.password}</div>}
-                <input
-                    className="auth-inputs"
-                    type={visible ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                />
-                {errors.confirmPassword && <div className="auth-error">{errors.confirmPassword}</div>}
-
+                    <button
+                        type="button"
+                        onClick={() => setVisible(!visible)}
+                        className="visibility-container"
+                    >
+                        {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
+                    </button>
+                    {errors.password && <div className="auth-error">{errors.password}</div>}
+                </div>
+                <div className="auth-password-container">
+                    <input
+                        className="auth-inputs"
+                        type={confirmVisible ? "text" : "password"}
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setConfirmVisible(!confirmVisible)}
+                        className="visibility-container"
+                    >
+                        {confirmVisible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
+                    </button>
+                    {errors.confirmPassword && <div className="auth-error">{errors.confirmPassword}</div>}
+                </div>
                 <div className="auth-options">
                     <Link className="auth-options-button" to='/login'>Password Remembered?</Link>
                 </div>

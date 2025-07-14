@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import Register from './Register';
 import { useNavigate } from 'react-router-dom';
 
-function RegisterClient() {
+const RegisterClient = () => {
     const navigate = useNavigate();
     const handleSubmitClient = async (formData) => {
         try {

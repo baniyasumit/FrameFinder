@@ -3,10 +3,8 @@ import './Auth.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from '../../stateManagement/useAuthStore';
-import { registerUser } from '../../services/AuthServices';
-import { toast } from 'sonner';
 
-function Register({ handleSubmit }) {
+const Register = ({ handleSubmit }) => {
     const { user } = useAuthStore();
     const [visible, setVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
@@ -88,7 +86,7 @@ function Register({ handleSubmit }) {
     };
 
     return (
-        <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
+        <main className="auth-container">
             <form className="auth-form" onSubmit={onSubmit}>
 
                 <div className="auth-header">
@@ -154,6 +152,7 @@ function Register({ handleSubmit }) {
                         >
                             {visible ? <FaRegEye className="auth-password-visibility" /> : <FaRegEyeSlash className="auth-password-visibility" />}
                         </button>
+
                     </div>
                     <div className="auth-password-container">
                         <input

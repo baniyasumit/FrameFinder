@@ -7,7 +7,7 @@ import { loginUser, refreshUser, resetPasswordEmail } from "../../services/AuthS
 import { toast } from "sonner";
 import { IoIosArrowBack } from "react-icons/io";
 
-function Login() {
+const Login = () => {
     const navigate = useNavigate();
     const { user, setUser } = useAuthStore();
     const [visible, setVisible] = useState(false);
@@ -102,7 +102,7 @@ function Login() {
     }
 
     return (
-        <main className="auth-container" style={{ backgroundImage: `url(/authBackground.jpg)`, }}>
+        <main className="auth-container">
             {!showResetPassowrd ? (<form className="auth-form" onSubmit={handleSubmit}>
                 <div className="auth-header">
                     <h1 className="auth-title">Login</h1>

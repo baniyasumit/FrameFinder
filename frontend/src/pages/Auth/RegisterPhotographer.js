@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import Register from './Register';
 import { useNavigate } from 'react-router-dom';
 
-function RegisterPhotographer() {
+const RegisterPhotographer = () => {
     const navigate = useNavigate();
     const handleSubmitPhotographer = async (formData) => {
         try {

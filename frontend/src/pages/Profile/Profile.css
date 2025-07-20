@@ -1,0 +1,180 @@
+.profile-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: #FFD1ED;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    background-image: url("../../assets/images/authBackground.jpg");
+    padding-top: 7.5vh;
+}
+
+
+.profile-cover-image{
+    background: #91d5e357; 
+    position: relative;
+    height: 30%;
+    color: black;
+    backdrop-filter: blur(3px); 
+    animation: modalZoomIn 0.4s ease-out;
+    font-family: Lexend Deca, sans-serif;
+    transition: height 0.2s ease-in-out;
+    z-index: 3;
+     transition: height 1s ease-in-out;
+}
+
+.profile-image-container{
+    position: absolute;
+    top: 80%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    border-radius: 100%;
+    border: 2px solid #2563EB;
+    width: 15rem;
+    height: 15rem;
+    overflow: hidden;
+    transition: height 0.5s ease-in-out, width 0.5s ease-in-out ;
+}
+
+.profile-image{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+     object-position: center;
+}
+
+
+.profile-information-background{
+    background: #ffffff; 
+    position: relative;
+    width: 100%;
+    height: 70%;
+    z-index: 2;
+    color: black;
+    backdrop-filter: blur(3px); 
+    animation: modalZoomIn 0.4s ease-out;
+    font-family: Inter, sans-serif;
+    transition: height 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.profile-information-container{
+    max-width: 1216px;
+    width: 100%;
+    padding: 3rem 10rem;
+    transition: padding 0.5s ease-in-out;
+   
+}
+.profile-information-line{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+    
+
+}
+
+.profile-information-line > h1{
+    text-decoration: underline;
+}
+
+
+.profile-labeled-input{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.profile-labels{
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.733);
+}
+
+.profile-inputs-container{
+    width: 100%;
+    position: relative;
+}
+
+.profile-inputs{
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.input-icons{
+    position: absolute;
+    right: 10px;
+    top: 35%;
+    color: rgba(0, 0, 0, 0.639);
+}
+
+.profile-information-container > hr {
+    margin: 1.5rem 0;
+    border-color: rgba(24, 24, 24, 0.338);
+}
+
+.profile-information-line.account-actions{
+    justify-content: left;
+}
+
+.account-action{
+    padding: 0.5rem;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    
+}
+
+.account-action.edit{
+    border: #2563EB;
+    background-color: rgb(37 99 235);
+    color: white;
+}
+
+.account-action:hover{
+    transform: scale(1.1);
+}
+
+@media (max-width: 800px) {
+    .profile-information-container{
+        max-width: 100vw;
+        width: 100%;
+        padding: 5rem 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+   .profile-information-line{
+    flex-wrap: wrap;
+   }
+
+   .profile-information-container{
+    padding: 2rem 1rem;
+    overflow: auto;
+   }
+   .profile-cover-image{
+    height: 20%;
+   }
+
+   .profile-image-container{
+    width: 10rem;
+    height: 10rem;
+   }
+}

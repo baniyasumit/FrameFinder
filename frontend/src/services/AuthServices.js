@@ -79,12 +79,35 @@ export const resetPasswordEmail = async (formData) => {
 
 export const resetPassword = async (password, token) => {
     try {
-        const response = await ApiInstance.post(`/api/auth/reset-password/${token}`, {
+        const response = await ApiInstance.patch(`/api/auth/reset-password/${token}`, {
             newPassword: password
         });
         return response.data;
     } catch (error) {
-        console.error("Registration error:", error);
+        console.error("Reset error:", error);
+        throw error.response?.data.message || error.message;
+    }
+};
+
+export const changePassword = async (currentPassword, newPassword) => {
+    try {
+        const response = await ApiInstance.patch("/api/auth/change-password", {
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Change password error:", error);
+        throw error.response?.data.message || error.message;
+    }
+};
+
+export const editProfile = async (editData) => {
+    try {
+        const response = await ApiInstance.patch("/api/auth/edit-profile", editData);
+        return response.data;
+    } catch (error) {
+        console.error("Edit profile error:", error);
         throw error.response?.data.message || error.message;
     }
 };

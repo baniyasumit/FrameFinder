@@ -5,7 +5,7 @@ import { CiMenuFries } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { toast } from 'sonner';
-import redirection from "../../assets/images/photographerRedirect.png";
+import redirection from "../../assets/images/clientRedirect.png";
 
 const PhotographerHeader = () => {
     const headerRef = useRef(null);
@@ -52,7 +52,7 @@ const PhotographerHeader = () => {
                 </Link>
                 <nav className={`nav ${menuOpen ? "show" : ""}`} >
                     <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Dashboard</NavLink>
-                    <NavLink to="/profile" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Profile</NavLink>
+                    <NavLink to="/portfolio" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Portfolio</NavLink>
                     <NavLink to="/bookings" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Bookings</NavLink>
                     <NavLink to="/messages" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"} >Messages</NavLink>
                 </nav>
@@ -71,7 +71,7 @@ const PhotographerHeader = () => {
 
                             <div className='nav-user-avatar-container' ref={profileNavRef}>
                                 <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-                                    {user.userImage ? (
+                                    {user.picture ? (
                                         <img className='user-avatar' src={user.picture} alt="User" />
                                     ) : (
                                         <CgProfile className='user-avatar' />

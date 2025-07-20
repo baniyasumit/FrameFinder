@@ -72,8 +72,6 @@ const Register = ({ handleSubmit }) => {
             }
         }
 
-
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

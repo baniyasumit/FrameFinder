@@ -9,7 +9,6 @@
     justify-content: center;
     align-items: center;
     z-index: 1;
-    backdrop-filter: blur(5px); 
     background-size: cover;
     background-position: center;
     background-image: url("../../assets/images/authBackground.jpg");
@@ -39,11 +38,6 @@
     margin: 1rem 0rem;
 }
 
-.auth-header > img{
-    width: 45px;
-    height: auto;
-    object-fit: contain;
-}
 .auth-message{
     font-size:0.8rem;
     display: block;
@@ -108,10 +102,10 @@
     color: white;
     background-color: transparent;
     border: none;
-     position: absolute;
+    position: absolute;
     right: 5px;
     top: 35%;
-     cursor: pointer;
+    cursor: pointer;
 }
 .auth-password-visibility{
     color: black;
@@ -207,20 +201,7 @@ to {
     font-family: sans-serif;
 }
 
-.cancel-container{
-    display: flex;
-   justify-content: flex-end;
-}
 
-.cancel-btn {
-    padding: 10px;
-    background-color: #eb259f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    margin-top: 1rem;
-    cursor: pointer;
-}
 
 .back-icon {
     position: absolute;

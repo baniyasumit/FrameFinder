@@ -1,7 +1,6 @@
 
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
 import useAuthStore from './stateManagement/useAuthStore';
 import { setupInterceptors } from './services/ApiInstance';
@@ -18,6 +17,8 @@ import RegisterPhotographer from './pages/Auth/RegisterPhotographer';
 import DefaultLayout from './routes/DefaultLayout';
 import PhotographerLayout from './routes/PhotographerLayout';
 import NotFound from './pages/NotFound/NotFound';
+import Profile from './pages/Profile/Profile';
+import { DynamicLayout } from './routes/DynamicLayout';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -54,6 +55,7 @@ const App = () => {
           <Route path='/otp-verification-email' element={<OTP />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/register-photographer' element={<RegisterPhotographer />} />
+
         </Route>
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
@@ -64,6 +66,11 @@ const App = () => {
         <Route element={<RoleRoute allowedRoles={['client']} />}>
           <Route element={<DefaultLayout />}>
             <Route path='/checkout' element={<Dashboard />} />
+          </Route>
+        </Route>
+        <Route element={<RoleRoute allowedRoles={['client', 'photographer']} />}>
+          <Route element={<DynamicLayout />}>
+            <Route path='/profile' element={<Profile />} />
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

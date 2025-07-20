@@ -101,6 +101,8 @@ const Login = () => {
         }
     }
 
+    
+
     return (
         <main className="auth-container">
             {!showResetPassowrd ? (<form className="auth-form" onSubmit={handleSubmit}>
@@ -175,8 +177,6 @@ const Login = () => {
                     <button type="submit" className="submit-btn">Send Email</button>
                 </form>
             )}
-
-
 
         </main>
     );

@@ -148,7 +148,7 @@ export const resetPassword = async (req, res) => {
 
         const isMatch = await bcrypt.compare(newPassword, user.password);
         if (isMatch) {
-            return res.status(400).json({ message: "Cannot use already previous password" });
+            return res.status(400).json({ message: "Cannot use  previous used password" });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -250,6 +250,67 @@ export const verifyOtp = async (req, res) => {
     } catch (error) {
         console.error("OTP verification error:", error);
         return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body
+        const userId = req.user.id
+        if (!newPassword || !currentPassword) {
+            return res.status(400).json({ message: "Both current and new password is required" });
+        }
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Current password is invalid" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+
+
+        res.status(200).json({ message: "Password Changed Successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const editProfile = async (req, res) => {
+    try {
+        const { fullname, email, phoneNumber } = req.body
+        const userId = req.user.id;
+        const nameParts = fullname.trim().split(' ').filter(part => part.length > 0);
+        const firstname = nameParts[0];
+        const lastname = nameParts[1];
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        if (user.firstname === firstname && user.lastname === lastname && user.email === email && user.phoneNumber === phoneNumber) {
+            return res.status(204).json({ message: "No changes were made." });
+        }
+
+        user.firstname = firstname;
+        user.lastname = lastname;
+        if (user.email !== email) {
+            user.email = email;
+            user.isVerified = false;
+        }
+        user.phoneNumber = phoneNumber;
+        await user.save();
+
+
+        res.status(200).json({ message: "Profile Updated Successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
     }
 };
 

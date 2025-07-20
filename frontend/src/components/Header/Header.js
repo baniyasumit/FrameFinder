@@ -5,7 +5,7 @@ import { CiMenuFries } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { toast } from 'sonner';
-import redirection from "../../assets/images/clientRedirect.png";
+import redirection from "../../assets/images/photographerRedirect.png";
 
 const Header = () => {
   const headerRef = useRef(null);
@@ -70,7 +70,7 @@ const Header = () => {
               )}
               <div className='nav-user-avatar-container' ref={profileNavRef}>
                 <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-                  {user.userImage ? (
+                  {user.picture ? (
                     <img className='user-avatar' src={user.picture} alt="User" />
                   ) : (
                     <CgProfile className='user-avatar' />

@@ -1,0 +1,134 @@
+
+.change-password-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.555); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(7px); 
+
+}
+
+.change-password-modal {
+    position: relative;
+    background: #91d5e357; 
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 320px;
+    max-width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 0.7rem 0.09rem rgba(39, 40, 40, 0.749);
+    color: #fff;
+    animation: modalZoomIn 0.4s ease-out;
+    font-family: Lexend Deca, sans-serif;
+}
+
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+}
+
+.change-password-header{
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    justify-content: center;
+    font-family: Inter,sans-serif;
+    margin: 1rem 0rem;
+}
+
+.change-password-message{
+    font-size:0.8rem;
+    display: block;
+    text-align:center;
+    margin: 1rem 0rem;
+
+}
+
+.change-password-inputs{
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+
+
+.change-password-inputs:hover{
+    transform: scale(1.01);
+    background-color: rgb(148, 143, 143);
+    border-color:rgb(148, 143, 143);
+    
+}
+
+.change-password-inputs:focus{
+    transform: scale(1.01);
+    background-color: rgb(92, 92, 92);
+    border-color: rgb(92, 92, 92);
+}
+
+.change-password-inputs:focus-visible{
+    outline: none;
+    
+}
+
+.change-password-inputs::placeholder{
+    font-size: 0.9rem;
+}
+
+
+.password-container{
+    position: relative;
+    width: 100%;
+}
+
+.visibility-container{
+    color: white;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    right: 5px;
+    top: 35%;
+    cursor: pointer;
+}
+.password-visibility{
+    color: black;
+}
+
+.password-error {
+    color: #ff4d4f;
+    font-size: 0.75rem;
+    margin-top: -6px;
+    padding-left: 8px;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #2563EB;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    cursor: pointer;
+}

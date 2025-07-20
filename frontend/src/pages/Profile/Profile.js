@@ -4,16 +4,18 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { format } from 'date-fns';
 import { IoPersonSharp } from "react-icons/io5";
-import { MdEmail } from "react-icons/md";
+import { MdDeleteForever, MdEmail } from "react-icons/md";
 import { HiCalendarDateRange } from "react-icons/hi2";
 import { FaPhoneAlt, FaUserEdit, FaKey, FaSave } from "react-icons/fa";
 import { ChangePassword } from '../../components/EditProfile/ChangePassword';
 import { toast } from 'sonner';
-import { editProfile, refreshUser } from '../../services/AuthServices';
+import { deleteAccount, editProfile, refreshUser } from '../../services/AuthServices';
 import { Confirmation } from '../../components/Confirmation/Confirmation';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
     const { user, setUser } = useAuthStore();
+    const { navigate } = useNavigate();
     const createdDate = new Date(user?.createdAt);
     const formattedCreatedDate = format(createdDate, 'MMM dd yyyy');
     const [editable, setEditable] = useState(false);
@@ -29,7 +31,8 @@ const Profile = () => {
     });
     const [showChangePassword, setShowChangePassword] = useState(false);
 
-    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showEditConfirmation, setShowEditConfirmation] = useState(false);
+    const [showDeletConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const handleChange = (e) => {
 
@@ -82,13 +85,13 @@ const Profile = () => {
         e.preventDefault();
         if (!validate()) return;
         if (editData.email !== user.email) {
-            setShowConfirmation(true);
+            setShowEditConfirmation(true);
         } else {
             saveProfile();
         }
     }
     const saveProfile = async () => {
-        setShowConfirmation(false);
+        setShowEditConfirmation(false);
         try {
             const response = await editProfile(editData);
             setEditable(false)
@@ -104,13 +107,34 @@ const Profile = () => {
         }
     }
 
+    const deleteProfile = async () => {
+        setShowDeleteConfirmation(false);
+        try {
+            const response = await deleteAccount();
+            console.log("Delete Success:", response);
+            const userData = await refreshUser();
+            setUser(userData);
+            navigate('/')
+            toast.success('Profile Edited successfully');
+        } catch (err) {
+            console.error("Login error:", err);
+            toast.error(err, {
+                position: 'top-center',
+            });
+        }
+    }
+
     return (
         <>{showChangePassword && <ChangePassword setShowChangePassword={setShowChangePassword} />}
-            {showConfirmation && <Confirmation title="Are you sure you want to change the email?"
+            {showEditConfirmation && <Confirmation title="Are you sure you want to change the email?"
                 message="If you change the email you will have to reverify to access some pages."
                 extraInfo={`New Email : ${editData.email}`}
-                setShowConfirmation={setShowConfirmation}
+                setShowConfirmation={setShowEditConfirmation}
                 onConfirm={saveProfile} />}
+            {showDeletConfirmation && <Confirmation title="Are you sure you want to delete this account?"
+                message="If you delete this account you will not be able to recover the account again."
+                setShowConfirmation={setShowDeleteConfirmation}
+                onConfirm={deleteProfile} />}
             <main className="profile-container">
                 <section className='profile-cover-image'>
                     <div className='profile-image-container'>
@@ -227,6 +251,10 @@ const Profile = () => {
                             <button className='account-action' onClick={() => setShowChangePassword(true)} >
                                 <FaKey />
                                 Change Password
+                            </button>
+                            <button className='account-action delete' onClick={() => setShowDeleteConfirmation(true)} >
+                                <MdDeleteForever />
+                                Delete Account
                             </button>
                         </div>
 

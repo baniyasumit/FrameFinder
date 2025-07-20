@@ -111,3 +111,13 @@ export const editProfile = async (editData) => {
         throw error.response?.data.message || error.message;
     }
 };
+
+export const deleteAccount = async () => {
+    try {
+        const response = await ApiInstance.delete("/api/auth/delete-account");
+        return response.data;
+    } catch (error) {
+        console.error("Edit profile error:", error);
+        throw error.response?.data.message || error.message;
+    }
+};

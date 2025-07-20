@@ -148,6 +148,11 @@
     color: white;
 }
 
+.account-action.delete{
+    
+    background-color: #CD5656;
+}
+
 .account-action:hover{
     transform: scale(1.1);
 }

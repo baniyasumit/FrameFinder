@@ -121,3 +121,15 @@ export const deleteAccount = async () => {
         throw error.response?.data.message || error.message;
     }
 };
+
+export const uploadProfilePicture = async (file) => {
+    try {
+        const formData = new FormData();
+        formData.append('profile', file)
+        const response = await ApiInstance.patch("/api/auth/upload-profile-picture", formData);
+        return response.data;
+    } catch (error) {
+        console.error("Edit profile error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

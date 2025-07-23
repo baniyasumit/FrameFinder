@@ -29,6 +29,10 @@
      transition: height 1s ease-in-out;
 }
 
+.profile-change-button{
+    cursor: pointer;
+}
+
 .profile-image-container{
     position: absolute;
     top: 80%;
@@ -49,6 +53,30 @@
      object-position: center;
 }
 
+.profile-image-container.overlay{
+    display: none;
+    cursor: pointer;
+
+}
+
+.profile-image-container:hover + .profile-image-container.overlay{
+    display: block;
+    background-color: rgba(0, 0, 0, 0.409);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+.profile-image-container.overlay:hover{
+    display: block;
+     background-color: rgba(0, 0, 0, 0.409);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    
+}
+
+.profile-change-icon{
+    color: rgba(9, 9, 9, 0.831);
+    font-size: 2rem;
+}
 
 .profile-information-background{
     background: #ffffff; 

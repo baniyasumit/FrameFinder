@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Profile.css'
 import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
@@ -6,10 +6,10 @@ import { format } from 'date-fns';
 import { IoPersonSharp } from "react-icons/io5";
 import { MdDeleteForever, MdEmail } from "react-icons/md";
 import { HiCalendarDateRange } from "react-icons/hi2";
-import { FaPhoneAlt, FaUserEdit, FaKey, FaSave } from "react-icons/fa";
+import { FaPhoneAlt, FaUserEdit, FaKey, FaSave, FaCameraRetro } from "react-icons/fa";
 import { ChangePassword } from '../../components/EditProfile/ChangePassword';
 import { toast } from 'sonner';
-import { deleteAccount, editProfile, refreshUser } from '../../services/AuthServices';
+import { deleteAccount, editProfile, refreshUser, uploadProfilePicture } from '../../services/AuthServices';
 import { Confirmation } from '../../components/Confirmation/Confirmation';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,6 +34,9 @@ const Profile = () => {
     const [showEditConfirmation, setShowEditConfirmation] = useState(false);
     const [showDeletConfirmation, setShowDeleteConfirmation] = useState(false);
 
+    const fileInputRef = useRef(null);
+    const [userImage, setUserImage] = useState('');
+
     const handleChange = (e) => {
 
         const { name, value } = e.target;
@@ -43,7 +46,9 @@ const Profile = () => {
     };
 
     useEffect(() => {
+        setUserImage(profileImage);
         if (user) {
+            setUserImage(user.picture || profileImage);
             setEditData((prev) => ({
                 ...prev,
                 fullname: [user.firstname, user.lastname].filter(Boolean).join(' '),
@@ -100,7 +105,7 @@ const Profile = () => {
             setUser(userData);
             toast.success('Profile Edited successfully');
         } catch (err) {
-            console.error("Login error:", err);
+            console.error("Edit error:", err);
             toast.error(err, {
                 position: 'top-center',
             });
@@ -115,13 +120,40 @@ const Profile = () => {
             const userData = await refreshUser();
             setUser(userData);
             navigate('/')
-            toast.success('Profile Edited successfully');
+            toast.success('Profile Deleted successfully');
+        } catch (err) {
+            console.error("Delete error:", err);
+            toast.error(err, {
+                position: 'top-center',
+            });
+        }
+    }
+
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+            console.log("File not selected.");
+            return;
+        }
+        const blobUrl = URL.createObjectURL(file)
+        setUserImage(blobUrl)
+
+        try {
+            const response = await uploadProfilePicture(file);
+            console.log("Upload Success:", response);
+            const userData = await refreshUser();
+            setUser(userData);
+            URL.revokeObjectURL(blobUrl);
+            toast.success('Profile picture changed successfully');
+
         } catch (err) {
             console.error("Login error:", err);
             toast.error(err, {
                 position: 'top-center',
             });
         }
+
+
     }
 
     return (
@@ -138,13 +170,15 @@ const Profile = () => {
             <main className="profile-container">
                 <section className='profile-cover-image'>
                     <div className='profile-image-container'>
-                        {user.picture ? (
-                            <img src={user.picture} alt="Profile" className='profile-image' />
-                        ) : (
-                            <img src={profileImage} alt="Profile" className='profile-image' />
-                        )}
+
+                        <img src={userImage} alt="Profile" className='profile-image' />
 
                     </div>
+
+                    <button className='profile-image-container overlay' onClick={() => fileInputRef.current.click()}>
+                        <FaCameraRetro className='profile-change-icon' />
+                    </button>
+                    <input type='file' ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*" />
                 </section>
                 <section className='profile-information-background'>
                     <div className='profile-information-container'>

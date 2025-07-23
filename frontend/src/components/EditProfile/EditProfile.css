@@ -21,7 +21,6 @@
     padding: 2rem;
     width: 320px;
     max-width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 0.7rem 0.09rem rgba(39, 40, 40, 0.749);

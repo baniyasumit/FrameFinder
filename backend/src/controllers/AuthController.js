@@ -5,6 +5,7 @@ import User from '../models/User.js'
 import { generateOTP, sendOtpEmail, sendResetEmail } from '../utils/AuthUtils.js';
 import Otp from '../models/Otp.js';
 import crypto from 'crypto';
+import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
@@ -336,3 +337,29 @@ export const deleteAccount = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+export const uploadProfilePicture = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        const imageUrl = req.file.path;
+        const secretUrl = req.file.filename;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            const result = await cloudinary.uploader.destroy(secretUrl);
+            console.log("Delete result:", result);
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.picture = imageUrl;
+        user.secretUrl = secretUrl;
+        await user.save();
+
+        return res.status(200).json({ message: 'Profile picture uploaded successfully' })
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+

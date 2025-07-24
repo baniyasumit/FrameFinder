@@ -35,7 +35,7 @@ const Profile = () => {
     const [showDeletConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const fileInputRef = useRef(null);
-    const [userImage, setUserImage] = useState('');
+    const [userImage, setUserImage] = useState(profileImage);
 
     const handleChange = (e) => {
 
@@ -46,7 +46,6 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        setUserImage(profileImage);
         if (user) {
             setUserImage(user.picture || profileImage);
             setEditData((prev) => ({

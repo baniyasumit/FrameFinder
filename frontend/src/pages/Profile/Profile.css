@@ -155,6 +155,7 @@
 }
 
 .profile-information-line.account-actions{
+    
     justify-content: left;
 }
 
@@ -209,5 +210,9 @@
    .profile-image-container{
     width: 10rem;
     height: 10rem;
+   }
+
+   .profile-information-container>hr{
+         margin: 1rem 0rem;
    }
 }

@@ -1,0 +1,432 @@
+.portfolio{
+    background-color: #F9FAFB;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.portfolio-content-container{
+    max-width: 1216px;
+    width: 100%;
+    padding: 2.5rem 20px;
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    gap: 1rem;
+   
+}
+
+.portfolio-content{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    margin: 0.5rem 0;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem 1.5rem;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+    font-family: Poppins, sans-serif;
+}
+
+
+.portfolio-content.portfolio-header{
+    background-color: transparent;
+    box-shadow: none;
+    padding: unset;
+}
+.portfolio-header > h1{
+    font-size: 2rem;
+    font-family: Inter, sans-serif;
+    margin-top: unset;
+    margin-bottom: 10px;
+}
+
+.portfolio-header > span{
+    color: rgba(0, 0, 0, 0.68);
+    font-size: 1rem;
+}
+
+.portfolio-section-headers{
+    font-weight: 600;
+    font-family: Inter,sans-serif;
+    margin-top: unset;
+    margin-bottom: 1.5rem;
+    color: rgba(0, 0, 0, 0.781);
+}
+
+.portfolio-basic-info-line {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    
+}
+
+.portfolio-labeled-input{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    transition: flex-grow 0.3s ease-in-out;
+}
+
+.portfolio-labeled-input:hover{
+    flex-grow: 2;
+}
+
+.portfolio-labeled-input:focus-within {
+  flex-grow: 2;
+}
+
+
+.portfolio-inputs-container{
+    width: 100%;
+    position: relative;
+}
+
+.portfolio-input-icons{
+    position: absolute;
+    right: 10px;
+    top: 35%;
+    color: rgba(0, 0, 0, 0.639);
+}
+
+.profile-picture-content{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-picture-container{
+    width: 5rem;
+    height: 5rem;
+    border-radius: 100%;
+    border: 2px solid #2563EB;
+    overflow: hidden;
+}
+
+.profile-picture-container  > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.profile-picture-upload-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.portfolio-button{
+    background-color: #2563EB;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 0.7rem 0.7rem;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+    font-size: 0.8rem;
+
+    transition: transform 0.3s ease-in-out;
+    height: 2.7rem;
+}
+
+.portfolio-button > span{
+    width: 9rem;
+}
+
+
+.portfolio-button:hover{
+    transform: scale(1.1);
+}
+
+.profile-picture-upload-container > span{
+    color: rgba(0, 0, 0, 0.621);
+}
+.portfolio-content-line{
+    margin-bottom: 1.3rem;
+    
+}
+
+.portfolio-label{
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: rgba(0, 0, 0, 0.575);
+}
+
+.portfolio-input{
+    width: 100%;
+    padding: 13px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.288);
+    border-radius: 7px;
+    color: black;
+    font-family: Poppins, sans-serif;
+    transition: transform 0.3s ease-in-out;
+}
+
+
+
+
+.photographer-stats-container{
+    display: flex;
+    flex-direction: row;    
+    gap:15px;
+    flex-wrap: wrap;
+}
+.photographer-stats{
+    display: flex;
+    flex-direction: column;
+    flex-grow:1;
+    transition: flex-grow 0.3s ease-in-out;
+    
+}
+
+.photographer-stats:hover{
+
+    flex-grow:2;
+    
+}
+
+.portfolio-services-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.service-price-edit-container{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    
+}
+.service-price-edit-container > span{
+    color:black;
+}
+.service-edit-button{
+    background-color: transparent;
+    border:none;
+}
+
+.portfolio-service-container{
+    border:1px solid rgba(0, 0, 0, 0.121);
+    padding: 1rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-service-header{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.portfolio-service-title{
+    color: black;
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+    margin: unset;
+}
+
+.portfolio-service-container > ul{
+    margin: unset;
+}
+
+.services-label{
+    font-size: 0.8rem;
+    padding-left:20px;
+    color: rgba(0, 0, 0, 0.575);
+}
+
+.portfolio-images-gallery {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap:34.6px;
+}
+
+.portfolio-gallery-image-container , .portfolio-gallery-add-image{
+    flex-grow: 1;
+    flex-basis: 16rem;
+    height: 11rem;
+    border-radius: 15px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.portfolio-gallery-image-container{
+    position: relative;
+    overflow: hidden;
+
+}
+.portfolio-gallery-image-container:hover,.portfolio-gallery-add-image:hover{
+ transform: scale(1.1);
+}
+
+.portfolio-gallery-image{
+    position: absolute;
+    object-fit: cover;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);    
+}
+
+.portfolio-gallery-add-image{
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    border: 1px dashed rgba(0, 0, 0, 0.577);
+    color: rgba(0, 0, 0, 0.464);
+}
+
+.portfolio-equipments-skills-content,.portfolio-availabilty{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    font-family: Inter,sans-serif;
+}
+
+.portfolio-equipments > h3, 
+.portfolio-skills > h3, 
+.portfolio-availability-from > h3,
+.portfolio-availability-to > h3{
+    color: rgba(0, 0, 0, 0.585);
+    font-size: 0.8rem;
+}
+
+.portfolio-inputs-container.skills-equipment{
+     transition: transform 0.3s ease-in-out;
+}
+
+.portfolio-inputs-container.skills-equipment > .portfolio-input-icons{
+    right: 10px;
+    top: 25%;
+    background-color: transparent;
+    border:none;
+    font-size: 1rem;
+}
+
+
+.portfolio-skills-equipment-input, 
+.portfolio-availability-from > input,
+.portfolio-availability-to > input{
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.273);
+    font-weight: 600;
+    transition: transform 0.3s ease-in-out;
+}
+
+
+.portfolio-inputs-container.skills-equipment:hover, 
+.portfolio-availability-from > input:hover,
+.portfolio-availability-to > input:hover,
+.portfolio-inputs-container.skills-equipment:focus-within, 
+.portfolio-availability-from > input:focus,
+.portfolio-availability-to > input:focus{
+    transform: scale(1.05);
+}
+
+.portfolio-days-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.portfolio-day{
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-day > label{
+    font-size: 1rem;
+}
+
+.portfolio-day > input{
+    transform: scale(1.3);
+}
+
+
+.portfolio-actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.portfolio-actions > button{
+    height: 3rem;
+     font-size: 1.05rem;
+}
+
+.portfolio-actions button:first-child{
+    background-color: white;
+    color: #2563EB;
+    border: 1px solid rgba(0, 0, 0, 0.456);
+    width: 8rem;
+
+}
+
+@media screen and (max-width:925px) {
+    .portfolio-gallery-image{
+        height: 130%;
+    }
+
+    .portfolio-actions{
+        justify-content: center;
+    }
+}
+
+
+@media screen and (max-width:630px) {
+
+    .portfolio-services-header{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+
+    .portfolio-services-header>.add-service-button-container{
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .portfolio-service-header{
+        flex-direction: column;
+
+    }
+
+    .service-price-edit-container{
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+    }
+
+    .multiple-upload-button-container{
+        display: flex;
+        justify-content: center;
+    }
+
+    .portfolio-gallery-image-container,.portfolio-gallery-add-image{
+        width: 25rem;
+        height: 20rem;
+    }
+
+    .portfolio-equipments-skills-content , .portfolio-availabilty{
+        grid-template-columns: 1fr;
+    }
+    
+}

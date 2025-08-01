@@ -19,6 +19,7 @@ import PhotographerLayout from './routes/PhotographerLayout';
 import NotFound from './pages/NotFound/NotFound';
 import Profile from './pages/Profile/Profile';
 import { DynamicLayout } from './routes/DynamicLayout';
+import Portfolio from './pages/Porfolio/Portfolio';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -61,6 +62,7 @@ const App = () => {
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
           <Route element={<PhotographerLayout />}>
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/portfolio' element={<Portfolio />} />
           </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client']} />}>

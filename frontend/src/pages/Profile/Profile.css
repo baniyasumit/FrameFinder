@@ -97,7 +97,7 @@
 .profile-information-container{
     max-width: 1216px;
     width: 100%;
-    padding: 3rem 10rem;
+    padding:3rem 1rem;
     transition: padding 0.5s ease-in-out;
    
 }

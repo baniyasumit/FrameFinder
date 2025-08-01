@@ -9,9 +9,10 @@ import { HiCalendarDateRange } from "react-icons/hi2";
 import { FaPhoneAlt, FaUserEdit, FaKey, FaSave, FaCameraRetro } from "react-icons/fa";
 import { ChangePassword } from '../../components/EditProfile/ChangePassword';
 import { toast } from 'sonner';
-import { deleteAccount, editProfile, refreshUser, uploadProfilePicture } from '../../services/AuthServices';
+import { deleteAccount, editProfile, refreshUser } from '../../services/AuthServices';
 import { Confirmation } from '../../components/Confirmation/Confirmation';
 import { useNavigate } from 'react-router-dom';
+import UploadUserPicture from './../../components/UploadUserPicture/UploadUserPicture';
 
 const Profile = () => {
     const { user, setUser } = useAuthStore();
@@ -34,13 +35,13 @@ const Profile = () => {
     const [showEditConfirmation, setShowEditConfirmation] = useState(false);
     const [showDeletConfirmation, setShowDeleteConfirmation] = useState(false);
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef();
     const [userImage, setUserImage] = useState(profileImage);
 
     const handleChange = (e) => {
 
         const { name, value } = e.target;
-        console.log(name, value)
+
         setEditData((prev) => ({ ...prev, [name]: value }));
 
     };
@@ -128,32 +129,7 @@ const Profile = () => {
         }
     }
 
-    const handleImageChange = async (event) => {
-        const file = event.target.files[0];
-        if (!file) {
-            console.log("File not selected.");
-            return;
-        }
-        const blobUrl = URL.createObjectURL(file)
-        setUserImage(blobUrl)
 
-        try {
-            const response = await uploadProfilePicture(file);
-            console.log("Upload Success:", response);
-            const userData = await refreshUser();
-            setUser(userData);
-            URL.revokeObjectURL(blobUrl);
-            toast.success('Profile picture changed successfully');
-
-        } catch (err) {
-            console.error("Login error:", err);
-            toast.error(err, {
-                position: 'top-center',
-            });
-        }
-
-
-    }
 
     return (
         <>{showChangePassword && <ChangePassword setShowChangePassword={setShowChangePassword} />}
@@ -177,7 +153,7 @@ const Profile = () => {
                     <button className='profile-image-container overlay' onClick={() => fileInputRef.current.click()}>
                         <FaCameraRetro className='profile-change-icon' />
                     </button>
-                    <input type='file' ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*" />
+                    <UploadUserPicture fileInputRef={fileInputRef} setUserImage={setUserImage} />
                 </section>
                 <section className='profile-information-background'>
                     <div className='profile-information-container'>

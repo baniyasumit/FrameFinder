@@ -46,7 +46,7 @@ const PhotographerHeader = () => {
     }
     return (
         <header className="header" ref={headerRef}>
-            <section className='headercomponents'>
+            <section className='header-components'>
                 <Link to="/dashboard" className="logo">
                     <h1>Frame Finder</h1>
                 </Link>

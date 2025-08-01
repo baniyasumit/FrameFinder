@@ -1,0 +1,17 @@
+:root {
+    --background-color:white;
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+}
+
+[data-theme="dark"] {
+  --primary-color: #9b59b6;
+  --background-color: #1e1e1e;
+  --text-color: #f1f1f1;
+}
+[data-page="home"] {
+  --primary-color: #3498db;
+}
+[data-page="profile"] {
+  --primary-color: #8e44ad;
+}

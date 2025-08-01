@@ -172,7 +172,7 @@ export const getUserProfile = async (req, res) => {
     try {
 
         const userId = req.user.id
-        const user = await User.findOne({ _id: userId }, { password: 0, _id: 0, __v: 0 });
+        const user = await User.findOne({ _id: userId }, { password: 0, _id: 0, __v: 0, pictureSecretUrl: 0, resetPasswordToken: 0, resetPasswordExpires: 0 });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
@@ -352,8 +352,12 @@ export const uploadProfilePicture = async (req, res) => {
             console.log("Delete result:", result);
             return res.status(404).json({ message: "User not found" });
         }
+        if (user.pictureSecretUrl) {
+            const previousImage = await cloudinary.uploader.destroy(user.pictureSecretUrl);
+            console.log("Delete result Previous Image:", previousImage);
+        }
         user.picture = imageUrl;
-        user.secretUrl = secretUrl;
+        user.pictureSecretUrl = secretUrl;
         await user.save();
 
         return res.status(200).json({ message: 'Profile picture uploaded successfully' })

@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { logoutUser } from '../services/AuthServices';
 
 const useAuthStore = create((set, get) => ({
+    user: null,
     isAuthenticated: false,
     loading: true,
     hasSentOtp: false,
@@ -11,7 +12,7 @@ const useAuthStore = create((set, get) => ({
     setUser: (user) => set({ user, isAuthenticated: !!user, loading: false }),
     updateUser: (fields) => set((state) => ({ user: { ...state.user, ...fields, }, })),
     clearUser: () => set({ user: null, isAuthenticated: false }),
-    
+
 
     logout: async () => {
         try {

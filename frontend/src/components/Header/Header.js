@@ -46,7 +46,7 @@ const Header = () => {
   }
   return (
     <header className="header" ref={headerRef}>
-      <section className='headercomponents'>
+      <section className='header-components'>
         <Link to="/" className="logo">
           <h1>Frame Finder</h1>
         </Link>

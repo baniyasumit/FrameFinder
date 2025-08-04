@@ -10,6 +10,7 @@ import { MdEmail, MdOutlineCancel, MdWork } from 'react-icons/md';
 import { getPortfolio, savePortfolio } from '../../services/PortfolioServices.js';
 import { toast } from 'sonner';
 import { refreshUser } from '../../services/AuthServices.js';
+import ServiceModal from '../../components/ServiceModal/ServiceModal.js';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -37,6 +38,9 @@ const Portfolio = () => {
     const [newEquipment, setNewEquipment] = useState('');
     const [newSkill, setNewSkill] = useState('');
 
+    const [services, setServices] = useState([])
+    const [showServiceModal, setShowServiceModal] = useState(false);
+    const [editIndex, setEditIndex] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -70,24 +74,19 @@ const Portfolio = () => {
                 setEquipments(portfolio.equipments);
                 setSkills(portfolio.skills);
                 setAvailabilityDays(portfolio.availability.days)
-
+                setServices(portfolio.services)
             } catch (error) {
                 console.error("Load User Error: ", error)
 
             }
         };
-
         loadPortfolio();
-
-
     }, [setFormData]);
 
     const handleChange = (e) => {
 
         const { name, value } = e.target;
-        console.log(name, value)
         setFormData((prev) => ({ ...prev, [name]: value }));
-        console.log(formData)
 
     };
 
@@ -147,11 +146,12 @@ const Portfolio = () => {
                     from: formData.availabilityFrom,
                     to: formData.availabilityTo
                 }
-            }
+            },
+            services
         }
         try {
             const response = await savePortfolio(finalFormData);
-            console.log(response.message)
+            console.log(response.message);
             toast.success('Portfolio Saved successfully');
             await refreshUser();
         } catch (err) {
@@ -162,290 +162,328 @@ const Portfolio = () => {
         }
     }
 
-    return (<main className='portfolio'>
-        <div className='portfolio-content-container'>
-            <section className='portfolio-content portfolio-header'>
-                <h1>Edit Portfolio</h1>
-                <span>Update your portfolio and profile information.</span>
-            </section>
-            <section className='portfolio-content portfolio-basic-info'>
-                <h2 className='portfolio-section-headers'>Basic Information</h2>
-                <div className='portfolio-basic-info-line portfolio-content-line'>
-                    <div className='portfolio-labeled-input '>
-                        <label className='portfolio-label'>
-                            First Name:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name="firstname"
-                                placeholder="First Name"
-                                value={formData.firstname}
-                                onChange={handleChange}
+    return (
+        <>
+            {showServiceModal &&
+                <ServiceModal
+                    services={services}
+                    setServices={setServices}
+                    editIndex={editIndex}
+                    setShowServiceModal={setShowServiceModal}
+                />
+            }
+            <main className='portfolio'>
+                <div className='portfolio-content-container'>
+                    <section className='portfolio-content portfolio-header'>
+                        <h1>Edit Portfolio</h1>
+                        <span>Update your portfolio and profile information.</span>
+                    </section>
+                    <section className='portfolio-content portfolio-basic-info'>
+                        <h2 className='portfolio-section-headers'>Basic Information</h2>
+                        <div className='portfolio-basic-info-line portfolio-content-line'>
+                            <div className='portfolio-labeled-input '>
+                                <label className='portfolio-label'>
+                                    First Name:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name="firstname"
+                                        placeholder="First Name"
+                                        value={formData.firstname}
+                                        onChange={handleChange}
 
-                            />
-                            <span className='portfolio-input-icons'><IoPersonSharp /></span>
-                        </div>
-                    </div>
-                    <div className='portfolio-labeled-input'>
-                        <label className='portfolio-label'>
-                            Last Name:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name='lastname'
-                                placeholder='Last Name'
-                                value={formData.lastname}
-                                onChange={handleChange}
-                            />
-                            <span className='portfolio-input-icons'><HiCalendarDateRange /></span>
-
-                        </div>
-                    </div>
-
-                </div>
-                <div className='portfolio-basic-info-line  portfolio-content-line'>
-                    <div className='portfolio-labeled-input '>
-                        <label className='portfolio-label'>
-                            Email:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name="email"
-                                placeholder="Email"
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                            <span className='portfolio-input-icons'><MdEmail /></span>
-                        </div>
-                    </div>
-                    <div className='portfolio-labeled-input'>
-                        <label className='portfolio-label'>
-                            Phone Number:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name="phoneNumber"
-                                placeholder="Phone Number"
-                                value={formData.phoneNumber}
-                                onChange={handleChange}
-                            />
-                            <span className='portfolio-input-icons'><FaPhoneAlt /></span>
-                        </div>
-                    </div>
-                </div>
-                <div className='portfolio-basic-info-line  portfolio-content-line'>
-                    <div className='portfolio-labeled-input '>
-                        <label className='portfolio-label'>
-                            Location:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name="location"
-                                placeholder="Location"
-                                value={formData.location}
-                                onChange={handleChange}
-                            />
-                            <span className='portfolio-input-icons'><IoLocation /></span>
-                        </div>
-                    </div>
-                    <div className='portfolio-labeled-input'>
-                        <label className='portfolio-label'>
-                            Specialization:
-                        </label>
-                        <div className='portfolio-inputs-container'>
-                            <input
-                                className='portfolio-input'
-                                type="text"
-                                name="specialization"
-                                placeholder="Specialization"
-                                value={formData.specialization}
-                                onChange={handleChange}
-                            />
-                            <span className='portfolio-input-icons'><MdWork /></span>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-            <section className='portfolio-content portfolio-profile-picture'>
-                <h2 className='portfolio-section-headers'>Profile Picture</h2>
-                <div className='profile-picture-content'>
-                    <div className='profile-picture-container'>
-                        <img src={userImage} alt="Profile" />
-                    </div>
-                    <div className='profile-picture-upload-container' >
-                        <button className='portfolio-button' onClick={() => fileInputRef.current.click()}><IoCloudUpload /> <span>Upload New Photo</span></button>
-                        <UploadUserPicture fileInputRef={fileInputRef} setUserImage={setUserImage} />
-                        <span>JPG,PNG or GIF. Max size 2MB</span>
-                    </div>
-                </div>
-            </section>
-            <section className='portfolio-content portfolio-bio'>
-                <h2 className='portfolio-section-headers'>Bio & Description</h2>
-                <label className='portfolio-content-line portfolio-label'>Professional Bio</label>
-                <textarea className='portfolio-content-line portfolio-input'
-                    placeholder='Write about yourself and your work.'
-                    name='bio'
-                    value={formData.bio}
-                    onChange={handleChange}></textarea>
-                <div className='photographer-stats-container '>
-                    <div className='photographer-stats'>
-                        <label className='portfolio-label'>
-                            Years Experience
-                        </label>
-                        <input type='text' className='portfolio-input'
-                            name='experienceYears'
-                            value={formData.experienceYears}
-                            onChange={handleChange}>
-                        </input>
-                    </div>
-                    <div className='photographer-stats'>
-                        <label className='portfolio-label'>
-                            Happy Clients (.approx)
-                        </label>
-                        <input type='text' className='portfolio-input'
-                            name='happyClients'
-                            value={formData.happyClients}
-                            onChange={handleChange}>
-                        </input>
-                    </div>
-                    <div className='photographer-stats'>
-                        <label className='portfolio-label'>
-                            Photos Taken (.approx)
-                        </label>
-                        <input type='text' className='portfolio-input'
-                            name='photsTaken'
-                            value={formData.photosTaken}
-                            onChange={handleChange}>
-                        </input>
-                    </div>
-                </div>
-            </section>
-            <section className='portfolio-content portfolio-services-packages'>
-                <div className='portfolio-services-header portfolio-content-line'>
-                    <h2 className='portfolio-section-headers'>Services & Packages</h2>
-                    <div className='add-service-button-container'>
-                        <button className='portfolio-button add-service-button'>
-                            <IoAdd />
-                            <span> Add service packages</span>
-                        </button>
-                    </div>
-                </div>
-                <div className='portfolio-content-line portfolio-service-container'>
-                    <div className='portfolio-service-header'>
-                        <h3 className='portfolio-service-title'>Wedding Photography package</h3>
-                        <div className='service-price-edit-container'>
-                            <span>$1,500</span>
-                            <button className='service-edit-button'><FaEdit /> </button>
-                        </div>
-                    </div>
-                    <label className='portfolio-label'>Complete wedding day coverage</label>
-                    <span className='portfolio-label '>Includes:</span>
-                    <ul className='services-label'>
-                        <li>8 hours of session</li>
-                        <li>300+ edited high-resolution photos</li>
-                        <li>Online gallery for sharing</li>
-                        <li>Print release included</li>
-                    </ul>
-                </div>
-            </section>
-            <section className='portfolio-content portfolio-images'>
-                <h2 className='portfolio-section-headers'>Portfolio Images</h2>
-                <div className='portfolio-images-gallery portfolio-content-line'>
-                    <div className='portfolio-gallery-image-container'>
-                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                    </div>
-                    <div className='portfolio-gallery-image-container'>
-                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                    </div>
-                    <div className='portfolio-gallery-image-container'>
-                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                    </div>
-                    <button className='portfolio-gallery-add-image'>
-                        <IoAdd />
-                        <span>Add photo</span>
-                    </button>
-                </div>
-                <div className='multiple-upload-button-container'>
-                    <button className='portfolio-content-line portfolio-button'>
-                        <IoCloudUpload /> Upload Multiple Photos
-                    </button>
-                </div>
-            </section>
-            <section className='portfolio-content portfolio-skills-equipment'>
-                <h2 className='portfolio-section-headers' >Equipment & Skills</h2>
-                <div className='portfolio-content-line portfolio-equipments-skills-content'>
-                    <div className='portfolio-equipments'>
-                        <h3>Camera Equipments</h3>
-                        {equipments.map((equipment, index) => (
-                            <div className='portfolio-inputs-container skills-equipment' key={index}>
-                                <input className='portfolio-skills-equipment-input' name='equipment' value={equipment} onChange={(e) => handleEquipmentSkillChange(e, index)} />
-                                <button className='portfolio-input-icons' onClick={() => cancelEquipmentSkill("equipment", index)}><MdOutlineCancel /></button>
+                                    />
+                                    <span className='portfolio-input-icons'><IoPersonSharp /></span>
+                                </div>
                             </div>
-                        ))}
-                        <div className='portfolio-inputs-container skills-equipment'>
-                            <input className='portfolio-skills-equipment-input' placeholder='Add equipment...' value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} />
-                            <button className='portfolio-input-icons' name='equipment' onClick={(e) => addEquipmentSkill("equipment")}><IoAddCircle /></button>
-                        </div>
-                    </div>
-                    <div className='portfolio-skills'>
-                        <h3>Skills & Expertise</h3>
-                        {skills.map((skill, index) => (
-                            <div className='portfolio-inputs-container skills-equipment' key={index}>
-                                <input className='portfolio-skills-equipment-input' value={skill} onChange={(e) => handleEquipmentSkillChange(e, index)} />
-                                <button className='portfolio-input-icons' onClick={() => cancelEquipmentSkill("skill", index)}><MdOutlineCancel /></button>
+                            <div className='portfolio-labeled-input'>
+                                <label className='portfolio-label'>
+                                    Last Name:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name='lastname'
+                                        placeholder='Last Name'
+                                        value={formData.lastname}
+                                        onChange={handleChange}
+                                    />
+                                    <span className='portfolio-input-icons'><HiCalendarDateRange /></span>
+
+                                </div>
                             </div>
-                        ))}
 
-                        <div className='portfolio-inputs-container skills-equipment'>
-                            <input className='portfolio-skills-equipment-input' placeholder='Add Skill...' value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
-                            <button className='portfolio-input-icons' onClick={(e) => addEquipmentSkill("skill")}><IoAddCircle /></button>
                         </div>
-                    </div>
-                </div>
-            </section>
-            <section className='portfolio-content portfolio-availabiltiy'>
-                <h2 className='portfolio-section-headers' >Availability Settings</h2>
-                <div className='porfolio-content-line portfolio-days-container'>
-                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                        <div className='portfolio-day' key={day}>
-                            <label className='portfolio-label'>{day}</label>
-                            <input
-                                type='checkbox'
-                                value={day}
-                                checked={availabilityDays.includes(day)}
-                                onChange={handleDaysChange}
-                            />
+                        <div className='portfolio-basic-info-line  portfolio-content-line'>
+                            <div className='portfolio-labeled-input '>
+                                <label className='portfolio-label'>
+                                    Email:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name="email"
+                                        placeholder="Email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                    <span className='portfolio-input-icons'><MdEmail /></span>
+                                </div>
+                            </div>
+                            <div className='portfolio-labeled-input'>
+                                <label className='portfolio-label'>
+                                    Phone Number:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name="phoneNumber"
+                                        placeholder="Phone Number"
+                                        value={formData.phoneNumber}
+                                        onChange={handleChange}
+                                    />
+                                    <span className='portfolio-input-icons'><FaPhoneAlt /></span>
+                                </div>
+                            </div>
                         </div>
-                    ))}
-                </div>
-                <div className='portfolio-content-line portfolio-availabilty'>
-                    <div className='portfolio-availability-from'>
-                        <h3>Working Hours From</h3>
-                        <input type='time' name='availabilityFrom' value={formData.availabilityFrom} onChange={handleChange} className='portfolio-input-hover'></input>
-                    </div>
-                    <div className='portfolio-availability-to'>
-                        <h3>Working Hours To</h3>
-                        <input type='time' name='availabilityTo' value={formData.availabilityTo} onChange={handleChange} className='portfolio-input-hover'></input>
-                    </div>
-                </div>
-            </section>
-            <div className='portfolio-content portfolio-actions'>
-                <button className='portfolio-button'>Cancel</button>
-                <button className='portfolio-button' onClick={handleSave}>Save Profile</button>
-            </div>
+                        <div className='portfolio-basic-info-line  portfolio-content-line'>
+                            <div className='portfolio-labeled-input '>
+                                <label className='portfolio-label'>
+                                    Location:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name="location"
+                                        placeholder="Location"
+                                        value={formData.location}
+                                        onChange={handleChange}
+                                    />
+                                    <span className='portfolio-input-icons'><IoLocation /></span>
+                                </div>
+                            </div>
+                            <div className='portfolio-labeled-input'>
+                                <label className='portfolio-label'>
+                                    Specialization:
+                                </label>
+                                <div className='portfolio-inputs-container'>
+                                    <input
+                                        className='portfolio-input'
+                                        type="text"
+                                        name="specialization"
+                                        placeholder="Specialization"
+                                        value={formData.specialization}
+                                        onChange={handleChange}
+                                    />
+                                    <span className='portfolio-input-icons'><MdWork /></span>
+                                </div>
+                            </div>
+                        </div>
 
-        </div >
-    </main >)
+                    </section>
+                    <section className='portfolio-content portfolio-profile-picture'>
+                        <h2 className='portfolio-section-headers'>Profile Picture</h2>
+                        <div className='profile-picture-content'>
+                            <div className='profile-picture-container'>
+                                <img src={userImage} alt="Profile" />
+                            </div>
+                            <div className='profile-picture-upload-container' >
+                                <button className='portfolio-button' onClick={() => fileInputRef.current.click()}><IoCloudUpload /> <span>Upload New Photo</span></button>
+                                <UploadUserPicture fileInputRef={fileInputRef} setUserImage={setUserImage} />
+                                <span>JPG,PNG or GIF. Max size 2MB</span>
+                            </div>
+                        </div>
+                    </section>
+                    <section className='portfolio-content portfolio-bio'>
+                        <h2 className='portfolio-section-headers'>Bio & Description</h2>
+                        <label className='portfolio-content-line portfolio-label'>Professional Bio</label>
+                        <textarea className='portfolio-content-line portfolio-input'
+                            placeholder='Write about yourself and your work.'
+                            name='bio'
+                            value={formData.bio}
+                            onChange={handleChange}></textarea>
+                        <div className='photographer-stats-container '>
+                            <div className='photographer-stats'>
+                                <label className='portfolio-label'>
+                                    Years Experience
+                                </label>
+                                <input type='text' className='portfolio-input'
+                                    name='experienceYears'
+                                    value={formData.experienceYears}
+                                    onChange={handleChange}>
+                                </input>
+                            </div>
+                            <div className='photographer-stats'>
+                                <label className='portfolio-label'>
+                                    Happy Clients (.approx)
+                                </label>
+                                <input type='text' className='portfolio-input'
+                                    name='happyClients'
+                                    value={formData.happyClients}
+                                    onChange={handleChange}>
+                                </input>
+                            </div>
+                            <div className='photographer-stats'>
+                                <label className='portfolio-label'>
+                                    Photos Taken (.approx)
+                                </label>
+                                <input type='text' className='portfolio-input'
+                                    name='photosTaken'
+                                    value={formData.photosTaken}
+                                    onChange={handleChange}>
+                                </input>
+                            </div>
+                        </div>
+                    </section>
+                    <section className='portfolio-content portfolio-services-packages'>
+                        <div className='portfolio-services-header portfolio-content-line'>
+                            <h2 className='portfolio-section-headers'>Services & Packages</h2>
+                            <div className='add-service-button-container'>
+                                <button className='portfolio-button add-service-button'
+                                    onClick={() => { setEditIndex(null); setShowServiceModal(true) }}>
+                                    <IoAdd />
+                                    <span> Add service packages</span>
+                                </button>
+                            </div>
+                        </div>
+                        {services ?
+                            <>
+                                {services.map((service, index) => (
+                                    <div className='portfolio-content-line portfolio-service-container' key={index}>
+                                        <div className='portfolio-service-header'>
+                                            <h3 className='portfolio-service-title'>{service.title}</h3>
+                                            <div className='service-price-edit-container'>
+                                                <span>${service.price}</span>
+                                                <button className='service-edit-button' onClick={() => { setEditIndex(index); setShowServiceModal(true) }} ><FaEdit /> </button>
+                                            </div>
+                                        </div>
+                                        <label className='portfolio-label'>{service.description}</label>
+                                        <span className='portfolio-label '>Includes:</span>
+                                        <ul className='services-label'>
+                                            <li>{service.duration} hours of session</li>
+                                            {service.features?.map((feature, index) => (
+                                                <li key={index}>{feature}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </>
+                            :
+                            <div className='portfolio-content-line portfolio-service-container'>
+                                <div className='portfolio-service-header'>
+                                    <h3 className='portfolio-service-title'>Wedding Photography package(Sample)</h3>
+                                    <div className='service-price-edit-container'>
+                                        <span>$1,500</span>
+                                        <button className='service-edit-button'><FaEdit /> </button>
+                                    </div>
+                                </div>
+                                <label className='portfolio-label'>Complete wedding day coverage</label>
+                                <span className='portfolio-label '>Includes:</span>
+                                <ul className='services-label'>
+                                    <li>8 hours of session</li>
+                                    <li>300+ edited high-resolution photos</li>
+                                    <li>Online gallery for sharing</li>
+                                    <li>Print release included</li>
+                                </ul>
+                            </div>
+                        }
+
+                    </section>
+                    <section className='portfolio-content portfolio-images'>
+                        <h2 className='portfolio-section-headers'>Portfolio Images</h2>
+                        <div className='portfolio-images-gallery portfolio-content-line'>
+                            <div className='portfolio-gallery-image-container'>
+                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
+                            </div>
+                            <div className='portfolio-gallery-image-container'>
+                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
+                            </div>
+                            <div className='portfolio-gallery-image-container'>
+                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
+                            </div>
+                            <button className='portfolio-gallery-add-image'>
+                                <IoAdd />
+                                <span>Add photo</span>
+                            </button>
+                        </div>
+                        <div className='multiple-upload-button-container'>
+                            <button className='portfolio-content-line portfolio-button'>
+                                <IoCloudUpload /> Upload Multiple Photos
+                            </button>
+                        </div>
+                    </section>
+                    <section className='portfolio-content portfolio-skills-equipment'>
+                        <h2 className='portfolio-section-headers' >Equipment & Skills</h2>
+                        <div className='portfolio-content-line portfolio-equipments-skills-content'>
+                            <div className='portfolio-equipments'>
+                                <h3>Camera Equipments</h3>
+                                {equipments.map((equipment, index) => (
+                                    <div className='portfolio-inputs-container skills-equipment' key={index}>
+                                        <input className='portfolio-skills-equipment-input' name='equipment' value={equipment} onChange={(e) => handleEquipmentSkillChange(e, index)} />
+                                        <button className='portfolio-input-icons' onClick={() => cancelEquipmentSkill("equipment", index)}><MdOutlineCancel /></button>
+                                    </div>
+                                ))}
+                                <div className='portfolio-inputs-container skills-equipment'>
+                                    <input className='portfolio-skills-equipment-input' placeholder='Add equipment...' value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} />
+                                    <button className='portfolio-input-icons' name='equipment' onClick={(e) => addEquipmentSkill("equipment")}><IoAddCircle /></button>
+                                </div>
+                            </div>
+                            <div className='portfolio-skills'>
+                                <h3>Skills & Expertise</h3>
+                                {skills.map((skill, index) => (
+                                    <div className='portfolio-inputs-container skills-equipment' key={index}>
+                                        <input className='portfolio-skills-equipment-input' value={skill} onChange={(e) => handleEquipmentSkillChange(e, index)} />
+                                        <button className='portfolio-input-icons' onClick={() => cancelEquipmentSkill("skill", index)}><MdOutlineCancel /></button>
+                                    </div>
+                                ))}
+
+                                <div className='portfolio-inputs-container skills-equipment'>
+                                    <input className='portfolio-skills-equipment-input' placeholder='Add Skill...' value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
+                                    <button className='portfolio-input-icons' onClick={(e) => addEquipmentSkill("skill")}><IoAddCircle /></button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section className='portfolio-content portfolio-availabiltiy'>
+                        <h2 className='portfolio-section-headers' >Availability Settings</h2>
+                        <div className='porfolio-content-line portfolio-days-container'>
+                            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                                <div className='portfolio-day' key={day}>
+                                    <label className='portfolio-label'>{day}</label>
+                                    <input
+                                        type='checkbox'
+                                        value={day}
+                                        checked={availabilityDays.includes(day)}
+                                        onChange={handleDaysChange}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <div className='portfolio-content-line portfolio-availabilty'>
+                            <div className='portfolio-availability-from'>
+                                <h3>Working Hours From</h3>
+                                <input type='time' name='availabilityFrom' value={formData.availabilityFrom} onChange={handleChange} className='portfolio-input-hover'></input>
+                            </div>
+                            <div className='portfolio-availability-to'>
+                                <h3>Working Hours To</h3>
+                                <input type='time' name='availabilityTo' value={formData.availabilityTo} onChange={handleChange} className='portfolio-input-hover'></input>
+                            </div>
+                        </div>
+                    </section>
+                    <div className='portfolio-content portfolio-actions'>
+                        <button className='portfolio-button'>Cancel</button>
+                        <button className='portfolio-button' onClick={handleSave}>Save Profile</button>
+                    </div>
+
+                </div >
+            </main >
+        </>
+    )
 }
 export default Portfolio;

@@ -48,6 +48,16 @@ const portfolioSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    modifiedAt: {
+        type: Date,
+        default: Date.now,
+    },
 })
+
+
+portfolioSchema.pre('save', function (next) {
+    this.modifiedAt = Date.now();
+    next();
+});
 
 export default mongoose.model("Portfolio", portfolioSchema);

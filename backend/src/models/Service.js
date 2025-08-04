@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const ServiceSchema = new mongoose.Schema({
+const serviceSchema = new mongoose.Schema({
     portfolio: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Portfolio',
@@ -11,13 +11,29 @@ const ServiceSchema = new mongoose.Schema({
         required: true,
     },
     description: String,
-    price: Number,
-    duration: String,
+    price: {
+        type: Number,
+        min: 0,
+    },
+    duration: {
+        type: Number,
+        min: 1,
+    },
     features: [String],
     createdAt: {
         type: Date,
         default: Date.now,
     },
+    modifiedAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-export default mongoose.model("Service", ServiceSchema);
+
+serviceSchema.pre('save', function (next) {
+    this.modifiedAt = Date.now();
+    next();
+});
+
+export default mongoose.model('Service', serviceSchema);

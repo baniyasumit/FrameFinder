@@ -3,7 +3,6 @@ import { ApiInstance } from "./ApiInstance";
 export const savePortfolio = async (formData) => {
     try {
         const response = await ApiInstance.patch("/api/portfolio/save-portfolio", formData);
-        console.log(response?.data);
         return response.data
     } catch (error) {
         console.error("Save error:", error);

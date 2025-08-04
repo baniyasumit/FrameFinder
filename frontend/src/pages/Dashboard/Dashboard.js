@@ -1,8 +1,6 @@
 import React from 'react';
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { BsCamera2 } from "react-icons/bs";
-import { IoIosPeople } from "react-icons/io";
-import { FaStar, FaClock } from "react-icons/fa6";
 import landingImage from '../../assets/images/landing-image.jpg';
 import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
 import { Link } from 'react-router-dom';

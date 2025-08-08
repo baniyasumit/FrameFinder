@@ -7,6 +7,7 @@ import Otp from '../models/Otp.js';
 import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 
+
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 export const loginUser = async (req, res) => {
@@ -320,11 +321,15 @@ export const deleteAccount = async (req, res) => {
     try {
 
         const userId = req.user.id;
-
         const deletedUser = await User.findByIdAndDelete(userId);
         if (!deletedUser) {
             return res.status(404).json({ message: "User not found" });
         }
+        if (deletedUser?.pictureSecretUrl) {
+            const result = await cloudinary.uploader.destroy(deletedUser.pictureSecretUrl);
+            console.log("Delete result:", result);
+        }
+
         res.clearCookie('token', {
             httpOnly: true,
             secure: true,

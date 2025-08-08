@@ -4,13 +4,14 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPicture';
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
-import { FaEdit, FaPhoneAlt } from "react-icons/fa";
+import { FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
 import { MdEmail, MdOutlineCancel, MdWork } from 'react-icons/md';
-import { getPortfolio, savePortfolio } from '../../services/PortfolioServices.js';
+import { getPortfolio, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
 import { toast } from 'sonner';
 import { refreshUser } from '../../services/AuthServices.js';
 import ServiceModal from '../../components/ServiceModal/ServiceModal.js';
+import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery.js';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -42,6 +43,11 @@ const Portfolio = () => {
     const [showServiceModal, setShowServiceModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
 
+    const [showGalleryOverlay, setShowGalleryOverlay] = useState(false);
+    const [galleryImages, setGalleryImages] = useState([]);
+    const [uploadfiles, setUploadFiles] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
+
     useEffect(() => {
         if (user) {
             user.picture && setUserImage(user.picture)
@@ -59,7 +65,6 @@ const Portfolio = () => {
         const loadPortfolio = async () => {
             try {
                 const portfolio = await getPortfolio();
-
                 setFormData((prev) => ({
                     ...prev,
                     location: portfolio.location || '',
@@ -75,6 +80,7 @@ const Portfolio = () => {
                 setSkills(portfolio.skills);
                 setAvailabilityDays(portfolio.availability.days)
                 setServices(portfolio.services)
+                setGalleryImages(portfolio.pictures)
             } catch (error) {
                 console.error("Load User Error: ", error)
 
@@ -152,8 +158,19 @@ const Portfolio = () => {
         try {
             const response = await savePortfolio(finalFormData);
             console.log(response.message);
-            toast.success('Portfolio Saved successfully');
+            toast.success('Portfolio saved successfully.');
             await refreshUser();
+
+            const toastId = toast('Uploading images! This may take a few moments.', {
+                duration: Infinity,
+                icon: <FaSpinner className='spinner' />,
+                position: 'top-right',
+            });
+            const imageUploadResult = await uploadPortfolioPictures(uploadfiles);
+            console.log(imageUploadResult.message)
+            toast.success('Images uploaded successfully!', { id: toastId, duration: 5000, icon: <></> });
+
+
         } catch (err) {
             console.error("Save error:", err);
             toast.error(err, {
@@ -172,6 +189,16 @@ const Portfolio = () => {
                     setShowServiceModal={setShowServiceModal}
                 />
             }
+            {showGalleryOverlay &&
+                < PortfolioGallery
+                    showGalleryOverlay={showGalleryOverlay}
+                    setShowGalleryOverlay={setShowGalleryOverlay}
+                    galleryImages={galleryImages}
+                    setGalleryImages={setGalleryImages}
+                    setUploadFiles={setUploadFiles}
+                    hasMore={hasMore}
+                    setHasMore={setHasMore}
+                />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>
                     <section className='portfolio-content portfolio-header'>
@@ -398,23 +425,15 @@ const Portfolio = () => {
                     <section className='portfolio-content portfolio-images'>
                         <h2 className='portfolio-section-headers'>Portfolio Images</h2>
                         <div className='portfolio-images-gallery portfolio-content-line'>
-                            <div className='portfolio-gallery-image-container'>
-                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                            </div>
-                            <div className='portfolio-gallery-image-container'>
-                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                            </div>
-                            <div className='portfolio-gallery-image-container'>
-                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1748832794/qwzfuddj6ti3kgsy7hul.webp' className='portfolio-gallery-image' alt='gallery-image' />
-                            </div>
-                            <button className='portfolio-gallery-add-image'>
+                            {galleryImages.slice(0, 3).map((galleryImage, index) => (
+                                <div className='portfolio-gallery-image-container' key={index}>
+                                    <img src={galleryImage.url} className='portfolio-gallery-image' alt='gallery-image' />
+                                </div>
+                            ))}
+                            <button className='portfolio-gallery-add-image' onClick={() => setShowGalleryOverlay(true)}>
                                 <IoAdd />
-                                <span>Add photo</span>
-                            </button>
-                        </div>
-                        <div className='multiple-upload-button-container'>
-                            <button className='portfolio-content-line portfolio-button'>
-                                <IoCloudUpload /> Upload Multiple Photos
+                                <span>View more </span>
+                                <span>& Manage</span>
                             </button>
                         </div>
                     </section>

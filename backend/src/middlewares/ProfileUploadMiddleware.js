@@ -10,4 +10,4 @@ const storage = new CloudinaryStorage({
     },
 });
 
-export const uploadMiddleware = multer({ storage });
+export const profileUploadMiddleware = multer({ storage });

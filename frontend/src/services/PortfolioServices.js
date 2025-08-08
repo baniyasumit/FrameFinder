@@ -20,3 +20,27 @@ export const getPortfolio = async () => {
     }
 
 }
+
+export const uploadPortfolioPictures = async (files) => {
+    try {
+        const uploadData = new FormData();
+        for (const file of files)
+            uploadData.append('portfolio', file)
+        const response = await ApiInstance.post("/api/portfolio/upload-portfolio-pictures", uploadData);
+        return response.data;
+    } catch (error) {
+        console.error("Upload profile error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getPortfolioPictures = async (page) => {
+    try {
+
+        const response = await ApiInstance.get(`/api/portfolio/get-portfolio-pictures?page=${page}`);
+        return response.data;
+    } catch (error) {
+        console.error("Upload profile error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

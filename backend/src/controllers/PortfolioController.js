@@ -1,9 +1,10 @@
 import Portfolio from "../models/Portfolio.js";
+import PortfolioPicture from "../models/PortfolioPicture.js";
 import Service from "../models/Service.js";
 import User from "../models/User.js";
+import cloudinary from './../config/cloudinaryConfig.js';
 
-
-export const SavePortfolio = async (req, res) => {
+export const savePortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
         const { firstname, lastname, email, phoneNumber, location,
@@ -88,7 +89,7 @@ export const SavePortfolio = async (req, res) => {
         await Promise.all(servicePromises);
 
 
-        res.status(200).json({ message: "Portfolio Saved Successfull" });
+        return res.status(200).json({ message: "Portfolio Saved Successfull" });
     }
     catch (error) {
         console.error(error.message);
@@ -96,7 +97,7 @@ export const SavePortfolio = async (req, res) => {
     }
 }
 
-export const GetPortfolio = async (req, res) => {
+export const getPortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
         const userRole = req.user.role;
@@ -115,15 +116,77 @@ export const GetPortfolio = async (req, res) => {
 
 
         if (!portfolio) {
-            res.status(404).json({ message: "Portfolio not found" });
+            return res.status(404).json({ message: "Portfolio not found" });
         }
         const services = await Service.find({ portfolio: portfolio._id })
-            .select('-createdAt -modifiedAt,portfolio');
+            .select('-createdAt -modifiedAt -portfolio');
+        const pictures = await PortfolioPicture.find({ portfolio: portfolio._id }).select('url').sort('-createdAt').limit(9);
         const finalPortfolio = {
             ...portfolio.toObject(),
             services,
+            pictures
         };
-        res.status(200).json({ message: "Portfolio retrieved Successfully", portfolio: finalPortfolio },);
+        return res.status(200).json({ message: "Portfolio retrieved Successfully", portfolio: finalPortfolio },);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+export const uploadPortfolioPictures = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const portfolio = await Portfolio.findOne({ user: userId }).select('_id');
+        if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
+        const uploadPromises = req.files.map(file => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'portfolio-pictures' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(file.buffer);
+            });
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+
+        const picturesPromises = uploadResults?.map(async (file) => {
+            const newImage = new PortfolioPicture({
+                portfolio: portfolio._id,
+                url: file.secure_url,
+                secretUrl: file.public_id,
+            })
+            return newImage.save();
+        });
+
+        await Promise.all(picturesPromises);
+
+        return res.status(200).json({ message: 'Profile picture uploaded successfully' })
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+export const getPortfolioPictures = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const portfolio = await Portfolio.findOne({ user: userId }).select('_id')
+        if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
+        const page = parseInt(req.query.page) || 2;
+        const limit = 9;
+        const skip = (page - 1) * limit;
+
+        const pictures = await PortfolioPicture.
+            find({ portfolio: portfolio._id }).
+            select('url').sort('-createdAt').
+            skip(skip).limit(limit);
+
+        return res.status(200).json({ message: "Portfolio Picture Retrieved Successfully", pictures: pictures },);
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });

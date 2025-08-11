@@ -45,8 +45,9 @@ const Portfolio = () => {
 
     const [showGalleryOverlay, setShowGalleryOverlay] = useState(false);
     const [galleryImages, setGalleryImages] = useState([]);
-    const [uploadfiles, setUploadFiles] = useState([]);
+    const [uploadFiles, setUploadFiles] = useState([]);
     const [hasMore, setHasMore] = useState(true);
+    const [filteredPictures, setFilteredPictures] = useState([])
 
     useEffect(() => {
         if (user) {
@@ -141,7 +142,6 @@ const Portfolio = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-
         const finalFormData = {
             ...formData,
             equipments,
@@ -153,23 +153,27 @@ const Portfolio = () => {
                     to: formData.availabilityTo
                 }
             },
-            services
+            services,
+            filteredPictures
         }
         try {
             const response = await savePortfolio(finalFormData);
             console.log(response.message);
             toast.success('Portfolio saved successfully.');
             await refreshUser();
+            setFilteredPictures([]);
 
-            const toastId = toast('Uploading images! This may take a few moments.', {
-                duration: Infinity,
-                icon: <FaSpinner className='spinner' />,
-                position: 'top-right',
-            });
-            const imageUploadResult = await uploadPortfolioPictures(uploadfiles);
-            console.log(imageUploadResult.message)
-            toast.success('Images uploaded successfully!', { id: toastId, duration: 5000, icon: <></> });
+            if (uploadFiles.length) {
+                const toastId = toast('Uploading images! This may take a few moments.', {
+                    duration: Infinity,
+                    icon: <FaSpinner className='spinner' />,
+                    position: 'top-right',
+                });
+                const imageUploadResult = await uploadPortfolioPictures(uploadFiles);
+                console.log(imageUploadResult.message)
+                toast.success('Images uploaded successfully!', { id: toastId, duration: 5000, icon: <></> });
 
+            }
 
         } catch (err) {
             console.error("Save error:", err);
@@ -198,6 +202,7 @@ const Portfolio = () => {
                     setUploadFiles={setUploadFiles}
                     hasMore={hasMore}
                     setHasMore={setHasMore}
+                    setFilteredPictures={setFilteredPictures}
                 />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>

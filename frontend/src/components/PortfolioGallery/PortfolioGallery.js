@@ -4,8 +4,9 @@ import { IoCloudUpload } from 'react-icons/io5';
 import { toast } from 'sonner';
 import { ImSpinner9 } from "react-icons/im";
 import { getPortfolioPictures } from '../../services/PortfolioServices';
+import { MdDeleteForever } from 'react-icons/md';
 
-const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryImages, setGalleryImages, setUploadFiles, hasMore, setHasMore }) => {
+const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryImages, setGalleryImages, setUploadFiles, hasMore, setHasMore, setFilteredPictures }) => {
     const modalRef = useRef();
     const fileInputRef = useRef();
     const galleryRef = useRef();
@@ -14,6 +15,8 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
     const [page, setPage] = useState(1);
 
     const [loading, setLoading] = useState(false);
+
+    const [selectedImages, setSelectedImages] = useState([])
 
     useEffect(() => {
         if (showGalleryOverlay) {
@@ -91,7 +94,7 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
             }
             const blobUrl = URL.createObjectURL(file);
             validImages.push({ url: blobUrl });
-            validFiles.push(file);
+            validFiles.push({ url: blobUrl, file: file });
         }
 
         if (validImages.length > 0) {
@@ -99,6 +102,35 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
             setUploadFiles((prev) => [...validFiles, ...prev]);
         }
     };
+
+    const handleSelectChange = (e) => {
+        const { value, checked } = e.target;
+        if (checked) {
+            setSelectedImages(prev => [...prev, value]);
+        } else {
+            setSelectedImages(prev => prev.filter(url => url !== value));
+        }
+    }
+
+    const handleImagesRemove = async () => {
+        if (selectedImages.length === 0) {
+            toast.error("No Images selected")
+            return;
+        }
+        setFilteredPictures(prev => [
+            ...prev,
+            ...galleryImages.filter(
+                image => selectedImages.includes(image.url) && image._id
+            )
+        ]);
+
+        const remainingImages = galleryImages.filter(img => !selectedImages.includes(img.url));
+        setGalleryImages(remainingImages);
+        setUploadFiles(prev => prev.filter(file => !(selectedImages.includes(file.url))))
+        if (remainingImages.length <= 6) {
+            setPage(prev => prev + 1);
+        }
+    }
 
     return (
         <div className="gallery-overlay">
@@ -111,18 +143,36 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
                 </div>
                 <div className='images-gallery' ref={galleryRef} onScroll={handleScroll}>
                     {galleryImages.map((galleryImage, index) => (
-                        <div className='gallery-image-container' key={index}>
+                        <div className='gallery-image-container' key={index} onClick={() => handleSelectChange({
+                            target: {
+                                value: galleryImage.url,
+                                checked: !selectedImages.includes(galleryImage.url)
+                            }
+                        })}>
                             <img src={galleryImage?.url} className='gallery-image' alt='gallery-image' />
+                            <input
+                                type='checkbox'
+                                className='image-select'
+                                value={galleryImage.url}
+                                checked={selectedImages.includes(galleryImage.url)}
+                                onChange={handleSelectChange}
+                                onClick={(e) => e.stopPropagation()}
+                            />
                         </div>
                     ))}
                     {loading && <div className='loading-container'><ImSpinner9 className='spinner gallery' /></div>}
                     {!hasMore && <div className='loading-container'><p>You have reached the end.</p></div>}
                 </div>
                 <div className='multiple-upload-button-container'>
+                    <button className='portfolio-button pictures-delete-button' onClick={handleImagesRemove} >
+                        <MdDeleteForever className='delete-icon' />
+                        <span>Delete</span>
+                    </button>
                     <button className='portfolio-button pictures-upload-button' onClick={() => fileInputRef.current.click()} >
                         <IoCloudUpload />
                         <span>Upload New Photo</span>
                     </button>
+
 
                     <input type='file' onChange={handleImageChange} ref={fileInputRef} style={{ display: 'none' }} accept="image/*" multiple />
 

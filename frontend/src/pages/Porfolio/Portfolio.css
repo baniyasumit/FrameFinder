@@ -384,6 +384,14 @@
 
 }
 
+.portfolio-button.is-saving{
+    opacity: 50%;
+}
+
+.portfolio-button.is-saving:hover{
+    transform: scale(1.0);
+}
+
 @media screen and (max-width:925px) {
     .portfolio-gallery-image{
         height: 130%;

@@ -12,10 +12,14 @@ import { toast } from 'sonner';
 import { refreshUser } from '../../services/AuthServices.js';
 import ServiceModal from '../../components/ServiceModal/ServiceModal.js';
 import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery.js';
+import { Confirmation } from '../../components/Confirmation/Confirmation.js';
+import { useNavigate } from 'react-router-dom';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
     const fileInputRef = useRef();
+    const navigate = useNavigate();
+
     const [userImage, setUserImage] = useState(profileImage);
 
     const [formData, setFormData] = useState({
@@ -48,6 +52,11 @@ const Portfolio = () => {
     const [uploadFiles, setUploadFiles] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [filteredPictures, setFilteredPictures] = useState([])
+
+    const [isSaving, setIsSaving] = useState(false);
+
+    const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
+    const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -142,6 +151,11 @@ const Portfolio = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
+        setShowSaveConfirmation(false);
+        if (isSaving) {
+            toast.info("Previous changes are being saved")
+            return;
+        }
         const finalFormData = {
             ...formData,
             equipments,
@@ -157,6 +171,7 @@ const Portfolio = () => {
             filteredPictures
         }
         try {
+            setIsSaving(true);
             const response = await savePortfolio(finalFormData);
             console.log(response.message);
             toast.success('Portfolio saved successfully.');
@@ -180,8 +195,24 @@ const Portfolio = () => {
             toast.error(err, {
                 position: 'top-center',
             });
+        } finally {
+            setIsSaving(false);
+
         }
     }
+
+    const handleIsSaving = () => {
+        if (isSaving) {
+            toast.info("Previous changes are being saved")
+            return;
+        }
+    }
+    const handleCancel = () => {
+        navigate('/dashboard')
+
+    }
+
+
 
     return (
         <>
@@ -204,6 +235,14 @@ const Portfolio = () => {
                     setHasMore={setHasMore}
                     setFilteredPictures={setFilteredPictures}
                 />}
+            {showCancelConfirmation && <Confirmation title="Are you sure you want to cancel?"
+                message="If you cancel now, all the changes made will return to previous save & you will be navigated to homepage."
+                setShowConfirmation={setShowCancelConfirmation}
+                onConfirm={handleCancel} />}
+            {showSaveConfirmation && <Confirmation title="Are you sure you want to save the changes made?"
+                message="If you save the changes made currently. You will not be able to return to previous state."
+                setShowConfirmation={setShowSaveConfirmation}
+                onConfirm={handleSave} />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>
                     <section className='portfolio-content portfolio-header'>
@@ -501,8 +540,8 @@ const Portfolio = () => {
                         </div>
                     </section>
                     <div className='portfolio-content portfolio-actions'>
-                        <button className='portfolio-button'>Cancel</button>
-                        <button className='portfolio-button' onClick={handleSave}>Save Profile</button>
+                        <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowCancelConfirmation(true) }}>Cancel</button>
+                        <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowSaveConfirmation(true) }}>Save Profile</button>
                     </div>
 
                 </div >

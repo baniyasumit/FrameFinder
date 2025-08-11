@@ -10,7 +10,8 @@ export const savePortfolio = async (req, res) => {
         const { firstname, lastname, email, phoneNumber, location,
             specialization, bio, experienceYears, happyClients, photosTaken,
             equipments, skills, availability } = req.body;
-        const { services } = req.body;
+        const { services, filteredPictures } = req.body;
+
         let portfolio;
         portfolio = await Portfolio.findOne({ user: userId });
         if (!portfolio) {
@@ -87,6 +88,21 @@ export const savePortfolio = async (req, res) => {
         });
 
         await Promise.all(servicePromises);
+        if (filteredPictures.length) {
+            const picturesPromises = filteredPictures.map(async (picture) => {
+                const pictureModel = await PortfolioPicture.findById(picture._id);
+
+                if (pictureModel?.secretUrl) {
+                    const deleteResult = await cloudinary.uploader.destroy(pictureModel.secretUrl);
+                    console.log("Delete result:", deleteResult);
+                }
+
+                await PortfolioPicture.findByIdAndDelete(picture._id);
+            });
+
+            await Promise.all(picturesPromises);
+        }
+
 
 
         return res.status(200).json({ message: "Portfolio Saved Successfull" });

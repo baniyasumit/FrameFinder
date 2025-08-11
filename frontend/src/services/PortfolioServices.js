@@ -24,12 +24,13 @@ export const getPortfolio = async () => {
 export const uploadPortfolioPictures = async (files) => {
     try {
         const uploadData = new FormData();
-        for (const file of files)
-            uploadData.append('portfolio', file)
+        for (const file of files) {
+            uploadData.append('portfolio', file.file)
+        }
         const response = await ApiInstance.post("/api/portfolio/upload-portfolio-pictures", uploadData);
         return response.data;
     } catch (error) {
-        console.error("Upload profile error:", error);
+        console.error("Upload portfolio error:", error);
         throw error.response?.data.message || error.message;
     }
 }
@@ -40,7 +41,8 @@ export const getPortfolioPictures = async (page) => {
         const response = await ApiInstance.get(`/api/portfolio/get-portfolio-pictures?page=${page}`);
         return response.data;
     } catch (error) {
-        console.error("Upload profile error:", error);
+        console.error("Portfolio Pictures Retrieval error:", error);
         throw error.response?.data.message || error.message;
     }
 }
+

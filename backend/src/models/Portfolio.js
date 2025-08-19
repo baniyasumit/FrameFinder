@@ -17,6 +17,10 @@ const portfolioSchema = new mongoose.Schema({
         type: String,
         maxlength: 1000,
     },
+    about: {
+        type: String,
+        maxlength: 1000,
+    },
     experienceYears: {
         type: Number
     },
@@ -32,17 +36,6 @@ const portfolioSchema = new mongoose.Schema({
         instagram: String,
         facebook: String,
         website: String,
-    },
-    availability: {
-        days: {
-            type: [String],
-            enum: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            required: true
-        },
-        time: {
-            from: { type: String, required: true },
-            to: { type: String, required: true }
-        }
     },
     createdAt: {
         type: Date,

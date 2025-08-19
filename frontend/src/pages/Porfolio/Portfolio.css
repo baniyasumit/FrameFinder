@@ -168,6 +168,10 @@
     transition: transform 0.3s ease-in-out;
 }
 
+.portfolio-input.portfolio-about{
+    height: 10rem;
+    text-align: justify;
+}
 
 
 
@@ -301,9 +305,7 @@
 }
 
 .portfolio-equipments > h3, 
-.portfolio-skills > h3, 
-.portfolio-availability-from > h3,
-.portfolio-availability-to > h3{
+.portfolio-skills > h3{
     color: rgba(0, 0, 0, 0.585);
     font-size: 0.8rem;
 }
@@ -321,9 +323,7 @@
 }
 
 
-.portfolio-skills-equipment-input, 
-.portfolio-availability-from > input,
-.portfolio-availability-to > input{
+.portfolio-skills-equipment-input{
     padding: 10px;
     width: 100%;
     margin-bottom: 10px;
@@ -335,11 +335,7 @@
 
 
 .portfolio-inputs-container.skills-equipment:hover, 
-.portfolio-availability-from > input:hover,
-.portfolio-availability-to > input:hover,
-.portfolio-inputs-container.skills-equipment:focus-within, 
-.portfolio-availability-from > input:focus,
-.portfolio-availability-to > input:focus{
+.portfolio-inputs-container.skills-equipment:focus-within{
     transform: scale(1.05);
 }
 

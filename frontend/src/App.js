@@ -20,6 +20,7 @@ import NotFound from './pages/NotFound/NotFound';
 import Profile from './pages/Profile/Profile';
 import { DynamicLayout } from './routes/DynamicLayout';
 import Portfolio from './pages/Porfolio/Portfolio';
+import ViewPortfolio from './pages/ViewPortfolio/ViewPortfolio';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -56,7 +57,7 @@ const App = () => {
           <Route path='/otp-verification-email' element={<OTP />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/register-photographer' element={<RegisterPhotographer />} />
-
+          <Route path='/view-portfolio/:portfolioId' element={<ViewPortfolio />} />
         </Route>
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>

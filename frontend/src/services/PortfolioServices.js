@@ -46,3 +46,14 @@ export const getPortfolioPictures = async (page) => {
     }
 }
 
+export const getPhotographerPortfolio = async (portfolioId) => {
+    try {
+        const response = await ApiInstance.get(`/api/portfolio/get-portfolio/${portfolioId}`)
+        return response.data.portfolio;
+    } catch (error) {
+        console.error("Retrival  error:", error);
+        throw error.response?.data.message || error.message;
+    }
+
+}
+

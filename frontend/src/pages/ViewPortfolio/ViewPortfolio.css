@@ -1,0 +1,449 @@
+.main{
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.main.basic-information-background{
+    background: #2A61EB;
+background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1) 100%);
+}
+
+.container{
+    max-width: 1216px;
+    width: 100%;
+    padding: 10px 15px;
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr 1fr;  
+}
+
+.container.basic-information-content{
+    padding: 4rem 15px;
+}
+.photographer-information{
+    color: white;
+    padding: 6rem 0rem;
+}
+
+.photographer-profile-information{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.profile-picture-container{
+    width: 6rem;
+    height: 6rem;
+    border-radius: 100%;
+    border: 3px solid #ffffff;
+    overflow: hidden;
+   
+}
+
+.profile-picture-container  > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.profile-information{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-information > .full-name{
+    font-weight: bold;
+    font-size: 2.2rem;
+    line-height: 2rem;
+    font-family: Lexend Deca, sans-serif;
+    margin: unset;
+    margin-bottom: 10px;
+}
+
+.profile-information > .rating-stats{
+    display: flex;
+    gap: 5px;
+   }
+
+.rating-stats > span{
+    font-size: 0.98rem;
+}
+
+
+.profile-information > p{
+    font-size: 1.15rem;
+    line-height: 1.7rem;
+    margin: unset;
+    color: rgba(255, 255, 255, 0.884);
+}
+
+.photographer-message{
+    font-size: 1.2rem;
+}
+
+.photographer-stats-container{
+    display: flex;
+    
+}
+
+.photographer-stat{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.photographer-stat > span{
+    align-self: center;
+    font-size: 2rem;
+    font-weight: bolder;
+}
+
+
+.booking-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    font-family: Inter, sans-serif;
+}
+
+.booking-form >h1{
+    font-size: 1.8rem;
+    margin: unset;
+    align-self: center;
+    margin-bottom: 10px;
+}
+
+.booking-form > span{
+    color: rgba(0, 0, 0, 0.655);
+    align-self: center;
+    margin-bottom: 15px;
+}
+
+.booking-form > label{
+    font-size: 0.83rem;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.74);
+}
+
+.booking-form > input, .booking-form > select{
+    font-family: sans-serif;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.9rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.booking-form > input:hover, .booking-form > select:hover{
+    transform: scale(1.05);
+}
+
+.booking-form > button{
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #2A61EB;
+    transition: transform 0.3s ease-in-out;
+}
+
+.booking-form > button:hover{
+    transform: scale(1.05);
+}
+.booking-button{
+    padding: 1.1rem;
+    background-color: #2A61EB;
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 550;
+}
+
+.booking-message{
+    font-family: Poppins, sans-serif;
+    padding: 0.8rem;
+    color: #2A61EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: 550;
+    background-color: white;
+}
+
+.main.portfolio-navigation-container{
+    border-bottom: 0.3px solid #d2d3d3;
+}
+
+.photographer-nav {
+    display: flex;
+    gap: 25px;
+    padding: 10px 15px;
+    padding-bottom: 15px;
+}
+
+.nav-tab {
+    background: none;
+    border: none;
+    font-size: 15.5px;
+    color: #0000008a;
+    cursor: pointer;
+    padding: 5px 10px;
+    position: relative;
+    font-family: Inter, sans-serif;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-tab:hover {
+    transform: scale(1.05);
+    color: #2563eb;
+    
+}
+
+.nav-tab:focus {
+    outline: none;
+}
+
+.nav-tab.active {
+    transform: scale(1.05);
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.nav-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -14.5px;
+    height: 2px;
+    width: 100%;
+    background-color: #2563eb;
+    border-radius: 2px;
+}
+
+.main.view-portfolio-gallery-section{
+    background-color: #F9FAFB;
+    padding-top: 1rem;
+}
+
+.container.view-portfolio-gallery{
+    padding: 2rem 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.view-portfolio-heading{
+    margin: unset;
+    font-family: Inter,sans-serif;
+}
+
+.view-portfolio-images-gallery {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap:25px;
+    padding: 2rem 0;
+    
+}
+
+.view-portfolio-gallery-image-container {
+    flex-grow: 1;
+    flex-basis: 21rem;
+    height: 16rem;
+    border-radius: 15px;
+    cursor: pointer;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: #93a5a88a; 
+}
+
+
+.view-portfolio-gallery-image{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 15px; 
+    transition: transform 0.3s ease-in-out;
+}
+
+.view-portfolio-gallery-image-container:hover > .view-portfolio-gallery-image{
+ transform: scale(1.1);
+}
+
+.main.view-portfolio-about{
+    padding: 2rem 0;
+}
+
+.view-portfolio-heading.about{
+    font-size: 2rem;
+}
+
+.photographer-description{
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.678);
+    margin-bottom: 2.5rem;
+}
+
+
+
+.photographer-services > span{
+    color: rgba(0, 0, 0, 0.676);
+}
+
+.view-portfolio-packages{
+    margin-bottom: 2rem;
+}
+.view-portfolio-packages > h2{
+    margin-bottom: 2rem;
+}
+
+.package-container{
+    background-color: rgba(151, 146, 146, 0.068);
+    padding: 20px 15px;
+    border-radius: 10px;
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.package-header-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.package-heading{
+    margin: unset;
+    font-weight: 500;
+    font-size: 1rem;
+    
+}
+
+.package-container > span{
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.808);
+}
+
+.package-header-section > button{
+    background-color:#2563eb;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 8px;
+}
+
+.equipments-container,.skills-container{
+    display: flex;
+    flex-wrap: wrap;
+    padding-left:20px;
+}
+
+.equipments-container > li,.skills-container > li{
+    flex: 50%;
+    margin: 0.5rem 0;
+    color: rgba(0, 0, 0, 0.742);
+    font-size: 0.9rem;
+    
+}
+
+.view-portfolio-reviews{
+    background-color: #F9FAFB;
+}
+
+.container.reviews{
+    display: block;
+    padding: 3rem;
+}
+
+.view-portfolio-heading.reviews{
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.reviews-container{
+   
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.review-container{
+    background-color: white;
+    flex-basis: 350px;
+    flex-grow: 1;
+    border-radius: 10px;
+    box-shadow: 0 0px 10px 10px rgba(186, 186, 186, 0.068);
+    border: none;
+    padding: 1.5rem;
+}
+
+.photographer-profile-information.review{
+    gap: 8px;
+}
+.profile-picture-container.review{
+    width: 3.2rem;
+    height: 3.2rem;
+}
+
+.profile-information.review{
+    gap: unset;
+}
+
+.full-name.review{
+    font-size: 1rem;
+    font-weight: 500;
+    margin: unset;
+    line-height: 25px;
+}
+
+.review-container > p {
+    margin: unset;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.35rem;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.646);
+   
+}
+
+
+@media (max-width: 1022px) {
+    .container.basic-information-content{
+        grid-template-columns: 1fr;
+    }
+
+    .photographer-information{
+    padding: unset;
+    }
+
+    .container.about{
+        grid-template-columns: 1fr;
+    }
+
+    .container.reviews{
+       padding: 3rem 10px;
+    }
+
+
+}
+
+
+

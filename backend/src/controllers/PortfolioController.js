@@ -8,10 +8,9 @@ export const savePortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
         const { firstname, lastname, email, phoneNumber, location,
-            specialization, bio, experienceYears, happyClients, photosTaken,
-            equipments, skills, availability } = req.body;
+            specialization, bio, about, experienceYears, happyClients, photosTaken,
+            equipments, skills } = req.body;
         const { services, filteredPictures } = req.body;
-
         let portfolio;
         portfolio = await Portfolio.findOne({ user: userId });
         if (!portfolio) {
@@ -21,12 +20,12 @@ export const savePortfolio = async (req, res) => {
                 location,
                 specialization,
                 bio,
+                about,
                 experienceYears,
                 happyClients,
                 photosTaken,
                 equipments,
                 skills,
-                availability,
             });
 
             await portfolio.save();
@@ -37,12 +36,13 @@ export const savePortfolio = async (req, res) => {
                 location,
                 specialization,
                 bio,
+                about,
                 experienceYears,
                 happyClients,
                 photosTaken,
                 equipments,
                 skills,
-                availability
+
             })
 
             await portfolio.save();
@@ -116,20 +116,11 @@ export const savePortfolio = async (req, res) => {
 export const getPortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
-        const userRole = req.user.role;
+
         const portfolio = await Portfolio.findOne({ user: userId }).populate({
             path: 'user',
             select: '-password -_id -__v -pictureSecretUrl -resetPasswordToken -resetPasswordExpires'
         });
-        /* if (userRole === 'photographer') {
-            portfolio = await Portfolio.findOne({ user: userId });
-        } else {
-            portfolio = await Portfolio.findOne({ user: userId }).populate({
-                path: 'user',
-                select: '-password -_id -__v -pictureSecretUrl -resetPasswordToken -resetPasswordExpires'
-            });
-        } */
-
 
         if (!portfolio) {
             return res.status(404).json({ message: "Portfolio not found" });
@@ -203,6 +194,34 @@ export const getPortfolioPictures = async (req, res) => {
             skip(skip).limit(limit);
 
         return res.status(200).json({ message: "Portfolio Picture Retrieved Successfully", pictures: pictures },);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+
+export const getPhotographerPortfolio = async (req, res) => {
+    try {
+        const portfolioId = req.params.portfolioId;
+        const portfolio = await Portfolio.findById(portfolioId).select('-__v').populate({
+            path: 'user',
+            select: '-password -_id -__v -pictureSecretUrl -resetPasswordToken -resetPasswordExpires -role'
+        });
+
+        if (!portfolio) {
+            return res.status(404).json({ message: "Portfolio not found" });
+        }
+
+        const services = await Service.find({ portfolio: portfolioId })
+            .select('-createdAt -modifiedAt -portfolio -__v');
+        const pictures = await PortfolioPicture.find({ portfolio: portfolioId }).select('-_id url').sort('-createdAt').limit(6);
+        const finalPortfolio = {
+            ...portfolio.toObject(),
+            services,
+            pictures
+        };
+        return res.status(200).json({ message: "Photographer Portfolio retrieved Successfully", portfolio: finalPortfolio },);
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });

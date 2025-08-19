@@ -30,16 +30,14 @@ const Portfolio = () => {
         location: '',
         specialization: '',
         bio: '',
+        about: '',
         experienceYears: '',
         happyClients: '',
-        photosTaken: '',
-        availabilityFrom: '',
-        availabilityTo: '',
+        photosTaken: ''
     });
 
     const [equipments, setEquipments] = useState([]);
     const [skills, setSkills] = useState([]);
-    const [availabilityDays, setAvailabilityDays] = useState([]);
     const [newEquipment, setNewEquipment] = useState('');
     const [newSkill, setNewSkill] = useState('');
 
@@ -80,15 +78,13 @@ const Portfolio = () => {
                     location: portfolio.location || '',
                     specialization: portfolio.specialization || '',
                     bio: portfolio.bio || '',
+                    about: portfolio.about || '',
                     experienceYears: portfolio.experienceYears || '0',
                     happyClients: portfolio.happyClients || '0',
                     photosTaken: portfolio.photosTaken || '0',
-                    availabilityFrom: portfolio?.availability?.time?.from || '',
-                    availabilityTo: portfolio?.availability?.time?.to || ''
                 }));
                 setEquipments(portfolio.equipments);
                 setSkills(portfolio.skills);
-                setAvailabilityDays(portfolio.availability.days)
                 setServices(portfolio.services)
                 setGalleryImages(portfolio.pictures)
             } catch (error) {
@@ -115,6 +111,7 @@ const Portfolio = () => {
             setEquipments(newEquipments);
 
         } else if (name === 'skill') {
+            console.log("Helllllooo")
             const newSkills = [...skills];
             newSkills[index] = value;
             setSkills(newSkills);
@@ -142,12 +139,6 @@ const Portfolio = () => {
         }
     }
 
-    const handleDaysChange = (e) => {
-        const day = e.target.value;
-        setAvailabilityDays((prev) =>
-            prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-        );
-    }
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -160,13 +151,6 @@ const Portfolio = () => {
             ...formData,
             equipments,
             skills,
-            availability: {
-                days: availabilityDays,
-                time: {
-                    from: formData.availabilityFrom,
-                    to: formData.availabilityTo
-                }
-            },
             services,
             filteredPictures
         }
@@ -375,9 +359,14 @@ const Portfolio = () => {
                         <h2 className='portfolio-section-headers'>Bio & Description</h2>
                         <label className='portfolio-content-line portfolio-label'>Professional Bio</label>
                         <textarea className='portfolio-content-line portfolio-input'
-                            placeholder='Write about yourself and your work.'
+                            placeholder='Write a small slogan.(eg.Creating timeless memories through elegant photography with 8+ years of experience in capturing lifes most precious moments.)'
                             name='bio'
                             value={formData.bio}
+                            onChange={handleChange}></textarea>
+                        <textarea className='portfolio-content-line portfolio-input portfolio-about'
+                            placeholder='Write about yourself and your work.(100-150 words)'
+                            name='about'
+                            value={formData.about}
                             onChange={handleChange}></textarea>
                         <div className='photographer-stats-container '>
                             <div className='photographer-stats'>
@@ -501,7 +490,7 @@ const Portfolio = () => {
                                 <h3>Skills & Expertise</h3>
                                 {skills.map((skill, index) => (
                                     <div className='portfolio-inputs-container skills-equipment' key={index}>
-                                        <input className='portfolio-skills-equipment-input' value={skill} onChange={(e) => handleEquipmentSkillChange(e, index)} />
+                                        <input className='portfolio-skills-equipment-input' name='skill' value={skill} onChange={(e) => handleEquipmentSkillChange(e, index)} />
                                         <button className='portfolio-input-icons' onClick={() => cancelEquipmentSkill("skill", index)}><MdOutlineCancel /></button>
                                     </div>
                                 ))}
@@ -510,32 +499,6 @@ const Portfolio = () => {
                                     <input className='portfolio-skills-equipment-input' placeholder='Add Skill...' value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
                                     <button className='portfolio-input-icons' onClick={(e) => addEquipmentSkill("skill")}><IoAddCircle /></button>
                                 </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section className='portfolio-content portfolio-availabiltiy'>
-                        <h2 className='portfolio-section-headers' >Availability Settings</h2>
-                        <div className='porfolio-content-line portfolio-days-container'>
-                            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                                <div className='portfolio-day' key={day}>
-                                    <label className='portfolio-label'>{day}</label>
-                                    <input
-                                        type='checkbox'
-                                        value={day}
-                                        checked={availabilityDays.includes(day)}
-                                        onChange={handleDaysChange}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                        <div className='portfolio-content-line portfolio-availabilty'>
-                            <div className='portfolio-availability-from'>
-                                <h3>Working Hours From</h3>
-                                <input type='time' name='availabilityFrom' value={formData.availabilityFrom} onChange={handleChange} className='portfolio-input-hover'></input>
-                            </div>
-                            <div className='portfolio-availability-to'>
-                                <h3>Working Hours To</h3>
-                                <input type='time' name='availabilityTo' value={formData.availabilityTo} onChange={handleChange} className='portfolio-input-hover'></input>
                             </div>
                         </div>
                     </section>

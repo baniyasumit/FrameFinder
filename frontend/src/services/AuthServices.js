@@ -32,7 +32,6 @@ export const logoutUser = async () => {
     }
 }
 
-
 export const refreshUser = async () => {
     try {
         const response = await ApiInstance.get("/api/auth/me")
@@ -46,7 +45,7 @@ export const refreshUser = async () => {
 
 export const sendOTPEmail = async () => {
     try {
-        const response = await ApiInstance.post("/api/auth/send-otp-email", JSON.stringify({ purpose: 'email_verification' }))
+        const response = await ApiInstance.post("/api/auth/send-otp-email", { purpose: 'email_verification' })
         console.log(response.data.message)
         return response.data.message;
     } catch (error) {

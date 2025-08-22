@@ -21,6 +21,7 @@ import Profile from './pages/Profile/Profile';
 import { DynamicLayout } from './routes/DynamicLayout';
 import Portfolio from './pages/Porfolio/Portfolio';
 import ViewPortfolio from './pages/ViewPortfolio/ViewPortfolio';
+import ImageFullScreenView from './components/ImageFullScreenView/ImageFullScreenView';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -58,6 +59,7 @@ const App = () => {
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/register-photographer' element={<RegisterPhotographer />} />
           <Route path='/view-portfolio/:portfolioId' element={<ViewPortfolio />} />
+          <Route path='/view-full-picture' element={<ImageFullScreenView />} />
         </Route>
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>

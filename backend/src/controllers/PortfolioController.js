@@ -8,7 +8,7 @@ export const savePortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
         const { firstname, lastname, email, phoneNumber, location,
-            specialization, bio, about, experienceYears, happyClients, photosTaken,
+            designation, bio, about, experienceYears, happyClients, photosTaken,
             equipments, skills } = req.body;
         const { services, filteredPictures } = req.body;
         let portfolio;
@@ -18,7 +18,7 @@ export const savePortfolio = async (req, res) => {
             portfolio = new Portfolio({
                 user: userId,
                 location,
-                specialization,
+                designation,
                 bio,
                 about,
                 experienceYears,
@@ -34,7 +34,7 @@ export const savePortfolio = async (req, res) => {
         else {
             portfolio.set({
                 location,
-                specialization,
+                designation,
                 bio,
                 about,
                 experienceYears,
@@ -181,15 +181,15 @@ export const uploadPortfolioPictures = async (req, res) => {
 
 export const getPortfolioPictures = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const portfolio = await Portfolio.findOne({ user: userId }).select('_id')
+        const { portfolioId } = req.params;
+        const portfolio = await Portfolio.findById(portfolioId).select('_id')
         if (!portfolio) return res.status(404).json({ message: "Portfolio not found" });
         const page = parseInt(req.query.page) || 2;
         const limit = 9;
         const skip = (page - 1) * limit;
 
         const pictures = await PortfolioPicture.
-            find({ portfolio: portfolio._id }).
+            find({ portfolio: portfolioId }).
             select('url').sort('-createdAt').
             skip(skip).limit(limit);
 
@@ -215,7 +215,7 @@ export const getPhotographerPortfolio = async (req, res) => {
 
         const services = await Service.find({ portfolio: portfolioId })
             .select('-createdAt -modifiedAt -portfolio -__v');
-        const pictures = await PortfolioPicture.find({ portfolio: portfolioId }).select('-_id url').sort('-createdAt').limit(6);
+        const pictures = await PortfolioPicture.find({ portfolio: portfolioId }).select('-_id url').sort('-createdAt').limit(9);
         const finalPortfolio = {
             ...portfolio.toObject(),
             services,

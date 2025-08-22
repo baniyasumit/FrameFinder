@@ -5,8 +5,14 @@ import { toast } from 'sonner';
 import { ImSpinner9 } from "react-icons/im";
 import { getPortfolioPictures } from '../../services/PortfolioServices';
 import { MdDeleteForever } from 'react-icons/md';
+import usePortfolioStore from '../../stateManagement/usePortfolioStore';
 
-const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryImages, setGalleryImages, setUploadFiles, hasMore, setHasMore, setFilteredPictures }) => {
+const PortfolioGallery = (
+    { showGalleryOverlay, setShowGalleryOverlay,
+        galleryImages, setGalleryImages, setUploadFiles,
+        hasMore, setHasMore, setFilteredPictures,
+        isViewer = false, portfolioId }) => {
+
     const modalRef = useRef();
     const fileInputRef = useRef();
     const galleryRef = useRef();
@@ -17,6 +23,8 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
     const [loading, setLoading] = useState(false);
 
     const [selectedImages, setSelectedImages] = useState([])
+
+    const { setPreviewIndex, setFullImages } = usePortfolioStore();
 
     useEffect(() => {
         if (showGalleryOverlay) {
@@ -64,7 +72,7 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
         const fetchImages = async (pageNum) => {
             setLoading(true);
             try {
-                const response = await getPortfolioPictures(pageNum);
+                const response = await getPortfolioPictures(pageNum, portfolioId);
                 console.log(response.message);
                 if (response.pictures.length < 9) setHasMore(false);
                 setGalleryImages(prev => [...prev, ...response.pictures]);
@@ -77,7 +85,7 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
 
         fetchImages(page);
 
-    }, [page, setGalleryImages, setHasMore, hasMore]);
+    }, [page, setGalleryImages, setHasMore, hasMore, portfolioId]);
 
 
     const handleImageChange = async (event) => {
@@ -143,43 +151,53 @@ const PortfolioGallery = ({ showGalleryOverlay, setShowGalleryOverlay, galleryIm
                 </div>
                 <div className='images-gallery' ref={galleryRef} onScroll={handleScroll}>
                     {galleryImages.map((galleryImage, index) => (
-                        <div className='gallery-image-container' key={index} onClick={() => handleSelectChange({
+                        <div className='gallery-image-container' key={index} /* onClick={() => handleSelectChange({
                             target: {
                                 value: galleryImage.url,
                                 checked: !selectedImages.includes(galleryImage.url)
                             }
-                        })}>
+
+                        })} */
+                            onClick={() => {
+                                setFullImages([...galleryImages])
+                                setPreviewIndex(index);
+                                window.open('/view-full-picture', '_blank');
+                            }} >
                             <img src={galleryImage?.url} className='gallery-image' alt='gallery-image' />
-                            <input
-                                type='checkbox'
-                                className='image-select'
-                                value={galleryImage.url}
-                                checked={selectedImages.includes(galleryImage.url)}
-                                onChange={handleSelectChange}
-                                onClick={(e) => e.stopPropagation()}
-                            />
+                            {!isViewer &&
+                                <input
+                                    type='checkbox'
+                                    className='image-select'
+                                    value={galleryImage.url}
+                                    checked={selectedImages.includes(galleryImage.url)}
+                                    onChange={handleSelectChange}
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            }
                         </div>
                     ))}
                     {loading && <div className='loading-container'><ImSpinner9 className='spinner gallery' /></div>}
                     {!hasMore && <div className='loading-container'><p>You have reached the end.</p></div>}
                 </div>
-                <div className='multiple-upload-button-container'>
-                    <button className='portfolio-button pictures-delete-button' onClick={handleImagesRemove} >
-                        <MdDeleteForever className='delete-icon' />
-                        <span>Delete</span>
-                    </button>
-                    <button className='portfolio-button pictures-upload-button' onClick={() => fileInputRef.current.click()} >
-                        <IoCloudUpload />
-                        <span>Upload New Photo</span>
-                    </button>
+                {!isViewer &&
+                    <div className='multiple-upload-button-container'>
+                        <button className='portfolio-button pictures-delete-button' onClick={handleImagesRemove} >
+                            <MdDeleteForever className='delete-icon' />
+                            <span>Delete</span>
+                        </button>
+                        <button className='portfolio-button pictures-upload-button' onClick={() => fileInputRef.current.click()} >
+                            <IoCloudUpload />
+                            <span>Upload New Photo</span>
+                        </button>
+
+                        <input type='file' onChange={handleImageChange} ref={fileInputRef} style={{ display: 'none' }} accept="image/*" multiple />
 
 
-                    <input type='file' onChange={handleImageChange} ref={fileInputRef} style={{ display: 'none' }} accept="image/*" multiple />
-
-                </div>
+                    </div>
+                }
 
             </div>
-        </div>
+        </div >
     )
 }
 

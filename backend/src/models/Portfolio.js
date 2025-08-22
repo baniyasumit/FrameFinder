@@ -10,7 +10,7 @@ const portfolioSchema = new mongoose.Schema({
     location: {
         type: String,
     },
-    specialization: {
+    designation: {
         type: String
     },
     bio: {

@@ -105,7 +105,7 @@ const Login = () => {
 
     return (
         <main className="auth-container">
-            {!showResetPassowrd ? (<form className="auth-form" onSubmit={handleSubmit}>
+            {!showResetPassowrd ? (<form className="auth-form login" onSubmit={handleSubmit}>
                 <div className="auth-header">
                     <h1 className="auth-title">Login</h1>
                 </div>

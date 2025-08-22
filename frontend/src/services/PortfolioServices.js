@@ -35,10 +35,10 @@ export const uploadPortfolioPictures = async (files) => {
     }
 }
 
-export const getPortfolioPictures = async (page) => {
+export const getPortfolioPictures = async (page, portfolioId) => {
     try {
 
-        const response = await ApiInstance.get(`/api/portfolio/get-portfolio-pictures?page=${page}`);
+        const response = await ApiInstance.get(`/api/portfolio/get-portfolio-pictures/${portfolioId}?page=${page}`);
         return response.data;
     } catch (error) {
         console.error("Portfolio Pictures Retrieval error:", error);

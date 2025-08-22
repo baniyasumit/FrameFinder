@@ -4,7 +4,9 @@ import { FaMessage } from "react-icons/fa6";
 import { GoStar, GoStarFill } from "react-icons/go";
 import { Rating } from "react-simple-star-rating";
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery';
+import usePortfolioStore from '../../stateManagement/usePortfolioStore';
 
 const ViewPortfolio = () => {
     const [rating, setRating] = useState(3.5);
@@ -14,6 +16,13 @@ const ViewPortfolio = () => {
 
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
     const { portfolioId } = useParams();
+
+    const [showGalleryOverlay, setShowGalleryOverlay] = useState(false);
+    const [galleryImages, setGalleryImages] = useState([])
+    const [hasMore, setHasMore] = useState(true);
+
+    const { setFullImages, setPreviewIndex } = usePortfolioStore();
+    const navigate = useNavigate();
 
     const scrollToSection = (id) => {
         setActiveTab(id);
@@ -43,13 +52,15 @@ const ViewPortfolio = () => {
                 const portfolio = await getPhotographerPortfolio(portfolioId);
 
                 setPhotographerPortfolio(portfolio);
+                setGalleryImages(portfolio.pictures);
+                setFullImages(portfolio.pictures);
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
 
             }
         };
         loadPortfolio();
-    }, [setPhotographerPortfolio, portfolioId]);
+    }, [setPhotographerPortfolio, portfolioId, setFullImages]);
 
     return (
         <>
@@ -57,7 +68,17 @@ const ViewPortfolio = () => {
                 <p>Loading portfolio...</p>
             ) : (
                 <>
-
+                    {showGalleryOverlay &&
+                        < PortfolioGallery
+                            showGalleryOverlay={showGalleryOverlay}
+                            setShowGalleryOverlay={setShowGalleryOverlay}
+                            galleryImages={galleryImages}
+                            setGalleryImages={setGalleryImages}
+                            hasMore={hasMore}
+                            setHasMore={setHasMore}
+                            portfolioId={portfolioId}
+                            isViewer={true}
+                        />}
                     <section className='main basic-information-background'>
                         <div className='container basic-information-content'>
                             <div className='photographer-information'>
@@ -66,7 +87,9 @@ const ViewPortfolio = () => {
                                         <img src={photographerPortfolio?.user.picture} alt="Profile" />
                                     </div>
                                     <div className='profile-information' >
-                                        <h1 className='full-name'>{photographerPortfolio?.user.firstname} {photographerPortfolio?.user.lastname}</h1>
+                                        <h1 className='full-name'>
+                                            {photographerPortfolio?.user.firstname} {photographerPortfolio?.user.lastname}
+                                        </h1>
                                         <div className='rating-stats'>
                                             <Rating
                                                 className='rating-stat'
@@ -79,7 +102,7 @@ const ViewPortfolio = () => {
                                             />
                                             <span>{rating} (127 reviews)</span>
                                         </div>
-                                        <p>Wedding & Potrait Photographer</p>
+                                        <p>{photographerPortfolio.designation}</p>
                                     </div>
                                 </div>
                                 <p className='photographer-message'>
@@ -108,8 +131,9 @@ const ViewPortfolio = () => {
                                 <input type='date' />
                                 <label>Session Type</label>
                                 <select type='dropdown'>
-                                    <option value="Wedding Photography">Wedding Photography</option>
-                                    <option value="Potrait Photography">Potrait Photography</option>
+                                    {photographerPortfolio.services.map((service, index) =>
+                                        <option value={service._id} key={index}>{service.title}</option>
+                                    )}
                                 </select>
                                 <button className='booking-button'>Book Now</button>
                                 <button className='booking-message'><FaMessage className='message-icon' />Send Message</button>
@@ -153,10 +177,16 @@ const ViewPortfolio = () => {
                                 <h2 ref={portfolioRef} className='view-portfolio-heading'>Portfolio</h2>
                             </div>
                             <div className='view-portfolio-images-gallery'>
-                                {photographerPortfolio.pictures.map((picture, index) =>
-                                    <div className='view-portfolio-gallery-image-container' key={picture.url}>
+                                {galleryImages.slice(0, 6).map((picture, index) =>
+                                    <div className='view-portfolio-gallery-image-container' key={picture.url}
+                                        onClick={() => {
+                                            setFullImages([...galleryImages]);
+                                            setPreviewIndex(index);
+                                            navigate('/view-full-picture');
+                                        }}>
                                         <img src={picture.url} className='view-portfolio-gallery-image' alt='gallery-image' />
                                     </div>)}
+                                <button className='portfolio-gallery-add-image' onClick={() => setShowGalleryOverlay(true)}>View All</button>
                             </div>
 
                         </div>
@@ -179,13 +209,14 @@ const ViewPortfolio = () => {
                             <div>
                                 <div className='view-portfolio-packages'>
                                     <h2 className='view-portfolio-heading'>Packages</h2>
-                                    {photographerPortfolio.services.map((service) => <div className='package-container'>
-                                        <div className='package-header-section'>
-                                            <h3 className='package-heading'>{service.title}</h3>
-                                            <button>View Details</button>
-                                        </div>
-                                        <span>{service.description}</span>
-                                    </div>)}
+                                    {photographerPortfolio.services.map((service, index) =>
+                                        <div className='package-container' key={index}>
+                                            <div className='package-header-section'>
+                                                <h3 className='package-heading'>{service.title}</h3>
+                                                <button>View Details</button>
+                                            </div>
+                                            <span>{service.description}</span>
+                                        </div>)}
                                 </div>
                                 <div>
                                     <h2 className='view-portfolio-heading'>Equipments</h2>

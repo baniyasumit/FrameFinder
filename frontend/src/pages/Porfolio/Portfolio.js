@@ -14,6 +14,7 @@ import ServiceModal from '../../components/ServiceModal/ServiceModal.js';
 import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery.js';
 import { Confirmation } from '../../components/Confirmation/Confirmation.js';
 import { useNavigate } from 'react-router-dom';
+import usePortfolioStore from '../../stateManagement/usePortfolioStore.js';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -22,13 +23,14 @@ const Portfolio = () => {
 
     const [userImage, setUserImage] = useState(profileImage);
 
+    const [portfolioId, setPortfolioId] = useState('');
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
         email: '',
         phoneNumber: '',
         location: '',
-        specialization: '',
+        designation: '',
         bio: '',
         about: '',
         experienceYears: '',
@@ -56,6 +58,8 @@ const Portfolio = () => {
     const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
     const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
 
+    const { setFullImages, setPreviewIndex } = usePortfolioStore();
+
     useEffect(() => {
         if (user) {
             user.picture && setUserImage(user.picture)
@@ -73,10 +77,11 @@ const Portfolio = () => {
         const loadPortfolio = async () => {
             try {
                 const portfolio = await getPortfolio();
+                setPortfolioId(portfolio._id);
                 setFormData((prev) => ({
                     ...prev,
                     location: portfolio.location || '',
-                    specialization: portfolio.specialization || '',
+                    designation: portfolio.designation || '',
                     bio: portfolio.bio || '',
                     about: portfolio.about || '',
                     experienceYears: portfolio.experienceYears || '0',
@@ -218,6 +223,7 @@ const Portfolio = () => {
                     hasMore={hasMore}
                     setHasMore={setHasMore}
                     setFilteredPictures={setFilteredPictures}
+                    portfolioId={portfolioId}
                 />}
             {showCancelConfirmation && <Confirmation title="Are you sure you want to cancel?"
                 message="If you cancel now, all the changes made will return to previous save & you will be navigated to homepage."
@@ -325,15 +331,15 @@ const Portfolio = () => {
                             </div>
                             <div className='portfolio-labeled-input'>
                                 <label className='portfolio-label'>
-                                    Specialization:
+                                    Designation:
                                 </label>
                                 <div className='portfolio-inputs-container'>
                                     <input
                                         className='portfolio-input'
                                         type="text"
-                                        name="specialization"
-                                        placeholder="Specialization"
-                                        value={formData.specialization}
+                                        name="designation"
+                                        placeholder="Designation"
+                                        value={formData.designation}
                                         onChange={handleChange}
                                     />
                                     <span className='portfolio-input-icons'><MdWork /></span>
@@ -459,7 +465,12 @@ const Portfolio = () => {
                         <h2 className='portfolio-section-headers'>Portfolio Images</h2>
                         <div className='portfolio-images-gallery portfolio-content-line'>
                             {galleryImages.slice(0, 3).map((galleryImage, index) => (
-                                <div className='portfolio-gallery-image-container' key={index}>
+                                <div className='portfolio-gallery-image-container' key={index}
+                                    onClick={() => {
+                                        setFullImages([...galleryImages])
+                                        setPreviewIndex(index);
+                                        window.open('/view-full-picture', '_blank');
+                                    }} >
                                     <img src={galleryImage.url} className='portfolio-gallery-image' alt='gallery-image' />
                                 </div>
                             ))}

@@ -339,12 +339,26 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     color: rgba(0, 0, 0, 0.808);
 }
 
-.package-header-section > button{
-    background-color:#2563eb;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    padding: 8px;
+.service-price{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: unset;
+}
+
+
+.view-portfolio-label{
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: rgba(0, 0, 0, 0.575);
+    margin: unset;
+}
+
+.services-label{
+    font-size: 0.8rem;
+    padding-left:20px;
+    color: rgba(0, 0, 0, 0.575);
 }
 
 .equipments-container,.skills-container{

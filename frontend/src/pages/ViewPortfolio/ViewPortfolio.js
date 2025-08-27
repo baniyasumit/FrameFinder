@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './ViewPortfolio.css'
-import { FaMessage } from "react-icons/fa6";
+import { FaMessage, FaYenSign } from "react-icons/fa6";
 import { GoStar, GoStarFill } from "react-icons/go";
 import { Rating } from "react-simple-star-rating";
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
 import { useNavigate, useParams } from 'react-router-dom';
 import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore';
+
 
 const ViewPortfolio = () => {
     const [rating, setRating] = useState(3.5);
@@ -23,6 +24,8 @@ const ViewPortfolio = () => {
 
     const { setFullImages, setPreviewIndex } = usePortfolioStore();
     const navigate = useNavigate();
+
+    const [selectedServicePrice, setSelectedServicePrice] = useState(0);
 
     const scrollToSection = (id) => {
         setActiveTab(id);
@@ -54,6 +57,7 @@ const ViewPortfolio = () => {
                 setPhotographerPortfolio(portfolio);
                 setGalleryImages(portfolio.pictures);
                 setFullImages(portfolio.pictures);
+                setSelectedServicePrice(portfolio.services[0].price)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
 
@@ -61,6 +65,16 @@ const ViewPortfolio = () => {
         };
         loadPortfolio();
     }, [setPhotographerPortfolio, portfolioId, setFullImages]);
+
+    const handleServiceChange = (e) => {
+        const selectedId = e.target.value;
+        const service = photographerPortfolio.services.find(
+            (s) => s._id === selectedId
+        );
+        if (service) {
+            setSelectedServicePrice(service.price);
+        }
+    };
 
     return (
         <>
@@ -125,12 +139,15 @@ const ViewPortfolio = () => {
                                 </div>
                             </div>
                             <form className='booking-form'>
-                                <h1 className='booking-price'>$850</h1>
+                                <h1 className='booking-price'>${selectedServicePrice}</h1>
                                 <span>per session</span>
                                 <label>Select Date</label>
-                                <input type='date' />
+                                <input
+                                    type="date"
+                                    min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
+                                />
                                 <label>Session Type</label>
-                                <select type='dropdown'>
+                                <select type='dropdown' onChange={handleServiceChange}>
                                     {photographerPortfolio.services.map((service, index) =>
                                         <option value={service._id} key={index}>{service.title}</option>
                                     )}
@@ -213,9 +230,16 @@ const ViewPortfolio = () => {
                                         <div className='package-container' key={index}>
                                             <div className='package-header-section'>
                                                 <h3 className='package-heading'>{service.title}</h3>
-                                                <button>View Details</button>
+                                                <p className='service-price' ><FaYenSign /><span>{service.price}</span> </p>
                                             </div>
-                                            <span>{service.description}</span>
+                                            <p>{service.description}</p>
+                                            <p className='view-portfolio-label '>Includes:</p>
+                                            <ul className='services-label'>
+                                                <li>{service.duration} hours of session</li>
+                                                {service.features?.map((feature, index) => (
+                                                    <li key={index}>{feature}</li>
+                                                ))}
+                                            </ul>
                                         </div>)}
                                 </div>
                                 <div>

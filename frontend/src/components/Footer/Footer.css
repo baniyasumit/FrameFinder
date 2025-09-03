@@ -14,12 +14,16 @@ footer{
 .footer-grid-container{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 5rem; 
+    gap: 4.5rem; 
 }
 
-.footer-grid{
+.footer-grid.main{
     margin-bottom: 1rem;
     font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 
@@ -29,9 +33,10 @@ footer{
 .footer-headings{
     font-size: 1rem;
 }
-.footer-grid > span{
+.footer-grid > p{
     color: rgba(255, 255, 255, 0.418);
     line-height: 1.5rem;
+    margin: unset;
 }
 
 .links-container-footer{

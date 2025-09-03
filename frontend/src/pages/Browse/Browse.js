@@ -99,9 +99,7 @@ const Browse = () => {
                             </select>
                         </div>
 
-                        <div className='filter-type'>
-                            <button type='submit' className='filter-button' onClick={handleFilter}><span><FaSearch /></span>Search</button>
-                        </div>
+
                     </div>
                     <div className='filter-types-line'>
                         <div className='filter-type'>
@@ -112,6 +110,9 @@ const Browse = () => {
                             <label className='filter-label'>Max Budget</label>
                             <input className='filter-input' name='maxBudget' type='number' value={params.maxBudget} placeholder="∞" onChange={handleFilterChange} min={1} />
 
+                        </div>
+                        <div className='filter-type'>
+                            <button type='submit' className='filter-button' onClick={handleFilter}><span><FaSearch /></span>Search</button>
                         </div>
                     </div>
 
@@ -178,13 +179,12 @@ const Browse = () => {
                                     </p>
                                     <p className='photographer-price-container'>
                                         <span className='price'>{portfolio.priceRange}</span>
-                                        <span >per session</span>
+                                        <span >(incl. pkg)</span>
                                     </p>
                                     <div className='photographer-specializations-container'>
                                         {portfolio.serviceTypes?.map((type, index) => (
                                             <button key={index} className={`photographer-specialization ${type.toLowerCase()}`}>{type}</button>
                                         ))}
-                                        <button className='photographer-specialization'>Wedding</button>
                                     </div>
                                     <button className='photographer-profile-button' onClick={() => { navigate(`/view-portfolio/${portfolio._id}`) }}>View Profile</button>
                                 </div>

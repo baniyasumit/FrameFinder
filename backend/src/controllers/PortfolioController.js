@@ -244,7 +244,6 @@ export const browsePortfolio = async (req, res) => {
         if (sortBy !== "price") {
             sort[sortBy] = sortByAsc === 'true' ? 1 : -1;
         }
-        z
         const portfolios = await Portfolio.find(filter)
             .select('specialization bio serviceTypes standardCharge')
             .populate({

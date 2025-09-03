@@ -116,7 +116,7 @@ const ViewPortfolio = () => {
                                             />
                                             <span>{rating} (127 reviews)</span>
                                         </div>
-                                        <p>{photographerPortfolio.designation}</p>
+                                        <p className='specialization'><span>Specializes in:</span> <strong>{photographerPortfolio.specialization} Photography</strong> </p>
                                     </div>
                                 </div>
                                 <p className='photographer-message'>

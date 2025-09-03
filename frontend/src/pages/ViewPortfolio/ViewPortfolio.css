@@ -40,7 +40,7 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     border-radius: 100%;
     border: 3px solid #ffffff;
     overflow: hidden;
-   
+
 }
 
 .profile-picture-container  > img{
@@ -80,6 +80,10 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     line-height: 1.7rem;
     margin: unset;
     color: rgba(255, 255, 255, 0.884);
+}
+
+.specialization >span{
+    font-size: 1.2 rem;
 }
 
 .photographer-message{

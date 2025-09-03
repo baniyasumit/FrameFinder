@@ -57,3 +57,14 @@ export const getPhotographerPortfolio = async (portfolioId) => {
 
 }
 
+export const getBrowsePortfolio = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/portfolio/browse-portfolio?${query || ''}`)
+        return response.data.portfolios;
+    } catch (error) {
+        console.error("Retrival  error:", error);
+        throw error.response?.data.message || error.message;
+    }
+
+}
+

@@ -4,7 +4,7 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPicture';
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
-import { FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
+import { FaDollarSign, FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
 import { MdEmail, MdOutlineCancel, MdWork } from 'react-icons/md';
 import { getPortfolio, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
@@ -30,18 +30,21 @@ const Portfolio = () => {
         email: '',
         phoneNumber: '',
         location: '',
-        designation: '',
+        specialization: '',
         bio: '',
         about: '',
         experienceYears: '',
         happyClients: '',
-        photosTaken: ''
+        photosTaken: '',
+        standardCharge: ''
     });
 
     const [equipments, setEquipments] = useState([]);
     const [skills, setSkills] = useState([]);
     const [newEquipment, setNewEquipment] = useState('');
     const [newSkill, setNewSkill] = useState('');
+    const [types, setTypes] = useState([]);
+    const [newType, setNewType] = useState('');
 
     const [services, setServices] = useState([])
     const [showServiceModal, setShowServiceModal] = useState(false);
@@ -81,17 +84,19 @@ const Portfolio = () => {
                 setFormData((prev) => ({
                     ...prev,
                     location: portfolio.location || '',
-                    designation: portfolio.designation || '',
+                    specialization: portfolio.specialization || '',
                     bio: portfolio.bio || '',
                     about: portfolio.about || '',
                     experienceYears: portfolio.experienceYears || '0',
                     happyClients: portfolio.happyClients || '0',
                     photosTaken: portfolio.photosTaken || '0',
+                    standardCharge: portfolio.standardCharge || '0',
                 }));
                 setEquipments(portfolio.equipments);
                 setSkills(portfolio.skills);
                 setServices(portfolio.services)
                 setGalleryImages(portfolio.pictures)
+                portfolio.serviceTypes ? setTypes(portfolio.serviceTypes) : setTypes([])
             } catch (error) {
                 console.error("Load User Error: ", error)
 
@@ -103,6 +108,7 @@ const Portfolio = () => {
     const handleChange = (e) => {
 
         const { name, value } = e.target;
+        console.log(name, value)
         setFormData((prev) => ({ ...prev, [name]: value }));
 
     };
@@ -116,12 +122,12 @@ const Portfolio = () => {
             setEquipments(newEquipments);
 
         } else if (name === 'skill') {
-            console.log("Helllllooo")
             const newSkills = [...skills];
             newSkills[index] = value;
             setSkills(newSkills);
         }
     };
+
 
     const addEquipmentSkill = (type) => {
         if (type === "equipment") {
@@ -144,6 +150,18 @@ const Portfolio = () => {
         }
     }
 
+    const handleAddType = (e) => {
+        if (e.key === 'Enter') {
+            const type = newType;
+            setTypes([...types, type]);
+            setNewType('');
+        }
+    }
+
+
+    const handleRemoveType = (index) => {
+        setTypes(types.filter((_, i) => i !== index));
+    }
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -157,7 +175,8 @@ const Portfolio = () => {
             equipments,
             skills,
             services,
-            filteredPictures
+            filteredPictures,
+            types
         }
         try {
             setIsSaving(true);
@@ -200,8 +219,6 @@ const Portfolio = () => {
         navigate('/dashboard')
 
     }
-
-
 
     return (
         <>
@@ -331,15 +348,15 @@ const Portfolio = () => {
                             </div>
                             <div className='portfolio-labeled-input'>
                                 <label className='portfolio-label'>
-                                    Designation:
+                                    Specialization:
                                 </label>
                                 <div className='portfolio-inputs-container'>
                                     <input
                                         className='portfolio-input'
                                         type="text"
-                                        name="designation"
-                                        placeholder="Designation"
-                                        value={formData.designation}
+                                        name="specialization"
+                                        placeholder="Only write one word. eg.(Potrait), (Wedding). ."
+                                        value={formData.specialization}
                                         onChange={handleChange}
                                     />
                                     <span className='portfolio-input-icons'><MdWork /></span>
@@ -359,6 +376,26 @@ const Portfolio = () => {
                                 <UploadUserPicture fileInputRef={fileInputRef} setUserImage={setUserImage} />
                                 <span>JPG,PNG or GIF. Max size 2MB</span>
                             </div>
+                        </div>
+                    </section>
+                    <section className='portfolio-content portfolio-photography-types'>
+                        <h2 className='portfolio-section-headers' >Types of Services</h2>
+                        <p>Add services so that user can find you easilyin the search, they are basically like tags.
+                            (eg. Wedding, Potrait [Add one at a time]).
+                        </p>
+                        <div className='types-container'>
+                            {types?.map((type, index) => (
+                                <div className='added-type-container' key={index}>
+                                    <span >{type}</span>
+                                    <button
+                                        onClick={() => handleRemoveType(index)}>X</button>
+                                </div>
+                            ))}
+                            <input className='add-type-input'
+                                placeholder='Enter new type.'
+                                value={newType}
+                                onChange={(e) => setNewType(e.target.value)}
+                                onKeyDown={handleAddType} />
                         </div>
                     </section>
                     <section className='portfolio-content portfolio-bio'>
@@ -439,6 +476,22 @@ const Portfolio = () => {
                                         </ul>
                                     </div>
                                 ))}
+                                <div className='portfolio-content-line portfolio-service-container standard-charge' >
+                                    <label className='portfolio-service-title'>
+                                        Standard Charge:
+                                    </label>
+                                    <div className='portfolio-inputs-container standard-charge'>
+                                        <input
+                                            className='portfolio-input'
+                                            type="text"
+                                            name="standardCharge"
+                                            placeholder="Standard Charge"
+                                            value={formData.standardCharge}
+                                            onChange={handleChange}
+                                        />
+                                        <span className='portfolio-input-icons'><FaDollarSign /></span>
+                                    </div>
+                                </div>
                             </>
                             :
                             <div className='portfolio-content-line portfolio-service-container'>
@@ -513,10 +566,10 @@ const Portfolio = () => {
                             </div>
                         </div>
                     </section>
-                    <div className='portfolio-content portfolio-actions'>
+                    <section className='portfolio-content portfolio-actions'>
                         <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowCancelConfirmation(true) }}>Cancel</button>
                         <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowSaveConfirmation(true) }}>Save Profile</button>
-                    </div>
+                    </section>
 
                 </div >
             </main >

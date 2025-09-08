@@ -70,12 +70,21 @@
     font-weight: 500;
 }
 
-.filter-type > .filter-input{
+.filter-input-container{
+    width: 100%;
+    position: relative;
+}
+
+.filter-type > .filter-input, .filter-input-container > .filter-input{
     padding: 0.8rem;
     font-size: 1rem;
     border: 1px solid rgba(0, 0, 0, 0.132);
     border-radius: 8px;
     transition: transform 0.3s ease-in;
+}
+
+.filter-input-container > .filter-input{
+    width: 100%;
 }
 
 .filter-type > .filter-input.dropdown{
@@ -85,8 +94,6 @@
 .filter-type > .filter-input::placeholder{
     color: rgba(0, 0, 0, 0.285);
 }
-
-
 
 .filter-button{
     padding: 0.8rem 3rem;
@@ -102,13 +109,54 @@
     transition: transform 0.3s ease-in;
 }
 
-.filter-type > .filter-input:hover, .filter-type > .filter-button:hover{
+.filter-type > .filter-input:hover, .filter-type > .filter-button:hover, .filter-input-container > .filter-input:hover{
     transform: scale(1.05);
 }
+
+
+.portfolio-suggestions {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 4px;
+    padding: 0;
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+.current-location{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #2563EB;
+}
+
+.current-location.choose{
+    color: lightpink;
+}
+
+.portfolio-suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.portfolio-suggestions li:hover {
+    background: #f3f4f6;
+}
+
+
 .browse-main.filter-nav-container{
     background-color: white;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.096);
 }
+
 
 .browse-container.filter-nav-container{
     padding: 1.7rem 15px;

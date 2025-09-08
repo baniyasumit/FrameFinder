@@ -8,7 +8,19 @@ const portfolioSchema = new mongoose.Schema({
         unique: true,
     },
     location: {
-        type: String,
+        type: {
+            type: String,
+            enum: ["Point"],
+            default: "Point"
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        }
     },
     specialization: {
         type: String
@@ -53,6 +65,7 @@ const portfolioSchema = new mongoose.Schema({
     },
 })
 
+portfolioSchema.index({ location: "2dsphere" });
 
 portfolioSchema.pre('save', function (next) {
     this.modifiedAt = Date.now();

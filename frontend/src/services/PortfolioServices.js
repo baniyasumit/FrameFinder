@@ -1,7 +1,8 @@
 import { ApiInstance } from "./ApiInstance";
-
+const TOKEN = process.env.REACT_APP_MAP_TOKEN
 export const savePortfolio = async (formData) => {
     try {
+        console.log(formData)
         const response = await ApiInstance.patch("/api/portfolio/save-portfolio", formData);
         return response.data
     } catch (error) {
@@ -65,6 +66,31 @@ export const getBrowsePortfolio = async (query) => {
         console.error("Retrival  error:", error);
         throw error.response?.data.message || error.message;
     }
+}
 
+export const getLocation = async (longitude, latitude) => {
+    try {
+        const res = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${TOKEN}`
+        );
+        const data = await res.json();
+        return data
+    } catch (error) {
+        console.error("Location retrieval  error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getSearchedLocations = async (serchTerm) => {
+    try {
+        const res = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(serchTerm)}.json?access_token=${TOKEN}&autocomplete=true&limit=5`
+        );
+        const data = await res.json();
+        return data
+    } catch (error) {
+        console.error("Location retrieval  error:", error);
+        throw error.response?.data.message || error.message;
+    }
 }
 

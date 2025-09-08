@@ -6,8 +6,8 @@ import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPict
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
 import { FaDollarSign, FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
-import { MdEmail, MdOutlineCancel, MdWork } from 'react-icons/md';
-import { getPortfolio, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
+import { MdEmail, MdOutlineCancel, MdOutlineMyLocation, MdWork } from 'react-icons/md';
+import { getLocation, getPortfolio, getSearchedLocations, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
 import { toast } from 'sonner';
 import { refreshUser } from '../../services/AuthServices.js';
 import ServiceModal from '../../components/ServiceModal/ServiceModal.js';
@@ -15,6 +15,8 @@ import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery
 import { Confirmation } from '../../components/Confirmation/Confirmation.js';
 import { useNavigate } from 'react-router-dom';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore.js';
+import Mapbox from '../../components/Mapbox/Mapbox.js';
+import { GrMapLocation } from "react-icons/gr";
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -29,7 +31,6 @@ const Portfolio = () => {
         lastname: '',
         email: '',
         phoneNumber: '',
-        location: '',
         specialization: '',
         bio: '',
         about: '',
@@ -38,6 +39,15 @@ const Portfolio = () => {
         photosTaken: '',
         standardCharge: ''
     });
+
+    const [locationResults, setLocationResults] = useState('');
+    const [location, setLocation] = useState({
+        name: '',
+        coordinates: [],
+    });
+    const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
+    const [showMapboxModal, setShowMapboxModal] = useState(false)
+    const locationRef = useRef();
 
     const [equipments, setEquipments] = useState([]);
     const [skills, setSkills] = useState([]);
@@ -83,7 +93,6 @@ const Portfolio = () => {
                 setPortfolioId(portfolio._id);
                 setFormData((prev) => ({
                     ...prev,
-                    location: portfolio.location || '',
                     specialization: portfolio.specialization || '',
                     bio: portfolio.bio || '',
                     about: portfolio.about || '',
@@ -96,6 +105,10 @@ const Portfolio = () => {
                 setSkills(portfolio.skills);
                 setServices(portfolio.services)
                 setGalleryImages(portfolio.pictures)
+                setLocation({
+                    name: portfolio.location.name || '',
+                    coordinates: portfolio.location.coordinates || []
+                }) //modify locations accordingly 
                 portfolio.serviceTypes ? setTypes(portfolio.serviceTypes) : setTypes([])
             } catch (error) {
                 console.error("Load User Error: ", error)
@@ -108,10 +121,92 @@ const Portfolio = () => {
     const handleChange = (e) => {
 
         const { name, value } = e.target;
-        console.log(name, value)
+
         setFormData((prev) => ({ ...prev, [name]: value }));
 
     };
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (locationRef.current && !locationRef.current.contains(e.target)) {
+                setLocationResults([]);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [setLocationResults]);
+
+    const handleLocationChange = async (e) => {
+        const value = e.target.value;
+        setLocation({ ...location, name: value });
+
+        if (value.length < 3) {
+            setLocationResults([]);
+            return;
+        }
+
+        const data = await getSearchedLocations(value);
+        setLocationResults(data.features);
+    };
+
+    const handleLocationClick = (e) => {
+        handleLocationChange(e);
+    }
+
+    const handleCoordinatesLocationChange = async (longitude, latitude) => {
+        try {
+            setCurrentLocationLoading(true);
+            const data = await getLocation(longitude, latitude);
+            if (data.features.length > 0) {
+                const placeName = data.features[0].place_name;
+                const coordinates = data.features[0].geometry.coordinates;
+
+                setLocation({
+                    ...location,
+                    name: placeName,
+                    coordinates: coordinates,
+                });
+                setLocationResults([]);
+            }
+        } catch (err) {
+            console.error("Error fetching address:", err);
+        }
+        finally {
+            setCurrentLocationLoading(false);
+        }
+    }
+
+    const handleCurrentLocation = () => {
+        if ("geolocation" in navigator) {
+            setCurrentLocationLoading(true);
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    handleCoordinatesLocationChange(longitude, latitude);
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    setCurrentLocationLoading(false); // only stop if error occurs
+                }
+            );
+        }
+    };
+
+
+    const handleLocationStore = (place) => {
+        setLocation({
+            ...location,
+            name: place.place_name,
+            coordinates: [
+                place.center[0],
+                place.center[1]
+            ],
+        });
+        setLocationResults([]);
+    }
+
 
     const handleEquipmentSkillChange = (e, index) => {
 
@@ -127,7 +222,6 @@ const Portfolio = () => {
             setSkills(newSkills);
         }
     };
-
 
     const addEquipmentSkill = (type) => {
         if (type === "equipment") {
@@ -176,7 +270,8 @@ const Portfolio = () => {
             skills,
             services,
             filteredPictures,
-            types
+            types,
+            location
         }
         try {
             setIsSaving(true);
@@ -250,6 +345,7 @@ const Portfolio = () => {
                 message="If you save the changes made currently. You will not be able to return to previous state."
                 setShowConfirmation={setShowSaveConfirmation}
                 onConfirm={handleSave} />}
+            {showMapboxModal && <Mapbox setShowMapboxModal={setShowMapboxModal} location={location} handleLocationChangeFromMap={handleCoordinatesLocationChange} />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>
                     <section className='portfolio-content portfolio-header'>
@@ -334,16 +430,38 @@ const Portfolio = () => {
                                 <label className='portfolio-label'>
                                     Location:
                                 </label>
-                                <div className='portfolio-inputs-container'>
+                                <div className='portfolio-inputs-container location' ref={locationRef}>
+
                                     <input
                                         className='portfolio-input'
                                         type="text"
                                         name="location"
                                         placeholder="Location"
-                                        value={formData.location}
-                                        onChange={handleChange}
+                                        value={location.name}
+                                        onChange={handleLocationChange}
+                                        onClick={handleLocationClick}
+                                        disabled={currentLocationLoading}
+
                                     />
                                     <span className='portfolio-input-icons'><IoLocation /></span>
+                                    {locationResults.length > 0 && (
+                                        <ul className="portfolio-suggestions">
+                                            <>
+                                                <li onClick={handleCurrentLocation} className='current-location'>Current Location <span><MdOutlineMyLocation /></span></li>
+                                                <li onClick={() => setShowMapboxModal(true)} className='current-location choose'>Choose on Map <span><GrMapLocation /></span></li>
+                                                {locationResults.map((place) => (
+                                                    <li
+                                                        key={place.id}
+                                                        onClick={() => {
+                                                            handleLocationStore(place)
+                                                        }}
+                                                    >
+                                                        {place.place_name}
+                                                    </li>
+                                                ))}
+                                            </>
+                                        </ul>
+                                    )}
                                 </div>
                             </div>
                             <div className='portfolio-labeled-input'>

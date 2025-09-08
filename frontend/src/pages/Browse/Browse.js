@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Browse.css'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaSearch, FaSortAmountDown, FaSortAmountUp, FaStar } from 'react-icons/fa';
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
-import { getBrowsePortfolio } from '../../services/PortfolioServices';
+import { getBrowsePortfolio, getLocation, getSearchedLocations } from '../../services/PortfolioServices';
+import { MdOutlineMyLocation } from 'react-icons/md';
+import { GrMapLocation } from 'react-icons/gr';
+import Mapbox from '../../components/Mapbox/Mapbox';
 
 const Browse = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [params, setParams] = useState({
-        eventLocation: '',
         photographerType: '',
         minBudget: '0',
         maxBudget: '',
@@ -22,15 +24,57 @@ const Browse = () => {
 
     const navigate = useNavigate();
 
+    const [locationResults, setLocationResults] = useState('');
+    const [location, setLocation] = useState({
+        name: '',
+        coordinates: [],
+    });
+    const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
+    const [showMapboxModal, setShowMapboxModal] = useState(false)
+    const locationRef = useRef();
+
+    useEffect(() => {
+        const loadLocation = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const longitude = params.get("long");
+            const latitude = params.get("lat");
+
+            if (!longitude || !latitude) return;
+
+            try {
+                const data = await getLocation(Number(longitude), Number(latitude));
+                if (data.features.length > 0) {
+                    const placeName = data.features[0].place_name;
+                    const coordinates = data.features[0].geometry.coordinates;
+
+                    setLocation((prev) => ({
+                        ...prev,
+                        name: placeName,
+                        coordinates,
+                    }));
+                    setLocationResults([]);
+                }
+            } catch (error) {
+                console.error("Load Location Error: ", error);
+            }
+        };
+
+        loadLocation();
+    }, []);
+
+
+
     useEffect(() => {
         setParams((prev) => ({
             ...prev,
-            eventLocation: searchParams.get('eventLocation') || '',
+            long: searchParams.get('long') || '',
+            lat: searchParams.get('lat') || '',
             photographerType: searchParams.get('photographerType') || '',
             minBudget: searchParams.get('minBudget') || '0',
             maxBudget: searchParams.get('maxBudget') || '',
             sortBy: searchParams.get('sortBy') || 'rating',
             sortByAsc: searchParams.get('sortByAsc') === 'true',
+
         }));
     }, [searchParams])
 
@@ -54,8 +98,7 @@ const Browse = () => {
     };
 
     const handleFilter = () => {
-        console.log(params)
-        setSearchParams(params);
+        setSearchParams({ ...params, long: location.coordinates[0] || '', lat: location.coordinates[1] || '' });
     };
 
     const handleFilterNav = (e) => {
@@ -67,7 +110,6 @@ const Browse = () => {
 
     const handleSort = (field) => {
         const updatedParams = { ...params, sortBy: field };
-        console.log(updatedParams)
         setParams(updatedParams);
         setSearchParams({ ...updatedParams });
     };
@@ -78,7 +120,89 @@ const Browse = () => {
         setSearchParams({ ...updatedParams })
     }
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (locationRef.current && !locationRef.current.contains(e.target)) {
+                setLocationResults([]);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [setLocationResults]);
+
+    const handleLocationChange = async (e) => {
+        const value = e.target.value;
+        setLocation({ ...location, name: value });
+
+        if (value.length < 3) {
+            setLocationResults([]);
+            return;
+        }
+
+        const data = await getSearchedLocations(value);
+        setLocationResults(data.features);
+    };
+
+    const handleLocationClick = (e) => {
+        handleLocationChange(e);
+    }
+
+    const handleCoordinatesLocationChange = async (longitude, latitude) => {
+        try {
+            setCurrentLocationLoading(true);
+            const data = await getLocation(longitude, latitude);
+            if (data.features.length > 0) {
+                const placeName = data.features[0].place_name;
+                const coordinates = data.features[0].geometry.coordinates;
+
+                setLocation({
+                    ...location,
+                    name: placeName,
+                    coordinates: coordinates,
+                });
+                setLocationResults([]);
+            }
+        } catch (err) {
+            console.error("Error fetching address:", err);
+        }
+        finally {
+            setCurrentLocationLoading(false);
+        }
+    }
+
+    const handleCurrentLocation = () => {
+        if ("geolocation" in navigator) {
+            setCurrentLocationLoading(true);
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    handleCoordinatesLocationChange(longitude, latitude);
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    setCurrentLocationLoading(false); // only stop if error occurs
+                }
+            );
+        }
+    };
+
+
+    const handleLocationStore = (place) => {
+        setLocation({
+            ...location,
+            name: place.place_name,
+            coordinates: [
+                place.center[0],
+                place.center[1]
+            ],
+        });
+        setLocationResults([]);
+    }
+
     return (<>
+        {showMapboxModal && <Mapbox setShowMapboxModal={setShowMapboxModal} location={location} handleLocationChangeFromMap={handleCoordinatesLocationChange} />}
         <section className='browse-main filter'>
             <div className='browse-container '>
                 <h1 className='filter-heading'>Find Your Perfect Photographer</h1>
@@ -88,7 +212,31 @@ const Browse = () => {
                     <div className='filter-types-line'>
                         <div className='filter-type'>
                             <label className='filter-label'>Location</label>
-                            <input className='filter-input' name='eventLocation' placeholder="Enter city or zip code" value={params.eventLocation} onChange={handleFilterChange} />
+                            <div className='filter-input-container'>
+                                <input className='filter-input' name='eventLocation' placeholder="Enter city or zip code"
+                                    value={location.name}
+                                    onChange={handleLocationChange}
+                                    onClick={handleLocationClick}
+                                    disabled={currentLocationLoading} />
+                                {locationResults.length > 0 && (
+                                    <ul className="portfolio-suggestions">
+                                        <>
+                                            <li onClick={handleCurrentLocation} className='current-location'>Current Location <span><MdOutlineMyLocation /></span></li>
+                                            <li onClick={() => setShowMapboxModal(true)} className='current-location choose'>Choose on Map <span><GrMapLocation /></span></li>
+                                            {locationResults.map((place) => (
+                                                <li
+                                                    key={place.id}
+                                                    onClick={() => {
+                                                        handleLocationStore(place)
+                                                    }}
+                                                >
+                                                    {place.place_name}
+                                                </li>
+                                            ))}
+                                        </>
+                                    </ul>
+                                )}
+                            </div>
                         </div>
                         <div className='filter-type'>
                             <label className='filter-label'>Photographer Type</label>
@@ -178,7 +326,9 @@ const Browse = () => {
                                         {portfolio.bio}
                                     </p>
                                     <p className='photographer-price-container'>
-                                        <span className='price'>{portfolio.priceRange}</span>
+                                        <span className='price'>
+                                            {portfolio.minPrice === portfolio.maxPrice ? <>${portfolio.minPrice}</> : <>${portfolio.minPrice} - ${portfolio.maxPrice}</>}
+                                        </span>
                                         <span >(incl. pkg)</span>
                                     </p>
                                     <div className='photographer-specializations-container'>

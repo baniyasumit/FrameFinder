@@ -107,8 +107,6 @@ export const savePortfolio = async (req, res) => {
             await Promise.all(picturesPromises);
         }
 
-
-
         return res.status(200).json({ message: "Portfolio Saved Successfull" });
     }
     catch (error) {
@@ -234,91 +232,149 @@ export const getPhotographerPortfolio = async (req, res) => {
 
 export const browsePortfolio = async (req, res) => {
     try {
-        const { photographerType, minBudget = 0, maxBudget, sortBy = 'rating', sortByAsc = false } = req.query;
-        const filter = {};
+        const { long, lat, photographerType, minBudget = 0, maxBudget, sortBy = 'rating', sortByAsc = false } = req.query;
+        const min = Number(minBudget) || 0;
+        const max = maxBudget ? Number(maxBudget) : Infinity;
+        const sortOrder = sortByAsc === 'true' ? 1 : -1;
+        const maxDistance = 10000;
+        const matchStage = {};
+
         if (photographerType && photographerType.trim() !== '') {
-            filter.serviceTypes = { $regex: new RegExp(photographerType.trim(), 'i') };
+            matchStage.serviceTypes = { $regex: new RegExp(photographerType.trim(), 'i') };
         }
 
-        const sort = {};
-        if (sortBy !== "price") {
-            sort[sortBy] = sortByAsc === 'true' ? 1 : -1;
-        }
-        const portfolios = await Portfolio.find(filter)
-            .select('specialization bio serviceTypes standardCharge')
-            .populate({
-                path: 'user',
-                select: 'firstname lastname isVerified picture'
-            })
-            .sort(sort);
-
-        for (let portfolio of portfolios) {
-            const picture = await PortfolioPicture.findOne({ portfolio: portfolio._id })
-                .select('-_id url')
-                .sort('-createdAt');
-            portfolio._doc.picture = picture ? picture.url : null;
-        }
-
-
-        const portfolioIds = portfolios.map(p => p._id);
-        const services = await Service.find({ portfolio: { $in: portfolioIds } }).select("portfolio price");
-
-        const serviceMap = {};
-        for (let s of services) {
-            if (!serviceMap[s.portfolio]) serviceMap[s.portfolio] = [];
-            serviceMap[s.portfolio].push(s.price);
-        }
-
-        let portfoliosWithRange = portfolios.map(p => {
-            const allPrices = serviceMap[p._id]
-                ? serviceMap[p._id].map(price => p.standardCharge + price)
-                : [p.standardCharge];
-
-            const filtered = allPrices.filter(price => {
-
-                const min = Number(minBudget) || 0;
-                const max = maxBudget ? Number(maxBudget) : Infinity;
-                return price >= min && price <= max;
+        const pipeline = [];
+        if (long !== undefined && lat !== undefined && !isNaN(long) && !isNaN(lat) && long !== '' && lat !== '') {
+            pipeline.push({
+                $geoNear: {
+                    near: {
+                        type: "Point",
+                        coordinates: [Number(long), Number(lat)]
+                    },
+                    distanceField: "distance",
+                    spherical: true,
+                    maxDistance: maxDistance,
+                    distanceMultiplier: 0.001
+                }
             });
+        }
+        pipeline.push(
+            {
+                $match: matchStage
+            },
 
-            let priceRange = null;
-            let minPrice = null;
-            let maxPrice = null;
+            // Join user info
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
 
-            if (filtered.length === 1) {
-                minPrice = maxPrice = filtered[0];
-                priceRange = `$${filtered[0]}`;
-            } else if (filtered.length > 1) {
-                minPrice = Math.min(...filtered);
-                maxPrice = Math.max(...filtered);
-                priceRange = `$${minPrice} – $${maxPrice}`;
+            // Join services
+            {
+                $lookup: {
+                    from: 'services',
+                    localField: '_id',
+                    foreignField: 'portfolio',
+                    as: 'services'
+                }
+            },
+
+            // Compute total prices for each service
+            {
+                $addFields: {
+                    servicePrices: {
+                        $map: {
+                            input: '$services',
+                            as: 's',
+                            in: { $add: ['$$s.price', '$standardCharge'] }
+                        }
+                    }
+                }
+            },
+
+            // Filter prices by budget
+            {
+                $addFields: {
+                    filteredPrices: {
+                        $filter: {
+                            input: '$servicePrices',
+                            as: 'price',
+                            cond: { $and: [{ $gte: ['$$price', min] }, { $lte: ['$$price', max] }] }
+                        }
+                    }
+                }
+            },
+
+            // Compute minPrice, maxPrice, and priceRange
+            {
+                $addFields: {
+                    minPrice: { $min: '$filteredPrices' },
+                    maxPrice: { $max: '$filteredPrices' },
+                }
+            },
+
+
+            // Lookup latest portfolio picture
+            {
+                $lookup: {
+                    from: 'portfoliopictures',
+                    let: { portfolioId: '$_id' },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ['$portfolio', '$$portfolioId'] } } },
+                        { $sort: { createdAt: -1 } },
+                        { $limit: 1 },
+                        { $project: { _id: 0, url: 1 } }
+                    ],
+                    as: 'picture'
+                }
+            },
+            { $addFields: { picture: { $arrayElemAt: ['$picture.url', 0] } } },
+
+
+
+            // Project only required fields
+            {
+                $project: {
+                    specialization: 1,
+                    bio: 1,
+                    serviceTypes: 1,
+                    standardCharge: 1,
+                    minPrice: 1,
+                    maxPrice: 1,
+                    'user.firstname': 1,
+                    'user.lastname': 1,
+                    'user.isVerified': 1,
+                    'user.picture': 1,
+                    picture: 1,
+                    distance: 1,
+                    location: 1
+                }
+            },
+            // Sort
+            {
+                $sort: sortBy === 'price'
+                    ? { minPrice: sortOrder }
+                    : { [sortBy]: sortOrder }
             }
-
-            return {
-                ...p._doc,
-                priceRange,
-                minPrice,
-                maxPrice
-            };
-        });
+        );
 
 
-        if (sortBy === "price") {
-            const order = sortByAsc === 'true' ? 1 : -1;
-            portfoliosWithRange.sort((a, b) => {
-                const priceA = a.minPrice ?? Infinity;
-                const priceB = b.minPrice ?? Infinity;
-                return (priceA - priceB) * order;
-            });
-        }
-        portfoliosWithRange = portfoliosWithRange.filter(p => p.priceRange !== null);
+        const portfolios = await Portfolio.aggregate(pipeline);
 
         return res.status(200).json({
             message: "Photographer Portfolio retrieved Successfully",
-            portfolios: portfoliosWithRange
+            portfolios
         });
+
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });
     }
 };
+
+

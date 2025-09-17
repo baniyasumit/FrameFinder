@@ -1,0 +1,175 @@
+.main.booking-page{
+    background-color: #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 5rem 0;
+}
+
+.photographer-information-container.booking-page{
+    background-color: transparent;
+    width: 100%;
+    max-width: 1216px;
+    padding: 0 15px;
+}
+
+.photographer-information.booking-page{
+    background-color: white;
+    color: black;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 2rem 15px;
+    box-shadow: 0 0px 10px 10px rgba(186, 186, 186, 0.068);
+    border-radius: 15px;
+    border: 0.5px solid rgba(0, 0, 0, 0.116)
+}
+
+
+.profile-information.booking-page{
+    gap: 0px;
+}
+
+.full-name.booking-page{
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.specialization.booking-page{
+    color: rgba(0, 0, 0, 0.664);
+}
+
+.booking-details-container{
+    background-color: transparent;
+    max-width: 1216px;
+    width: 100%;
+    padding: 0 15px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    
+}
+.booking-forms-container{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.container.booking-page{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 0px 10px 10px rgba(186, 186, 186, 0.068);
+    padding: 1.6rem;
+    gap: 30px;
+    border: 0.5px solid rgba(0, 0, 0, 0.116)
+}
+
+.container.booking-page > .container-heading{
+    margin: unset;
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
+.booking-input-line{
+    display: flex;
+    flex-direction: row;
+   
+    gap: 2rem;
+    flex-wrap: wrap;
+    
+}
+
+.booking-input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1 1 250px;
+    
+}
+
+.browse-input-label{
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.575);
+}
+
+.booking-finalization{
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.container.booking-page.summary{
+    gap: 10px;
+}
+
+.container.booking-page.summary > .container-heading.summary{
+    font-size: 1.2rem;
+}
+
+.container.booking-page.summary > p{
+    margin: unset;
+    display: flex;
+    justify-content: space-between;
+}
+
+.container.booking-page.summary > .total-fee{
+    border-top: 1px solid rgba(0, 0, 0, 0.281);
+    padding-top: 10px;
+    font-weight: 500;
+}
+
+.container.booking-page.summary.included > p{
+    font-size: 0.9rem;
+    justify-content: flex-start;
+}
+
+.included-icon{
+    color: green;
+}
+
+.booking-button{
+    padding: 1.1rem;
+    background-color: #2A61EB;
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 550;
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.booking-message{
+    font-family: Poppins, sans-serif;
+    padding: 0.8rem;
+    color: rgba(0, 0, 0, 0.616);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: 550;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.406);
+    border-radius: 10px;
+
+}
+
+.booking-finalization > p{
+    margin: unset;
+    font-size: 0.9rem;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.514);
+}
+
+
+@media screen and (max-width:730px) {
+    .booking-details-container{
+        grid-template-columns: 1fr;
+    }
+}

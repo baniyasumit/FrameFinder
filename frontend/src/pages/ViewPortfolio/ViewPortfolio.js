@@ -9,6 +9,7 @@ import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery
 import usePortfolioStore from '../../stateManagement/usePortfolioStore';
 
 
+
 const ViewPortfolio = () => {
     const [rating, setRating] = useState(3.5);
 
@@ -24,8 +25,6 @@ const ViewPortfolio = () => {
 
     const { setFullImages, setPreviewIndex } = usePortfolioStore();
     const navigate = useNavigate();
-
-    const [selectedServicePrice, setSelectedServicePrice] = useState(0);
 
     const scrollToSection = (id) => {
         setActiveTab(id);
@@ -53,11 +52,9 @@ const ViewPortfolio = () => {
         const loadPortfolio = async () => {
             try {
                 const portfolio = await getPhotographerPortfolio(portfolioId);
-
                 setPhotographerPortfolio(portfolio);
                 setGalleryImages(portfolio.pictures);
                 setFullImages(portfolio.pictures);
-                setSelectedServicePrice(portfolio.services[0].price)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
 
@@ -66,15 +63,9 @@ const ViewPortfolio = () => {
         loadPortfolio();
     }, [setPhotographerPortfolio, portfolioId, setFullImages]);
 
-    const handleServiceChange = (e) => {
-        const selectedId = e.target.value;
-        const service = photographerPortfolio.services.find(
-            (s) => s._id === selectedId
-        );
-        if (service) {
-            setSelectedServicePrice(service.price);
-        }
-    };
+    const handelBooking = async () => {
+        navigate(`/create-booking/${portfolioId}`)
+    }
 
     return (
         <>
@@ -139,20 +130,8 @@ const ViewPortfolio = () => {
                                 </div>
                             </div>
                             <form className='booking-form'>
-                                <h1 className='booking-price'>${selectedServicePrice}</h1>
-                                <span>per session</span>
-                                <label>Select Date</label>
-                                <input
-                                    type="date"
-                                    min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
-                                />
-                                <label>Session Type</label>
-                                <select type='dropdown' onChange={handleServiceChange}>
-                                    {photographerPortfolio.services.map((service, index) =>
-                                        <option value={service._id} key={index}>{service.title}</option>
-                                    )}
-                                </select>
-                                <button className='booking-button'>Book Now</button>
+                                {/* Put a Big Calender in this and it should show the availability */}
+                                <button type="button" className='booking-button' onClick={handelBooking}>Book Now</button>
                                 <button className='booking-message'><FaMessage className='message-icon' />Send Message</button>
                             </form>
 

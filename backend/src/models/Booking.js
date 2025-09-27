@@ -12,12 +12,9 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     service: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Service',
-        required: true
-    },
-    sessionStartTime: {
-        type: String
+        title: { type: String, required: true },
+        description: { type: String },
+        features: [String]
     },
     sessionStartDate: {
         type: Date,
@@ -66,26 +63,35 @@ const bookingSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
-        platformCharge: {
+        duration: {
             type: Number,
-            required: true
+            required: true,
+            default: 1
         }
-    }
-    ,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
-    bookingDate: {
-        type: Date,
-        default: Date.now
-    },
     bookingStatus: {
-        type: String,
-        enum: ['pending', 'accepted', 'declined', 'canceled'],
-        default: 'pending',
+        status: {
+            type: String,
+            enum: ['pending', 'accepted', 'declined', 'canceled'],
+            default: 'pending',
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
     }
 })
+
+bookingSchema.pre('save', function (next) {
+    if (this.isModified('bookingStatus.status')) {
+        this.bookingStatus.date = new Date();
+    }
+    next();
+});
 
 
 export default mongoose.model("Booking", bookingSchema);

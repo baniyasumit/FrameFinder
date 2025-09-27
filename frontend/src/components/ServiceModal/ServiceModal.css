@@ -79,10 +79,19 @@
     position: absolute;
     color: rgba(0, 0, 0, 0.639);
     right: 10px;
-    top: 23%;
+    top: 20%;
     background-color: transparent;
     border:none;
     font-size: 1rem;
+}
+.service-input-icons.price{
+    right: 25px;
+}
+.service-input-icons > span{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    
 }
 
 .submit-button-container{

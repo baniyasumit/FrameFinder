@@ -4,10 +4,10 @@ import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
 import { useParams } from 'react-router-dom';
-import { TiTick } from "react-icons/ti";
 import { FaCalendarCheck, FaMessage } from 'react-icons/fa6';
-import { createBooking, PLATFORMCHARGE } from '../../services/BookingService';
+import { createBooking } from '../../services/BookingService';
 import { toast } from 'sonner';
+import { IoCheckmark } from 'react-icons/io5';
 
 
 const CreateBooking = () => {
@@ -29,13 +29,12 @@ const CreateBooking = () => {
         'specialRequest': '',
     });
 
-
     const [selectedService, setSelectedService] = useState();
 
     const [totalCharge, setTotalCharge] = useState({
         standardCharge: 0,
         packageCharge: 0,
-        platformCharge: PLATFORMCHARGE || 0
+        duration: 1,
     });
 
     useEffect(() => {
@@ -60,6 +59,20 @@ const CreateBooking = () => {
         };
         loadPortfolio();
     }, [setPhotographerPortfolio, portfolioId]);
+
+    useEffect(() => {
+        if (bookingData.sessionStartDate !== '' && bookingData.sessionEndDate !== '') {
+            const d1 = new Date(bookingData.sessionEndDate);
+            const d2 = new Date(bookingData.sessionStartDate);
+            const timeDifference = d1.getTime() - d2.getTime();
+            const millisecondsPerDay = 1000 * 60 * 60 * 24;
+            const daysDifference = Math.round(timeDifference / millisecondsPerDay) + 1;
+            setTotalCharge((prev) => ({
+                ...prev,
+                duration: daysDifference
+            }))
+        }
+    }, [bookingData.sessionStartDate, bookingData.sessionEndDate])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -289,17 +302,14 @@ const CreateBooking = () => {
                                 <h2 className='container-heading summary'>Booking Summary</h2>
                                 <p>Session Type <span>{selectedService?.title}</span></p>
                                 <p>Standard Fee <span>${photographerPortfolio.standardCharge}</span></p>
-                                <p>Package Fee <span>${selectedService?.price}</span></p>
-                                <p>Platform Fee <span>{PLATFORMCHARGE}</span></p>
-                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price + 100}</span></p>
+                                <p>Package Fee <span>${selectedService?.price * totalCharge.duration}</span></p>
+                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price * totalCharge.duration}</span></p>
                             </div>
                             <div className='container booking-page summary included'>
                                 <h2 className='container-heading summary'>What's Included</h2>
-                                <p><TiTick className='included-icon' /> Professional photography</p>
-                                <p><TiTick className='included-icon' />High-resolution images</p>
-                                <p><TiTick className='included-icon' />Online gallery</p>
-                                <p><TiTick className='included-icon' />Basic editing included</p>
-                                <p><TiTick className='included-icon' />48-hour preview</p>
+                                {selectedService.features.map((feature, index) => (
+                                    <p><IoCheckmark className='included-icon' key={index} /> {feature}</p>
+                                ))}
                             </div>
                             <button type="button" className='booking-button' onClick={handleBooking}><FaCalendarCheck />Book Now</button>
                             <button type="button" className='booking-message'><FaMessage className='message-icon' />Send Message</button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './ViewPortfolio.css'
-import { FaMessage, FaYenSign } from "react-icons/fa6";
+import { FaDollarSign, FaMessage } from "react-icons/fa6";
 import { GoStar, GoStarFill } from "react-icons/go";
 import { Rating } from "react-simple-star-rating";
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
@@ -209,12 +209,11 @@ const ViewPortfolio = () => {
                                         <div className='package-container' key={index}>
                                             <div className='package-header-section'>
                                                 <h3 className='package-heading'>{service.title}</h3>
-                                                <p className='service-price' ><FaYenSign /><span>{service.price}</span> </p>
+                                                <p className='service-price' ><FaDollarSign /><span>{service.price}</span> </p>
                                             </div>
                                             <p>{service.description}</p>
                                             <p className='view-portfolio-label '>Includes:</p>
                                             <ul className='services-label'>
-                                                <li>{service.duration} hours of session</li>
                                                 {service.features?.map((feature, index) => (
                                                     <li key={index}>{feature}</li>
                                                 ))}

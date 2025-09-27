@@ -11,7 +11,6 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
         title: '',
         description: '',
         price: '',
-        duration: '',
         features: [],
     })
     const [featureInput, setFeatureInput] = useState('')
@@ -27,7 +26,6 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
             title: services[editIndex].title,
             description: services[editIndex].description || '',
             price: services[editIndex].price,
-            duration: services[editIndex].duration,
             features: services[editIndex].features
         }))
 
@@ -51,6 +49,7 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
 
     const updateFeature = (e, index) => {
         e.preventDefault();
+
         setServiceData(prev => {
             const updatedFeatures = [...prev.features];
             updatedFeatures[index] = e.target.value;
@@ -81,6 +80,7 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         setServices(prev => {
             const updatedServices = [...prev];
             if (editIndex !== null) {
@@ -129,16 +129,7 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
                         onChange={handleChange}
                     />
 
-                    <span className='service-input-icons'><FaDollarSign /></span>
-                </div>
-                <div className='service-inputs-container'>
-                    <input type='number'
-                        className='service-inputs' name='duration'
-                        placeholder="Duration"
-                        value={serviceData.duration}
-                        onChange={handleChange}
-                    />
-                    <span className='service-input-icons'>hr</span>
+                    <span className='service-input-icons price'><span><FaDollarSign />  per session/day</span></span>
                 </div>
 
                 <h3>Includes</h3>

@@ -15,10 +15,6 @@ const serviceSchema = new mongoose.Schema({
         type: Number,
         min: 0,
     },
-    duration: {
-        type: Number,
-        min: 1,
-    },
     features: [String],
     createdAt: {
         type: Date,

@@ -8,6 +8,8 @@ export const createBooking = async (req, res) => {
         const portfolioId = req.params.portfolioId;
         const { sessionType, sessionStartTime, sessionStartDate, sessionEndDate,
             venueName,
+            city,
+            province,
             firstName,
             lastName,
             email,
@@ -15,14 +17,24 @@ export const createBooking = async (req, res) => {
             guestNumber,
             eventDescription,
             specialRequest,
-            totalCharge,
+            duration,
         } = req.body;
 
+        const portfolio = await Portfolio.findById(portfolioId)
+            .select('standardCharge')
         const service = await Service.findById(sessionType)
-            .select('title description features');
+            .select('title description features price');
+
         // Do some validation to check if it already exists
         const startDateTime = new Date(`${sessionStartDate}T${sessionStartTime}:00`);
-
+        const totalCharge = {
+            'standardCharge': portfolio.standardCharge,
+            'packageCharge': service.price,
+            'duration': duration
+        }
+        const payment = {
+            'remaining': (service.price * duration) + portfolio.standardCharge
+        }
         const booking = new Booking({
             user: userId,
             portfolio: portfolioId,
@@ -34,6 +46,8 @@ export const createBooking = async (req, res) => {
             sessionStartDate: startDateTime,
             sessionEndDate,
             venueName,
+            city,
+            province,
             firstName,
             lastName,
             email,
@@ -41,12 +55,13 @@ export const createBooking = async (req, res) => {
             guestNumber,
             eventDescription,
             specialRequest,
-            totalCharge
+            totalCharge,
+            payment
         });
 
         await booking.save();
 
-        return res.status(201).json({ message: "Booking Created Successfully", bookingId: booking._id })
+        return res.status(201).json({ message: "Booked Succesfully", bookingId: booking._id })
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ message: "Server Error" });

@@ -3,7 +3,7 @@ import './CreateBooking.css'
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaCalendarCheck, FaMessage } from 'react-icons/fa6';
 import { createBooking } from '../../services/BookingService';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ import { IoCheckmark } from 'react-icons/io5';
 
 
 const CreateBooking = () => {
-
+    const navigate = useNavigate();
     const { portfolioId } = useParams();
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
     const [bookingData, setBookingData] = useState({
@@ -20,6 +20,8 @@ const CreateBooking = () => {
         'sessionStartDate': '',
         'sessionEndDate': '',
         'venueName': '',
+        'city': '',
+        'province': '',
         'firstName': '',
         'lastName': '',
         'email': '',
@@ -27,15 +29,10 @@ const CreateBooking = () => {
         'guestNumber': '',
         'eventDescription': '',
         'specialRequest': '',
+        'duration': 1,
     });
 
     const [selectedService, setSelectedService] = useState();
-
-    const [totalCharge, setTotalCharge] = useState({
-        standardCharge: 0,
-        packageCharge: 0,
-        duration: 1,
-    });
 
     useEffect(() => {
         const loadPortfolio = async () => {
@@ -46,11 +43,6 @@ const CreateBooking = () => {
                 setBookingData((prev) => ({
                     ...prev,
                     'sessionType': portfolio.services[0]._id,
-                }))
-                setTotalCharge((prev) => ({
-                    ...prev,
-                    standardCharge: portfolio.standardCharge,
-                    packageCharge: portfolio.services[0].price,
                 }))
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
@@ -67,7 +59,7 @@ const CreateBooking = () => {
             const timeDifference = d1.getTime() - d2.getTime();
             const millisecondsPerDay = 1000 * 60 * 60 * 24;
             const daysDifference = Math.round(timeDifference / millisecondsPerDay) + 1;
-            setTotalCharge((prev) => ({
+            setBookingData((prev) => ({
                 ...prev,
                 duration: daysDifference
             }))
@@ -87,23 +79,19 @@ const CreateBooking = () => {
         if (service) {
             setSelectedService(service);
             setBookingData((prev) => ({ ...prev, 'sessionType': selectedId }))
-            setTotalCharge((prev) => ({
-                ...prev,
-                packageCharge: service.price
-            }))
         }
     };
 
     const handleBooking = async (e) => {
         e.preventDefault();
-        const finalBookingData = {
-            ...bookingData,
-            totalCharge
-        }
         try {
-            const response = await createBooking(finalBookingData, portfolioId);
+            const response = await createBooking(bookingData, portfolioId);
             console.log(response.message);
             toast.success(response.message);
+            console.log("GHelllo")
+            if (response.bookingId) {
+                navigate(`/view-booking/${response.bookingId}`, { replace: true })
+            }
 
         } catch (err) {
             console.error("Save error:", err);
@@ -111,8 +99,6 @@ const CreateBooking = () => {
                 position: 'top-center',
             });
         }
-
-
     }
 
     return (
@@ -209,13 +195,17 @@ const CreateBooking = () => {
                                         <label className='browse-input-label'>
                                             City
                                         </label>
-                                        <input name='venueCity' className='input-field' placeholder='City' />
+                                        <input name='city' className='input-field' placeholder='City'
+                                            value={bookingData.city}
+                                            onChange={handleChange} />
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label'>
                                             State/Province
                                         </label>
-                                        <input name='venueProvince' className='input-field' placeholder='State/Province' />
+                                        <input name='province' className='input-field' placeholder='State/Province'
+                                            value={bookingData.province}
+                                            onChange={handleChange} />
                                     </div>
                                 </div>
                             </div>
@@ -302,13 +292,13 @@ const CreateBooking = () => {
                                 <h2 className='container-heading summary'>Booking Summary</h2>
                                 <p>Session Type <span>{selectedService?.title}</span></p>
                                 <p>Standard Fee <span>${photographerPortfolio.standardCharge}</span></p>
-                                <p>Package Fee <span>${selectedService?.price * totalCharge.duration}</span></p>
-                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price * totalCharge.duration}</span></p>
+                                <p>Package Fee <span>${selectedService?.price * bookingData.duration}</span></p>
+                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price * bookingData.duration}</span></p>
                             </div>
                             <div className='container booking-page summary included'>
                                 <h2 className='container-heading summary'>What's Included</h2>
                                 {selectedService.features.map((feature, index) => (
-                                    <p><IoCheckmark className='included-icon' key={index} /> {feature}</p>
+                                    <p key={index} ><IoCheckmark className='included-icon' /> {feature}</p>
                                 ))}
                             </div>
                             <button type="button" className='booking-button' onClick={handleBooking}><FaCalendarCheck />Book Now</button>

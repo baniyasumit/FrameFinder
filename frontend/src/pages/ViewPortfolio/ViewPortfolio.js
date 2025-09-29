@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './ViewPortfolio.css'
-import { FaDollarSign, FaMessage } from "react-icons/fa6";
+import { FaMessage } from "react-icons/fa6";
 import { GoStar, GoStarFill } from "react-icons/go";
 import { Rating } from "react-simple-star-rating";
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
@@ -200,6 +200,14 @@ const ViewPortfolio = () => {
                                         )}
                                     </ul>
                                 </div>
+                                <div>
+                                    <h2 className='view-portfolio-heading'>Equipments</h2>
+                                    <ul className='equipments-container'>
+                                        {photographerPortfolio.equipments.map((equipment, index) =>
+                                            <li key={index}>{equipment}</li>
+                                        )}
+                                    </ul>
+                                </div>
 
                             </div>
                             <div>
@@ -209,7 +217,7 @@ const ViewPortfolio = () => {
                                         <div className='package-container' key={index}>
                                             <div className='package-header-section'>
                                                 <h3 className='package-heading'>{service.title}</h3>
-                                                <p className='service-price' ><FaDollarSign /><span>{service.price}</span> </p>
+                                                <p className='service-price' >$<span>{service.price}</span> </p>
                                             </div>
                                             <p>{service.description}</p>
                                             <p className='view-portfolio-label '>Includes:</p>
@@ -219,14 +227,6 @@ const ViewPortfolio = () => {
                                                 ))}
                                             </ul>
                                         </div>)}
-                                </div>
-                                <div>
-                                    <h2 className='view-portfolio-heading'>Equipments</h2>
-                                    <ul className='equipments-container'>
-                                        {photographerPortfolio.equipments.map((equipment, index) =>
-                                            <li key={index}>{equipment}</li>
-                                        )}
-                                    </ul>
                                 </div>
                             </div>
                         </div>

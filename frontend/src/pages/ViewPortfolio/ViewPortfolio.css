@@ -185,6 +185,7 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     font-size: 0.9rem;
     font-weight: 550;
     background-color: white;
+    text-decoration: none;
 }
 
 .main.portfolio-navigation-container{

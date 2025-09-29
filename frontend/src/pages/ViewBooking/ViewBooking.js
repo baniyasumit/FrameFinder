@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
 import { getBookingInformation } from '../../services/BookingService';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { FaCalendar, FaClock, FaCreditCard, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
 import { IoCall, IoCheckmark } from "react-icons/io5";
+import { AiOutlineProfile } from "react-icons/ai";
+import { toast } from 'sonner';
 
 const ViewBooking = () => {
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
     const [booking, setBooking] = useState();
     const { bookingId } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadBookingInformation = async () => {
@@ -20,11 +23,12 @@ const ViewBooking = () => {
                 setBooking(bookingInformation?.booking)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
-
+                toast.error(error)
+                navigate('/')
             }
         };
         loadBookingInformation();
-    }, [setPhotographerPortfolio, bookingId]);
+    }, [setPhotographerPortfolio, bookingId, navigate]);
 
     return (
         <>
@@ -62,8 +66,12 @@ const ViewBooking = () => {
                                             </div>
                                         </div>
                                         <div className='contact-button-container'>
-                                            <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
-                                            <button type="button" className='booking-message'><IoCall />Call</button>
+                                            {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
+                                                <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                            }
+
+                                            <Link className='booking-message' to={`/view-portfolio/${photographerPortfolio._id}`}><AiOutlineProfile />View Profile</Link>
+
                                         </div>
                                     </div>
 
@@ -148,25 +156,42 @@ const ViewBooking = () => {
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary'>Booking Status</h2>
                                 <p>Status <span className={`booking-status summary ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span></p>
-                                <p>Payment <span>Unpaid</span></p>
+
                                 <p>Created <span>{new Date(booking.createdAt).toLocaleDateString("en-US", {
                                     month: "short",
                                     day: "numeric",
                                     year: "numeric"
                                 })}</span></p>
-                                <p className='total-fee'>Total <span></span></p>
+                            </div>
+                            <div className='container booking-page summary'>
+                                <h2 className='container-heading summary'>Payment Status</h2>
+                                <p>Payment <span className={`payment-status summary ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
+                                {booking?.payment.status === 'partial' &&
+                                    <p>Paid <span>${booking.payment.paid}</span></p>
+                                }
+                                <p className='total-fee'>Remaining <span >${booking.payment.remaining}</span></p>
+
+
                             </div>
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary'>Payment Summary</h2>
                                 <p>Standard Fee <span>${booking.totalCharge.standardCharge}</span></p>
                                 <p>Package Fee <span>${booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
                                 <p className='total-fee'>Total <span>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
-                                <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
+                                {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
+                                    <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
+                                }
+
+
                             </div>
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary contact'>Contact Photographer</h2>
-                                <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
-                                <button type="button" className='booking-message'><IoCall />Call</button>
+                                {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' && <>
+                                    <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+
+                                    <button type="button" className='booking-message'><IoCall />Call</button>
+                                </>
+                                }
                                 <button type="button" className='booking-message'><FaCalendar />Reschedule</button>
 
                             </div>

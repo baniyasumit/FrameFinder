@@ -28,6 +28,14 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    city: {
+        type: String,
+        required: true
+    },
+    venueName: {
+        type: String,
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -67,6 +75,24 @@ const bookingSchema = new mongoose.Schema({
             type: Number,
             required: true,
             default: 1
+        }, total: {
+            type: Number,
+        }
+    },
+    payment: {
+        status: {
+            type: String,
+            enum: ['unpaid', 'partial', 'paid'],
+            default: 'unpaid',
+        },
+        paid: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        remaining: {
+            type: Number,
+            required: true,
         }
     },
     createdAt: {
@@ -87,6 +113,7 @@ const bookingSchema = new mongoose.Schema({
 })
 
 bookingSchema.pre('save', function (next) {
+    this.totalCharge.total = (this.totalCharge.duration * this.totalCharge.packageCharge) + this.totalCharge.standardCharge;
     if (this.isModified('bookingStatus.status')) {
         this.bookingStatus.date = new Date();
     }

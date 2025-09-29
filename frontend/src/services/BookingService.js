@@ -1,6 +1,5 @@
 import { ApiInstance } from "./ApiInstance";
 
-export const PLATFORMCHARGE = 100;
 
 export const createBooking = async (formData, portfolioId) => {
     try {
@@ -17,6 +16,17 @@ export const checkAvailability = async (bookingForm) => {
         const response = await ApiInstance.get("/api/booking/check-availability", { params: bookingForm });
 
         return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getBookingInformation = async (bookingId) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/get-booking/${bookingId}`);
+
+        return response.data?.bookingInformation
     } catch (error) {
         console.error("Save error:", error);
         throw error.response?.data.message || error.message;

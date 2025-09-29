@@ -1,0 +1,207 @@
+.main.booking-page{
+    background-color: #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 5rem 0;
+}
+
+.photographer-information-container.booking-page{
+    background-color: transparent;
+    width: 100%;
+    max-width: 1216px;
+    padding: 0 15px;
+}
+
+.photographer-information.booking-page{
+    background-color: white;
+    color: black;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 2rem 15px;
+    box-shadow: 0 0px 10px 10px rgba(186, 186, 186, 0.068);
+    border-radius: 15px;
+    border: 0.5px solid rgba(0, 0, 0, 0.116)
+}
+
+.photographer-information.booking-page > .photographer-profile-information{
+    width: 100%;
+}
+
+.profile-information.booking-page{
+    gap: 0px;
+}
+
+.service-price-container.booking-page{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.profile-information.booking-page {
+    flex-grow: 1;
+}
+
+.service-name.booking-page{
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: unset;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.booking-status{
+    font-size: 1rem;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 4px 10px;
+    background-color: #FEF9C3;
+    color: #854D0E;
+    text-transform: capitalize;
+}
+
+.booking-status.accepted{
+    background-color: #DCFCE7;
+    color: #166556;
+}
+
+.booking-status.declined,.booking-status.canceled{
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.service-price-container.booking-page > p{
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: unset;
+}
+
+.rating-contact-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.rating-stats.booking-page{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.full-name.booking-page{
+    display: flex;
+    font-size: 1rem;
+    align-items:flex-start;
+    margin:unset;
+    color: rgba(0, 0, 0, 0.584);
+}
+
+
+.rating-stat-container{
+    display: flex;
+    gap: 10px;
+}
+
+.contact-button-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.session-details-line{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    flex-wrap: wrap;
+    width: 100%;
+    
+}
+
+.session-details-container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 250px;
+}
+
+.session-details-icon{
+    color: #2A61EB;
+}
+
+.session-details > label{
+    color: rgba(0, 0, 0, 0.671);
+    font-size: 0.9rem;
+}
+
+.session-details > p{
+    margin: unset;
+}
+
+.container.booking-page.features{
+    gap: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.container.booking-page.features > h2{
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.container.booking-page.features > p {
+    width: calc(50% - 8px); /* 2 columns with gap */
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin: 8px 0;
+    color: rgba(0, 0, 0, 0.785);
+}
+
+.container.booking-page.special-request{
+    gap:0;
+}
+
+.container.booking-page.special-request > h2{
+    margin-bottom: 15px;
+}
+.container.booking-page.special-request > p{
+    margin: 8px 0;
+}
+
+.booking-status.summary{
+    font-size: 0.8rem;
+    padding: 2px 10px;
+}
+
+.payment-status{
+    font-size: 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 4px 10px;
+    background-color: #FEE2E2;
+    color: #991B1B;
+    text-transform: capitalize;
+}
+
+.payment-status.paid{
+    background-color: #DCFCE7;
+    color: #166556;
+}
+
+.payment-status.partial{
+    background-color: #FEF9C3;
+    color: #854D0E;
+}
+
+.booking-button.pay{
+    background-color: #16A34A;
+}
+
+.container-heading.summary.contact {
+    margin-bottom: 1rem;
+
+}

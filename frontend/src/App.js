@@ -24,6 +24,7 @@ import ViewPortfolio from './pages/ViewPortfolio/ViewPortfolio';
 import ImageFullScreenView from './components/ImageFullScreenView/ImageFullScreenView';
 import Browse from './pages/Browse/Browse';
 import CreateBooking from './pages/CreateBooking/CreateBooking.js';
+import ViewBooking from './pages/ViewBooking/ViewBooking.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -74,6 +75,7 @@ const App = () => {
         <Route element={<RoleRoute allowedRoles={['client']} />}>
           <Route element={<DefaultLayout />}>
             <Route path='/create-booking/:portfolioId' element={<CreateBooking />} />
+            <Route path='/view-booking/:bookingId' element={<ViewBooking />} />
           </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client', 'photographer']} />}>

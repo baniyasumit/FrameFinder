@@ -12,12 +12,9 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     service: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Service',
-        required: true
-    },
-    sessionStartTime: {
-        type: String
+        title: { type: String, required: true },
+        description: { type: String },
+        features: [String]
     },
     sessionStartDate: {
         type: Date,
@@ -25,6 +22,14 @@ const bookingSchema = new mongoose.Schema({
     },
     sessionEndDate: {
         type: Date,
+        required: true
+    },
+    venueName: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
         required: true
     },
     venueName: {
@@ -66,26 +71,54 @@ const bookingSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
-        platformCharge: {
+        duration: {
             type: Number,
-            required: true
+            required: true,
+            default: 1
+        }, total: {
+            type: Number,
         }
-    }
-    ,
+    },
+    payment: {
+        status: {
+            type: String,
+            enum: ['unpaid', 'partial', 'paid'],
+            default: 'unpaid',
+        },
+        paid: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        remaining: {
+            type: Number,
+            required: true,
+        }
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
-    bookingDate: {
-        type: Date,
-        default: Date.now
-    },
     bookingStatus: {
-        type: String,
-        enum: ['pending', 'accepted', 'declined', 'canceled'],
-        default: 'pending',
+        status: {
+            type: String,
+            enum: ['pending', 'accepted', 'declined', 'canceled'],
+            default: 'pending',
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
     }
 })
+
+bookingSchema.pre('save', function (next) {
+    this.totalCharge.total = (this.totalCharge.duration * this.totalCharge.packageCharge) + this.totalCharge.standardCharge;
+    if (this.isModified('bookingStatus.status')) {
+        this.bookingStatus.date = new Date();
+    }
+    next();
+});
 
 
 export default mongoose.model("Booking", bookingSchema);

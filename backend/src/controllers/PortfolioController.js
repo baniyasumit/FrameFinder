@@ -73,7 +73,6 @@ export const savePortfolio = async (req, res) => {
                         title: service.title,
                         description: service.description,
                         price: service.price,
-                        duration: service.duration,
                         features: service.features,
                     });
                     return serviceModel.save();
@@ -84,7 +83,6 @@ export const savePortfolio = async (req, res) => {
                     title: service.title,
                     description: service.description,
                     price: service.price,
-                    duration: service.duration,
                     features: service.features,
                 });
                 return newService.save();
@@ -291,7 +289,7 @@ export const browsePortfolio = async (req, res) => {
                         $map: {
                             input: '$services',
                             as: 's',
-                            in: { $add: ['$$s.price', '$standardCharge'] }
+                            in: { $add: ['$$s.price', '$standardCharge',] }
                         }
                     }
                 }

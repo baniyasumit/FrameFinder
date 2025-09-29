@@ -3,15 +3,15 @@ import './CreateBooking.css'
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
-import { useParams } from 'react-router-dom';
-import { TiTick } from "react-icons/ti";
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaCalendarCheck, FaMessage } from 'react-icons/fa6';
-import { createBooking, PLATFORMCHARGE } from '../../services/BookingService';
+import { createBooking } from '../../services/BookingService';
 import { toast } from 'sonner';
+import { IoCheckmark } from 'react-icons/io5';
 
 
 const CreateBooking = () => {
-
+    const navigate = useNavigate();
     const { portfolioId } = useParams();
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
     const [bookingData, setBookingData] = useState({
@@ -20,6 +20,8 @@ const CreateBooking = () => {
         'sessionStartDate': '',
         'sessionEndDate': '',
         'venueName': '',
+        'city': '',
+        'province': '',
         'firstName': '',
         'lastName': '',
         'email': '',
@@ -27,16 +29,10 @@ const CreateBooking = () => {
         'guestNumber': '',
         'eventDescription': '',
         'specialRequest': '',
+        'duration': 1,
     });
-
 
     const [selectedService, setSelectedService] = useState();
-
-    const [totalCharge, setTotalCharge] = useState({
-        standardCharge: 0,
-        packageCharge: 0,
-        platformCharge: PLATFORMCHARGE || 0
-    });
 
     useEffect(() => {
         const loadPortfolio = async () => {
@@ -48,11 +44,6 @@ const CreateBooking = () => {
                     ...prev,
                     'sessionType': portfolio.services[0]._id,
                 }))
-                setTotalCharge((prev) => ({
-                    ...prev,
-                    standardCharge: portfolio.standardCharge,
-                    packageCharge: portfolio.services[0].price,
-                }))
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
 
@@ -60,6 +51,20 @@ const CreateBooking = () => {
         };
         loadPortfolio();
     }, [setPhotographerPortfolio, portfolioId]);
+
+    useEffect(() => {
+        if (bookingData.sessionStartDate !== '' && bookingData.sessionEndDate !== '') {
+            const d1 = new Date(bookingData.sessionEndDate);
+            const d2 = new Date(bookingData.sessionStartDate);
+            const timeDifference = d1.getTime() - d2.getTime();
+            const millisecondsPerDay = 1000 * 60 * 60 * 24;
+            const daysDifference = Math.round(timeDifference / millisecondsPerDay) + 1;
+            setBookingData((prev) => ({
+                ...prev,
+                duration: daysDifference
+            }))
+        }
+    }, [bookingData.sessionStartDate, bookingData.sessionEndDate])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -74,23 +79,19 @@ const CreateBooking = () => {
         if (service) {
             setSelectedService(service);
             setBookingData((prev) => ({ ...prev, 'sessionType': selectedId }))
-            setTotalCharge((prev) => ({
-                ...prev,
-                packageCharge: service.price
-            }))
         }
     };
 
     const handleBooking = async (e) => {
         e.preventDefault();
-        const finalBookingData = {
-            ...bookingData,
-            totalCharge
-        }
         try {
-            const response = await createBooking(finalBookingData, portfolioId);
+            const response = await createBooking(bookingData, portfolioId);
             console.log(response.message);
             toast.success(response.message);
+            console.log("GHelllo")
+            if (response.bookingId) {
+                navigate(`/view-booking/${response.bookingId}`, { replace: true })
+            }
 
         } catch (err) {
             console.error("Save error:", err);
@@ -98,8 +99,6 @@ const CreateBooking = () => {
                 position: 'top-center',
             });
         }
-
-
     }
 
     return (
@@ -196,13 +195,17 @@ const CreateBooking = () => {
                                         <label className='browse-input-label'>
                                             City
                                         </label>
-                                        <input name='venueCity' className='input-field' placeholder='City' />
+                                        <input name='city' className='input-field' placeholder='City'
+                                            value={bookingData.city}
+                                            onChange={handleChange} />
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label'>
                                             State/Province
                                         </label>
-                                        <input name='venueProvince' className='input-field' placeholder='State/Province' />
+                                        <input name='province' className='input-field' placeholder='State/Province'
+                                            value={bookingData.province}
+                                            onChange={handleChange} />
                                     </div>
                                 </div>
                             </div>
@@ -289,17 +292,14 @@ const CreateBooking = () => {
                                 <h2 className='container-heading summary'>Booking Summary</h2>
                                 <p>Session Type <span>{selectedService?.title}</span></p>
                                 <p>Standard Fee <span>${photographerPortfolio.standardCharge}</span></p>
-                                <p>Package Fee <span>${selectedService?.price}</span></p>
-                                <p>Platform Fee <span>{PLATFORMCHARGE}</span></p>
-                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price + 100}</span></p>
+                                <p>Package Fee <span>${selectedService?.price * bookingData.duration}</span></p>
+                                <p className='total-fee'>Total <span>${photographerPortfolio.standardCharge + selectedService?.price * bookingData.duration}</span></p>
                             </div>
                             <div className='container booking-page summary included'>
                                 <h2 className='container-heading summary'>What's Included</h2>
-                                <p><TiTick className='included-icon' /> Professional photography</p>
-                                <p><TiTick className='included-icon' />High-resolution images</p>
-                                <p><TiTick className='included-icon' />Online gallery</p>
-                                <p><TiTick className='included-icon' />Basic editing included</p>
-                                <p><TiTick className='included-icon' />48-hour preview</p>
+                                {selectedService.features.map((feature, index) => (
+                                    <p key={index} ><IoCheckmark className='included-icon' /> {feature}</p>
+                                ))}
                             </div>
                             <button type="button" className='booking-button' onClick={handleBooking}><FaCalendarCheck />Book Now</button>
                             <button type="button" className='booking-message'><FaMessage className='message-icon' />Send Message</button>

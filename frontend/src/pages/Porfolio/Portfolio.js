@@ -587,7 +587,6 @@ const Portfolio = () => {
                                         <label className='portfolio-label'>{service.description}</label>
                                         <span className='portfolio-label '>Includes:</span>
                                         <ul className='services-label'>
-                                            <li>{service.duration} hours of session</li>
                                             {service.features?.map((feature, index) => (
                                                 <li key={index}>{feature}</li>
                                             ))}

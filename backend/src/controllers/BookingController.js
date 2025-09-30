@@ -110,3 +110,40 @@ export const getBookingInformation = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+export const getBookingInformationPhotographer = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const booking = await Booking.findById(bookingId)
+            .populate('user', 'picture')
+            .lean();
+        if (!booking) return res.status(404).json({ message: "Booking not found" })
+
+        return res.status(200).json({
+            message: "Photographer Portfolio retrieved Successfully", bookingInformation: booking
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+export const changeBookingStatus = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const { status } = req.body;
+        if (!status || status === undefined) return res.status(400).json({ message: "Status required" })
+        const booking = await Booking.findById(bookingId);
+        if (!booking) return res.status(404).json({ message: "Booking not found" })
+
+        booking.bookingStatus.status = status;
+        await booking.save();
+        return res.status(200).json({
+            message: "Book status updated"
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+

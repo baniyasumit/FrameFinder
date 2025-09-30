@@ -32,3 +32,24 @@ export const getBookingInformation = async (bookingId) => {
         throw error.response?.data.message || error.message;
     }
 }
+
+
+export const getBookingInformationPhotographer = async (bookingId) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/get-booking-photographer/${bookingId}`);
+        return response.data?.bookingInformation
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const changeBookingStatus = async (bookingId, status) => {
+    try {
+        const response = await ApiInstance.patch(`/api/booking/change-booking-status/${bookingId}`, { 'status': status });
+        return response.data
+    } catch (error) {
+        console.error("Update error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

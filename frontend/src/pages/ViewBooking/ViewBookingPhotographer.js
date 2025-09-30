@@ -1,36 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
-import { changeBookingStatus, getBookingInformation } from '../../services/BookingService';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Rating } from 'react-simple-star-rating';
-import { GoStar, GoStarFill } from 'react-icons/go';
-import { FaCalendar, FaClock, FaCreditCard, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
+import { changeBookingStatus, getBookingInformationPhotographer } from '../../services/BookingService';
+import { useParams } from 'react-router-dom';
+import { FaCalendar, FaClock, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
 import { IoCall, IoCheckmark } from "react-icons/io5";
-import { AiOutlineProfile } from "react-icons/ai";
+import { RxCross2 } from "react-icons/rx";
 import { toast } from 'sonner';
-import { RxCross2 } from 'react-icons/rx';
 
-const ViewBooking = () => {
-    const [photographerPortfolio, setPhotographerPortfolio] = useState();
+const ViewBookingPhotographer = () => {
     const [booking, setBooking] = useState();
     const { bookingId } = useParams();
-    const navigate = useNavigate();
 
     useEffect(() => {
         const loadBookingInformation = async () => {
             try {
-                const bookingInformation = await getBookingInformation(bookingId);
-                console.log(bookingInformation)
-                setPhotographerPortfolio(bookingInformation?.photographerPortfolio);
-                setBooking(bookingInformation?.booking)
+                const bookingInformation = await getBookingInformationPhotographer(bookingId);
+
+                setBooking(bookingInformation)
             } catch (error) {
                 console.error("Load Booking Error: ", error)
-                toast.error(error)
-                navigate('/')
             }
         };
         loadBookingInformation();
-    }, [setPhotographerPortfolio, bookingId, navigate]);
+    }, [bookingId]);
 
     const handleStatus = async (status) => {
         try {
@@ -42,53 +34,41 @@ const ViewBooking = () => {
         } catch (err) {
             console.error("Status change Error", err)
         } finally {
-            const bookingInformation = await getBookingInformation(bookingId);
+            const bookingInformation = await getBookingInformationPhotographer(bookingId);
             setBooking(bookingInformation)
         }
     }
 
+
+
     return (
         <>
-            {!photographerPortfolio && !booking ? (
-                <p>Loading portfolio...</p>
+            {!booking ? (
+                <p>Loading booking information...</p>
             ) : (
                 <main className='main booking-page'>
                     <section className='photographer-information-container booking-page'>
                         <div className='photographer-information booking-page'>
                             <div className='photographer-profile-information'>
                                 <div className='profile-picture-container '>
-                                    <img src={photographerPortfolio?.user.picture} alt="Profile" />
+                                    <img src={booking?.user.picture} alt="Profile" />
                                 </div>
                                 <div className='profile-information booking-page' >
                                     <div className='service-price-container booking-page'>
                                         <h1 className='service-name booking-page'>
                                             {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
                                         </h1>
-                                        <p>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
+
                                     </div>
                                     <div className='rating-contact-container'>
                                         <div className='rating-stats booking-page'>
-                                            <p className='full-name booking-page'>with {photographerPortfolio?.user.firstname} {photographerPortfolio?.user.lastname} </p>
-                                            <div className='rating-stat-container'>
-                                                <Rating
-                                                    className='rating-stat'
-                                                    initialValue={3}
-                                                    size={20}
-                                                    allowFraction
-                                                    emptyIcon={<GoStar color="rgba(12, 12, 12, 0.5)" size={20} />}
-                                                    fillIcon={<GoStarFill color="#FACC15" size={20} />}
-                                                    readonly
-                                                />
-                                                <span>{3} (127 reviews)</span>
-                                            </div>
+                                            <p className='full-name booking-page'>with {booking?.firstName} {booking?.lastName} </p>
                                         </div>
                                         <div className='contact-button-container'>
                                             {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
                                                 <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+
                                             }
-
-                                            <Link className='booking-message' to={`/view-portfolio/${photographerPortfolio._id}`}><AiOutlineProfile />View Profile</Link>
-
                                         </div>
                                     </div>
 
@@ -181,45 +161,52 @@ const ViewBooking = () => {
                                 })}</span></p>
                             </div>
                             <div className='container booking-page summary'>
-                                <h2 className='container-heading summary'>Payment Status</h2>
-                                <p>Payment <span className={`payment-status summary ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
-                                {booking?.payment.status === 'partial' &&
-                                    <p>Paid <span>${booking.payment.paid}</span></p>
-                                }
-                                <p className='total-fee'>Remaining <span >${booking.payment.remaining}</span></p>
-
-
-                            </div>
-                            <div className='container booking-page summary'>
-                                <h2 className='container-heading summary'>Payment Summary</h2>
+                                <h2 className='container-heading summary'>Pricing Summary</h2>
                                 <p>Standard Fee <span>${booking.totalCharge.standardCharge}</span></p>
                                 <p>Package Fee <span>${booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
                                 <p className='total-fee'>Total <span>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
-                                {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
-                                    <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
-                                }
-
 
                             </div>
+                            {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
+                                <>
+                                    <div className='container booking-page summary'>
+                                        <h2 className='container-heading summary'>Payment Status</h2>
+                                        <p>Payment <span className={`payment-status summary ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
+                                        {booking?.payment.status === 'partial' &&
+                                            <p>Paid <span>${booking.payment.paid}</span></p>
+                                        }
+                                        <p className='total-fee'>Remaining <span >${booking.payment.remaining}</span></p>
+
+
+                                    </div>
+                                </>
+                            }
+                            {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
+                                <>
+                                    <div className='container booking-page summary'>
+                                        <h2 className='container-heading summary contact'>Contact Client</h2>
+
+                                        <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                        <button type="button" className='booking-message' onClick={() => window.open(`tel:${booking?.phoneNumber}`, "_self")}><IoCall />Call</button>
+
+                                    </div>
+                                </>
+                            }
                             {(booking?.bookingStatus.status === 'declined' || booking?.bookingStatus.status === 'cancelled') ? (<></>) : (
                                 <div className='container booking-page summary'>
-                                    <h2 className='container-heading summary contact'>Contact Photographer</h2>
-                                    {booking?.bookingStatus.status === 'accepted' && <>
-                                        <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
-
-                                        <button type="button" className='booking-message' onClick={() => window.open(`tel:${photographerPortfolio?.user.phoneNumber}`, "_self")}><IoCall />Call</button>
-                                    </>
-                                    }
-                                    {(booking?.bookingStatus.status === 'accepted' || booking?.bookingStatus.status === 'pending') &&
+                                    <h2 className='container-heading summary contact'>Respond to Booking</h2>
+                                    {booking?.bookingStatus.status === 'pending' &&
                                         <>
-                                            <button type="button" className='booking-button decline' onClick={() => handleStatus('cancelled')}><RxCross2 />Cancel Booking</button>
-                                            <button type="button" className='booking-message'><FaCalendar />Reschedule</button>
+                                            <button type="button" className='booking-button accept' onClick={() => handleStatus('accepted')}><IoCheckmark className='message-icon' />Accept Booking</button>
+                                            <button type="button" className='booking-button decline' onClick={() => handleStatus('declined')}><RxCross2 />Decline Booking</button>
                                         </>
                                     }
+                                    {booking?.bookingStatus.status === 'accepted' &&
+                                        <button type="button" className='booking-button decline' onClick={() => handleStatus('cancelled')}><RxCross2 />Cancel Booking</button>
+                                    }
+                                </div>)
 
-
-                                </div>
-                            )}
+                            }
                         </div>
                     </section>
                 </main >
@@ -228,4 +215,4 @@ const ViewBooking = () => {
     )
 }
 
-export default ViewBooking
+export default ViewBookingPhotographer

@@ -69,7 +69,7 @@
     color: #166556;
 }
 
-.booking-status.declined,.booking-status.canceled{
+.booking-status.declined,.booking-status.cancelled{
     background-color: #FEE2E2;
     color: #991B1B;
 }
@@ -204,4 +204,12 @@
 .container-heading.summary.contact {
     margin-bottom: 1rem;
 
+}
+
+.booking-button.accept{
+    background-color: #16A34A;
+}
+
+.booking-button.decline{
+    background-color: #DC2626;
 }

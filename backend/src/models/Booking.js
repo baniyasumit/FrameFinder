@@ -32,7 +32,7 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    venueName: {
+    state: {
         type: String,
         required: true
     },
@@ -102,7 +102,7 @@ const bookingSchema = new mongoose.Schema({
     bookingStatus: {
         status: {
             type: String,
-            enum: ['pending', 'accepted', 'declined', 'cancelled'],
+            enum: ['pending', 'accepted', 'declined', 'cancelled', 'completed'],
             default: 'pending',
         },
         date: {

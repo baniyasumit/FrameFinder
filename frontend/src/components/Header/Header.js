@@ -80,6 +80,7 @@ const Header = () => {
                 {profileMenuOpen && (
                   <div className='profile-dropdown' >
                     <Link className='view-profile-navigate' to="/profile">View Profile</Link>
+                    <Link className='view-profile-navigate' to="/bookings">View Bookings</Link>
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}

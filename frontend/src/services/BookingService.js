@@ -22,6 +22,40 @@ export const checkAvailability = async (bookingForm) => {
     }
 }
 
+export const getTotalBookings = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/get-total-bookings?${query || ''}`)
+
+        return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getBookings = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/get-bookings?${query || ''}`)
+
+        return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getBookingsPhotographer = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/photographer/get-bookings?${query || ''}`)
+
+        return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+
 export const getBookingInformation = async (bookingId) => {
     try {
         const response = await ApiInstance.get(`/api/booking/get-booking/${bookingId}`);
@@ -36,7 +70,7 @@ export const getBookingInformation = async (bookingId) => {
 
 export const getBookingInformationPhotographer = async (bookingId) => {
     try {
-        const response = await ApiInstance.get(`/api/booking/get-booking-photographer/${bookingId}`);
+        const response = await ApiInstance.get(`/api/booking/photographer/get-booking/${bookingId}`);
         return response.data?.bookingInformation
     } catch (error) {
         console.error("Save error:", error);

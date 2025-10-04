@@ -26,6 +26,8 @@ import Browse from './pages/Browse/Browse';
 import CreateBooking from './pages/CreateBooking/CreateBooking.js';
 import ViewBooking from './pages/ViewBooking/ViewBooking.js';
 import ViewBookingPhotographer from './pages/ViewBooking/ViewBookingPhotographer.js';
+import ViewBookings from './pages/ViewBookings/ViewBookings.js';
+import ViewBookingsPhotographer from './pages/ViewBookings/ViewBookingsPhotographer.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -70,13 +72,15 @@ const App = () => {
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>
           <Route element={<PhotographerLayout />}>
             <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/portfolio' element={<Portfolio />} />
-            <Route path='/view-booking-photographer/:bookingId' element={<ViewBookingPhotographer />} />
+            <Route path='/photographer/portfolio' element={<Portfolio />} />
+            <Route path='/photographer/bookings' element={<ViewBookingsPhotographer />} />
+            <Route path='/photographer/view-booking/:bookingId' element={<ViewBookingPhotographer />} />
           </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client']} />}>
           <Route element={<DefaultLayout />}>
             <Route path='/create-booking/:portfolioId' element={<CreateBooking />} />
+            <Route path='/bookings' element={<ViewBookings />} />
             <Route path='/view-booking/:bookingId' element={<ViewBooking />} />
           </Route>
         </Route>

@@ -85,6 +85,156 @@ export const checkAvailability = async (req, res) => {
     }
 }
 
+export const getTotalBookings = async (req, res) => {
+    try {
+        const { bookingStatus = '' } = req.query;
+
+        const limit = 20;
+
+        let filter = {};
+
+        if (bookingStatus && bookingStatus !== 'declined') {
+            filter["bookingStatus.status"] = bookingStatus;
+        } else if (bookingStatus === 'declined') {
+            const status = ["declined", "cancelled"];
+            filter["bookingStatus.status"] = { $in: status };
+        } else if (bookingStatus === 'upcoming') {
+            const today = new Date();
+            filter = {
+                "bookingStatus.status": "accepted",
+                "sessionStartDate": { $gte: today },
+            };
+        }
+        const total = await Booking.countDocuments(filter);
+        return res.status(200).json({
+            message: "Booking List retrived successfully",
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+export const getBookings = async (req, res) => {
+    try {
+        const { pageNum = 1, bookingStatus = '' } = req.query;
+
+        const page = parseInt(pageNum);
+        const limit = 20;
+        const skip = (page - 1) * limit;
+
+        let filter = {};
+
+        if (bookingStatus && bookingStatus !== 'declined') {
+            console.log("Booking Status", bookingStatus);
+            filter["bookingStatus.status"] = bookingStatus;
+        } else if (bookingStatus === 'declined') {
+            const status = ["declined", "cancelled"];
+            filter["bookingStatus.status"] = { $in: status };
+        } else if (bookingStatus === 'upcoming') {
+            const today = new Date();
+            filter = {
+                "bookingStatus.status": "accepted",
+                "sessionStartDate": { $gte: today },
+            };
+        }
+
+        let query = Booking.find(filter).populate({
+            path: "portfolio",
+            select: "user",
+            populate: {
+                path: "user",
+                model: "User",
+                select: "firstname lastname picture"
+            }
+        }).skip(skip).limit(limit);
+
+        if (bookingStatus === 'upcoming') {
+            query = query.sort({ sessionStartDate: 1 });
+        }
+        else {
+            query = query.sort({ createdAt: -1 });
+        }
+
+        const bookings = await query;
+
+
+        const total = await Booking.countDocuments(filter);
+        return res.status(200).json({
+            message: "Booking List retrived successfully",
+            bookings,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalBookings: total,
+            },
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+export const getBookingsPhotographer = async (req, res) => {
+    try {
+        const { pageNum = 1, bookingStatus = '' } = req.query;
+
+        const page = parseInt(pageNum);
+        const limit = 20;
+        const skip = (page - 1) * limit;
+
+        let filter = {};
+
+        if (bookingStatus && bookingStatus !== 'declined') {
+            console.log("Booking Status", bookingStatus);
+            filter["bookingStatus.status"] = bookingStatus;
+        } else if (bookingStatus === 'declined') {
+            const status = ["declined", "cancelled"];
+            filter["bookingStatus.status"] = { $in: status };
+        } else if (bookingStatus === 'upcoming') {
+            const today = new Date();
+            filter = {
+                "bookingStatus.status": "accepted",
+                "sessionStartDate": { $gte: today },
+            };
+        }
+
+        let query = Booking.find(filter).populate({
+            path: "user",
+            select: "picture",
+        }).skip(skip).limit(limit);
+
+        if (bookingStatus === 'upcoming') {
+            query = query.sort({ sessionStartDate: 1 });
+        }
+        else {
+            query = query.sort({ createdAt: -1 });
+        }
+
+        const bookings = await query;
+
+
+        const total = await Booking.countDocuments(filter);
+        return res.status(200).json({
+            message: "Booking List retrived successfully",
+            bookings,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalBookings: total,
+            },
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+
+
+
+
 export const getBookingInformation = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
@@ -146,4 +296,5 @@ export const changeBookingStatus = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
 

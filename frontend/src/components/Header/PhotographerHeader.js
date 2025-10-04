@@ -52,8 +52,8 @@ const PhotographerHeader = () => {
                 </Link>
                 <nav className={`nav ${menuOpen ? "show" : ""}`} >
                     <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Dashboard</NavLink>
-                    <NavLink to="/portfolio" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Portfolio</NavLink>
-                    <NavLink to="/bookings" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Bookings</NavLink>
+                    <NavLink to="/photographer/portfolio" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Portfolio</NavLink>
+                    <NavLink to="/photographer/bookings" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Bookings</NavLink>
                     <NavLink to="/messages" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"} >Messages</NavLink>
                 </nav>
                 <div className='nav-menu-container'>

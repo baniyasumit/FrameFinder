@@ -150,7 +150,7 @@
   flex-direction: column;
   min-width: 120px;
   overflow: hidden;
-  z-index: -1;
+  z-index: 1;
 }
 
 .profile-dropdown a,

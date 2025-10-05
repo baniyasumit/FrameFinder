@@ -210,7 +210,8 @@ const ViewBookingsPhotographer = () => {
                 </section>
 
             </div >
-        </main >)
+        </main >
+    )
 }
 
 export default ViewBookingsPhotographer

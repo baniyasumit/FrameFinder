@@ -9,6 +9,8 @@ import { IoCall, IoCheckmark } from "react-icons/io5";
 import { AiOutlineProfile } from "react-icons/ai";
 import { toast } from 'sonner';
 import { RxCross2 } from 'react-icons/rx';
+import ReviewModal from '../../components/ReviewModal/ReviewModal';
+import { checkReviewStatus } from './../../services/ReviewService';
 
 const ViewBooking = () => {
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
@@ -16,11 +18,25 @@ const ViewBooking = () => {
     const { bookingId } = useParams();
     const navigate = useNavigate();
 
+    const [showReviewModal, setShowReviewModal] = useState(false);
+
+    useEffect(() => {
+        const reviewStatusCheck = async () => {
+            try {
+                const reviewStatus = await checkReviewStatus(bookingId);
+                console.log(reviewStatus)
+                setShowReviewModal(true)
+            } catch (error) {
+                console.error("Review Status check error: ", error)
+            }
+        };
+        reviewStatusCheck();
+    }, [bookingId, setShowReviewModal])
+
     useEffect(() => {
         const loadBookingInformation = async () => {
             try {
                 const bookingInformation = await getBookingInformation(bookingId);
-                console.log(bookingInformation)
                 setPhotographerPortfolio(bookingInformation?.photographerPortfolio);
                 setBooking(bookingInformation?.booking)
             } catch (error) {
@@ -49,6 +65,7 @@ const ViewBooking = () => {
 
     return (
         <>
+            {showReviewModal && <ReviewModal setShowReviewModal={setShowReviewModal} bookingId={bookingId} />}
             {!photographerPortfolio && !booking ? (
                 <p>Loading portfolio...</p>
             ) : (

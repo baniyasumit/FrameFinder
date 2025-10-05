@@ -2,7 +2,6 @@ import { ApiInstance } from "./ApiInstance";
 const TOKEN = process.env.REACT_APP_MAP_TOKEN
 export const savePortfolio = async (formData) => {
     try {
-        console.log(formData)
         const response = await ApiInstance.patch("/api/portfolio/save-portfolio", formData);
         return response.data
     } catch (error) {

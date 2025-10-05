@@ -15,7 +15,6 @@ const ViewBookingPhotographer = () => {
         const loadBookingInformation = async () => {
             try {
                 const bookingInformation = await getBookingInformationPhotographer(bookingId);
-
                 setBooking(bookingInformation)
             } catch (error) {
                 console.error("Load Booking Error: ", error)

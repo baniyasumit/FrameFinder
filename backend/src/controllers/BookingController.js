@@ -9,7 +9,7 @@ export const createBooking = async (req, res) => {
         const { sessionType, sessionStartTime, sessionStartDate, sessionEndDate,
             venueName,
             city,
-            province,
+            state,
             firstName,
             lastName,
             email,
@@ -47,7 +47,7 @@ export const createBooking = async (req, res) => {
             sessionEndDate,
             venueName,
             city,
-            province,
+            state,
             firstName,
             lastName,
             email,
@@ -160,6 +160,7 @@ export const getBookings = async (req, res) => {
         const bookings = await query;
 
 
+
         const total = await Booking.countDocuments(filter);
         return res.status(200).json({
             message: "Booking List retrived successfully",
@@ -232,16 +233,13 @@ export const getBookingsPhotographer = async (req, res) => {
 }
 
 
-
-
-
 export const getBookingInformation = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
         const booking = await Booking.findById(bookingId);
         if (!booking) return res.status(404).json({ message: "Booking not found" })
 
-        const photographerPortfolio = await Portfolio.findById(booking.portfolio).select('user').populate({
+        const photographerPortfolio = await Portfolio.findById(booking.portfolio).select('user ratingStats').populate({
             path: 'user',
             select: '-password -_id -__v -pictureSecretUrl -resetPasswordToken -resetPasswordExpires -role'
         });
@@ -286,8 +284,13 @@ export const changeBookingStatus = async (req, res) => {
         const booking = await Booking.findById(bookingId);
         if (!booking) return res.status(404).json({ message: "Booking not found" })
 
-        booking.bookingStatus.status = status;
-        await booking.save();
+        const updatedBooking = await Booking.findByIdAndUpdate(
+            bookingId,
+            { 'bookingStatus.status': status },
+            { new: true }
+        );
+
+        if (!updatedBooking) return res.status(404).json({ message: "Booking not found" });
         return res.status(200).json({
             message: "Book status updated"
         });

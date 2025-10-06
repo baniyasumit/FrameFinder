@@ -57,7 +57,6 @@ const bookingSchema = new mongoose.Schema({
     },
     eventDescription: {
         type: String,
-        required: true
     },
     specialRequest: {
         type: String,

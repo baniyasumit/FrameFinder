@@ -29,7 +29,7 @@ export const Confirmation = ({ title, message, extraInfo, onConfirm, setShowConf
                 <span className="confirmation-message">{message}</span>
                 <span className="confirmation-extra">{extraInfo}</span>
                 <div className='buttons-container'>
-                    <button type="submit" className="confirmation-button submit">Proceed</button>
+                    <button type="button" className="confirmation-button submit" onClick={onConfirm}>Proceed</button>
                     <button className="confirmation-button cancel" onClick={() => setShowConfirmation(false)}>Cancel</button>
                 </div>
             </form>

@@ -1,5 +1,6 @@
 import Portfolio from "../models/Portfolio.js";
 import PortfolioPicture from "../models/PortfolioPicture.js";
+import Review from "../models/Review.js";
 import Service from "../models/Service.js";
 import User from "../models/User.js";
 import cloudinary from './../config/cloudinaryConfig.js';
@@ -128,6 +129,7 @@ export const getPortfolio = async (req, res) => {
         const services = await Service.find({ portfolio: portfolio._id })
             .select('-createdAt -modifiedAt -portfolio');
         const pictures = await PortfolioPicture.find({ portfolio: portfolio._id }).select('url').sort('-createdAt').limit(9);
+
         const finalPortfolio = {
             ...portfolio.toObject(),
             services,
@@ -216,10 +218,55 @@ export const getPhotographerPortfolio = async (req, res) => {
         const services = await Service.find({ portfolio: portfolioId })
             .select('-createdAt -modifiedAt -portfolio -__v');
         const pictures = await PortfolioPicture.find({ portfolio: portfolioId }).select('-_id url').sort('-createdAt').limit(9);
+
+        const reviews = await Review.aggregate([
+            // 1️⃣ Join Booking data
+            {
+                $lookup: {
+                    from: 'bookings',
+                    localField: 'booking',
+                    foreignField: '_id',
+                    as: 'booking'
+                }
+            },
+            // 2️⃣ Flatten the booking array
+            { $unwind: '$booking' },
+            // 3️⃣ Match only reviews for this portfolio
+            {
+                $match: {
+                    'booking.portfolio': portfolio._id
+                }
+            },
+            // 4️⃣ Lookup user info from bookings
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'booking.user',
+                    foreignField: '_id',
+                    as: 'userInfo'
+                }
+            },
+            { $unwind: '$userInfo' },
+            // 5️⃣ Project only the fields we want
+            {
+                $project: {
+                    rating: 1,
+                    description: 1,
+                    createdAt: 1,
+                    user: {
+                        firstname: '$userInfo.firstname',
+                        lastname: '$userInfo.lastname',
+                        picture: '$userInfo.picture'
+                    }
+                }
+            }
+        ]);
+
         const finalPortfolio = {
             ...portfolio.toObject(),
             services,
-            pictures
+            pictures,
+            reviews
         };
         return res.status(200).json({ message: "Photographer Portfolio retrieved Successfully", portfolio: finalPortfolio });
     } catch (error) {
@@ -228,7 +275,7 @@ export const getPhotographerPortfolio = async (req, res) => {
     }
 }
 
-export const browsePortfolio = async (req, res) => {
+export const getPortfolios = async (req, res) => {
     try {
         const { long, lat, photographerType, minBudget = 0, maxBudget, sortBy = 'rating', sortByAsc = false } = req.query;
         const min = Number(minBudget) || 0;
@@ -350,7 +397,8 @@ export const browsePortfolio = async (req, res) => {
                     'user.picture': 1,
                     picture: 1,
                     distance: 1,
-                    location: 1
+                    location: 1,
+                    ratingStats: 1,
                 }
             },
             // Sort

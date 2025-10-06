@@ -52,9 +52,11 @@ const ViewPortfolio = () => {
         const loadPortfolio = async () => {
             try {
                 const portfolio = await getPhotographerPortfolio(portfolioId);
+                console.log(portfolio)
                 setPhotographerPortfolio(portfolio);
                 setGalleryImages(portfolio.pictures);
                 setFullImages(portfolio.pictures);
+                setRating(portfolio.ratingStats.averageRating)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
 
@@ -105,7 +107,7 @@ const ViewPortfolio = () => {
                                                 fillIcon={<GoStarFill color="#FACC15" size={20} />}
                                                 readonly
                                             />
-                                            <span>{rating} (127 reviews)</span>
+                                            <span>{rating} ({photographerPortfolio.ratingStats.totalReviews} reviews)</span>
                                         </div>
                                         <p className='specialization'><span>Specializes in:</span> <strong>{photographerPortfolio.specialization} Photography</strong> </p>
                                     </div>
@@ -235,66 +237,28 @@ const ViewPortfolio = () => {
                         <div className='container reviews'>
                             <h2 className='view-portfolio-heading reviews'>Client Reviews</h2>
                             <div className='reviews-container'>
-                                <div className='review-container'>
-                                    <div className='photographer-profile-information review'>
-                                        <div className='profile-picture-container review'>
-                                            <img src={photographerPortfolio.user.picture} alt="Profile" />
+                                {photographerPortfolio.reviews.map((review, index) => (
+                                    <div className='review-container'>
+                                        <div className='photographer-profile-information review'>
+                                            <div className='profile-picture-container review'>
+                                                <img src={photographerPortfolio.user.picture} alt="Profile" />
+                                            </div>
+                                            <div className='profile-information review' >
+                                                <h3 className='full-name review'>{review.user.firstname} {review.user.lastname}</h3>
+                                                <Rating
+                                                    className='rating-stat review'
+                                                    initialValue={review.rating}
+                                                    size={20}
+                                                    allowFraction={true}
+                                                    emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
+                                                    fillIcon={<GoStarFill color="#FACC15" size={20} />}
+                                                    readonly
+                                                />
+                                            </div>
                                         </div>
-                                        <div className='profile-information review' >
-                                            <h3 className='full-name review'>{photographerPortfolio.user.firstname} {photographerPortfolio.user.lastname}</h3>
-                                            <Rating
-                                                className='rating-stat review'
-                                                initialValue={rating}
-                                                size={20}
-                                                allowFraction={true}
-                                                emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
-                                                fillIcon={<GoStarFill color="#FACC15" size={20} />}
-                                                readonly
-                                            />
-                                        </div>
-                                    </div>
-                                    <p>"Sarah captured our wedding day perfectly! Her attention to detail and ability to capture candid moments was incredible. We couldn't be happier with our photos!"</p>
-                                </div>
-                                <div className='review-container'>
-                                    <div className='photographer-profile-information review'>
-                                        <div className='profile-picture-container review'>
-                                            <img src={photographerPortfolio.user.picture} alt="Profile" />
-                                        </div>
-                                        <div className='profile-information review' >
-                                            <h3 className='full-name review'>{photographerPortfolio.user.firstname} {photographerPortfolio.user.lastname}</h3>
-                                            <Rating
-                                                className='rating-stat review'
-                                                onClick={setRating}
-                                                initialValue={rating}
-                                                size={20}
-                                                allowFraction={true}
-                                                emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
-                                                fillIcon={<GoStarFill color="#FACC15" size={20} />}
-                                            />
-                                        </div>
-                                    </div>
-                                    <p>"Sarah captured our wedding day perfectly! Her attention to detail and ability to capture candid moments was incredible. We couldn't be happier with our photos!"</p>
-                                </div>
-                                <div className='review-container'>
-                                    <div className='photographer-profile-information review'>
-                                        <div className='profile-picture-container review'>
-                                            <img src={photographerPortfolio.user.picture} alt="Profile" />
-                                        </div>
-                                        <div className='profile-information review' >
-                                            <h3 className='full-name review'>{photographerPortfolio.user.firstname} {photographerPortfolio.user.lastname}</h3>
-                                            <Rating
-                                                className='rating-stat review'
-                                                onClick={setRating}
-                                                initialValue={rating}
-                                                size={20}
-                                                allowFraction={true}
-                                                emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
-                                                fillIcon={<GoStarFill color="#FACC15" size={20} />}
-                                            />
-                                        </div>
-                                    </div>
-                                    <p>"Sarah captured our wedding day perfectly! Her attention to detail and ability to capture candid moments was incredible. We couldn't be happier with our photos!"</p>
-                                </div>
+                                        <p>"{review.description}"</p>
+                                    </div>))}
+
 
                             </div>
                         </div>

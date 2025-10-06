@@ -74,6 +74,11 @@
     color: #991B1B;
 }
 
+.booking-status.completed{
+    background-color: #F3F4F6;
+    color: black;
+}
+
 .service-price-container.booking-page > p{
     font-size: 1.8rem;
     font-weight: 600;

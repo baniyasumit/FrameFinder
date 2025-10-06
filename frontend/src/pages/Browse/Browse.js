@@ -311,14 +311,14 @@ const Browse = () => {
                                             <div className='photographer-rating-stats'>
                                                 <Rating
                                                     className='photographer-rating-stat'
-                                                    initialValue={4.9}
+                                                    initialValue={portfolio.ratingStats.averageRating}
                                                     size={16}
                                                     allowFraction
                                                     emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
                                                     fillIcon={<GoStarFill color="#FACC15" size={15} />}
                                                     readonly
                                                 />
-                                                <span>{4.9} (127 reviews)</span>
+                                                <span>{portfolio.ratingStats.averageRating} ({portfolio.ratingStats.totalReviews} reviews)</span>
                                             </div>
                                         </div>
                                     </div>

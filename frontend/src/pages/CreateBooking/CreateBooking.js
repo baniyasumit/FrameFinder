@@ -21,7 +21,7 @@ const CreateBooking = () => {
         'sessionEndDate': '',
         'venueName': '',
         'city': '',
-        'province': '',
+        'state': '',
         'firstName': '',
         'lastName': '',
         'email': '',
@@ -203,8 +203,8 @@ const CreateBooking = () => {
                                         <label className='browse-input-label'>
                                             State/Province
                                         </label>
-                                        <input name='province' className='input-field' placeholder='State/Province'
-                                            value={bookingData.province}
+                                        <input name='state' className='input-field' placeholder='State/Province'
+                                            value={bookingData.state}
                                             onChange={handleChange} />
                                     </div>
                                 </div>

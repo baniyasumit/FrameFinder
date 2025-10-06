@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { RxCross2 } from 'react-icons/rx';
 import ReviewModal from '../../components/ReviewModal/ReviewModal';
 import { checkReviewStatus } from './../../services/ReviewService';
+import { Confirmation } from '../../components/Confirmation/Confirmation';
 
 const ViewBooking = () => {
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
@@ -19,6 +20,7 @@ const ViewBooking = () => {
     const navigate = useNavigate();
 
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [showCancelConfirmation, setShowCancelConfirmation] = useState(false)
 
     useEffect(() => {
         const reviewStatusCheck = async () => {
@@ -53,20 +55,27 @@ const ViewBooking = () => {
             await changeBookingStatus(bookingId, status)
             if (status === 'accepted') { toast.success('Booking Confirmed') }
             else if (status === 'declined') { toast.success('Booking Declined') }
-            else if (status === 'cancelled') { toast.success('Booking Cancelled') }
+            else if (status === 'cancelled') {
+                toast.success('Booking Cancelled')
+                setShowCancelConfirmation(false)
+            }
 
         } catch (err) {
             console.error("Status change Error", err)
         } finally {
             const bookingInformation = await getBookingInformation(bookingId);
-            setBooking(bookingInformation)
+            setBooking(bookingInformation?.booking)
         }
     }
 
     return (
         <>
             {showReviewModal && <ReviewModal setShowReviewModal={setShowReviewModal} bookingId={bookingId} />}
-            {!photographerPortfolio && !booking ? (
+            {showCancelConfirmation && <Confirmation title="Are you sure you want to cancel the booking?"
+                message="If you cancel the booking. You will be be charged 5% of total amount and be refunded."
+                setShowConfirmation={setShowCancelConfirmation}
+                onConfirm={() => handleStatus('cancelled')} />}
+            {(!photographerPortfolio || !booking) ? (
                 <p>Loading portfolio...</p>
             ) : (
                 <main className='main booking-page'>
@@ -89,14 +98,14 @@ const ViewBooking = () => {
                                             <div className='rating-stat-container'>
                                                 <Rating
                                                     className='rating-stat'
-                                                    initialValue={3}
+                                                    initialValue={photographerPortfolio.ratingStats.averageRating}
                                                     size={20}
                                                     allowFraction
                                                     emptyIcon={<GoStar color="rgba(12, 12, 12, 0.5)" size={20} />}
                                                     fillIcon={<GoStarFill color="#FACC15" size={20} />}
                                                     readonly
                                                 />
-                                                <span>{3} (127 reviews)</span>
+                                                <span>{photographerPortfolio.ratingStats.averageRating} ({photographerPortfolio.ratingStats.totalReviews} reviews)</span>
                                             </div>
                                         </div>
                                         <div className='contact-button-container'>
@@ -229,7 +238,7 @@ const ViewBooking = () => {
                                     }
                                     {(booking?.bookingStatus.status === 'accepted' || booking?.bookingStatus.status === 'pending') &&
                                         <>
-                                            <button type="button" className='booking-button decline' onClick={() => handleStatus('cancelled')}><RxCross2 />Cancel Booking</button>
+                                            <button type="button" className='booking-button decline' onClick={() => setShowCancelConfirmation(true)}><RxCross2 />Cancel Booking</button>
                                             <button type="button" className='booking-message'><FaCalendar />Reschedule</button>
                                         </>
                                     }

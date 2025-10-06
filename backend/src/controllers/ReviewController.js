@@ -1,5 +1,7 @@
 import Booking from "../models/Booking.js";
+import Portfolio from "../models/Portfolio.js";
 import Review from "../models/Review.js";
+import mongoose from 'mongoose';
 
 export const checkReviewStatus = async (req, res) => {
     try {
@@ -43,6 +45,51 @@ export const createReview = async (req, res) => {
         });
 
         await review.save();
+
+        const booking = await Booking.findById(bookingId).select('portfolio');
+        const portfolioId = booking.portfolio;
+        console.log('Portfolio ID:', portfolioId);
+
+        const result = await Review.aggregate([
+            // 1️⃣ Join Booking data
+            {
+                $lookup: {
+                    from: 'bookings',
+                    localField: 'booking',
+                    foreignField: '_id',
+                    as: 'booking'
+                }
+            },
+            // 2️⃣ Flatten the booking array
+            { $unwind: '$booking' },
+            // 3️⃣ Match only the target portfolio
+            {
+                $match: {
+                    'booking.portfolio': portfolioId
+                }
+            },
+            // 4️⃣ Group and calculate average rating (no rounding yet)
+            {
+                $group: {
+                    _id: '$booking.portfolio',
+                    totalReviews: { $sum: 1 },
+                    averageRating: { $avg: '$rating' }
+                }
+            },
+            // 5️⃣ Round the average rating (expression stage)
+            {
+                $project: {
+                    _id: 0,
+                    totalReviews: 1,
+                    averageRating: { $round: ['$averageRating', 1] }
+                }
+            }
+        ]);
+
+        const overallRating = result[0] || { averageRating: 0, totalReviews: 0 };
+
+
+        const portfolioAfterRating = await Portfolio.findByIdAndUpdate(portfolioId, { ratingStats: overallRating }, { new: true })
 
         return res.status(201).json({ message: "Review Successful" })
     } catch (error) {

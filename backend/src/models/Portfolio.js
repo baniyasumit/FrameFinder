@@ -63,6 +63,16 @@ const portfolioSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    ratingStats: {
+        averageRating: {
+            type: Number,
+            default: 5
+        },
+        totalReviews: {
+            type: Number,
+            default: 0
+        },
+    },
 })
 
 portfolioSchema.index({ location: "2dsphere" });

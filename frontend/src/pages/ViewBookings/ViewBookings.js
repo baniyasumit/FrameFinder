@@ -4,7 +4,6 @@ import { FaCalendar, FaClock, FaLocationArrow, FaMessage } from 'react-icons/fa6
 import { AiOutlineProfile } from 'react-icons/ai';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getBookings, getTotalBookings } from './../../services/BookingService';
-import ReviewModal from '../../components/ReviewModal/ReviewModal';
 
 const ViewBookings = () => {
     const [activeTab, setActiveTab] = useState("");

@@ -6,10 +6,13 @@ import { FaCalendar, FaClock, FaLocationArrow, FaMessage, FaPeopleGroup } from '
 import { IoCall, IoCheckmark } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from 'sonner';
+import { Confirmation } from '../../components/Confirmation/Confirmation';
 
 const ViewBookingPhotographer = () => {
     const [booking, setBooking] = useState();
     const { bookingId } = useParams();
+
+    const [showCancelConfirmation, setShowCancelConfirmation] = useState(false)
 
     useEffect(() => {
         const loadBookingInformation = async () => {
@@ -25,10 +28,15 @@ const ViewBookingPhotographer = () => {
 
     const handleStatus = async (status) => {
         try {
-            await changeBookingStatus(bookingId, status)
+            const bookingStatus = await changeBookingStatus(bookingId, status)
+            if (!bookingStatus) return
+
             if (status === 'accepted') { toast.success('Booking Confirmed') }
             else if (status === 'declined') { toast.success('Booking Declined') }
-            else if (status === 'cancelled') { toast.success('Booking Cancelled') }
+            else if (status === 'cancelled') {
+                toast.success('Booking Cancelled')
+                setShowCancelConfirmation(false)
+            }
 
         } catch (err) {
             console.error("Status change Error", err)
@@ -42,6 +50,10 @@ const ViewBookingPhotographer = () => {
 
     return (
         <>
+            {showCancelConfirmation && <Confirmation title="Are you sure you want to cancel the booking?"
+                message="If you cancel the booking your ranking might decline."
+                setShowConfirmation={setShowCancelConfirmation}
+                onConfirm={() => handleStatus('cancelled')} />}
             {!booking ? (
                 <p>Loading booking information...</p>
             ) : (
@@ -201,7 +213,7 @@ const ViewBookingPhotographer = () => {
                                         </>
                                     }
                                     {booking?.bookingStatus.status === 'accepted' &&
-                                        <button type="button" className='booking-button decline' onClick={() => handleStatus('cancelled')}><RxCross2 />Cancel Booking</button>
+                                        <button type="button" className='booking-button decline' onClick={() => setShowCancelConfirmation(true)}><RxCross2 />Cancel Booking</button>
                                     }
                                 </div>)
 

@@ -7,8 +7,7 @@ import { getPhotographerPortfolio } from '../../services/PortfolioServices';
 import { useNavigate, useParams } from 'react-router-dom';
 import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore';
-
-
+import ReviewsSlider from '../../components/ReviewsSlider/ReviewsSlider';
 
 const ViewPortfolio = () => {
     const [rating, setRating] = useState(3.5);
@@ -52,7 +51,6 @@ const ViewPortfolio = () => {
         const loadPortfolio = async () => {
             try {
                 const portfolio = await getPhotographerPortfolio(portfolioId);
-                console.log(portfolio)
                 setPhotographerPortfolio(portfolio);
                 setGalleryImages(portfolio.pictures);
                 setFullImages(portfolio.pictures);
@@ -236,31 +234,7 @@ const ViewPortfolio = () => {
                     <section id='reviews' className='main view-portfolio-reviews'>
                         <div className='container reviews'>
                             <h2 className='view-portfolio-heading reviews'>Client Reviews</h2>
-                            <div className='reviews-container'>
-                                {photographerPortfolio.reviews.map((review, index) => (
-                                    <div className='review-container'>
-                                        <div className='photographer-profile-information review'>
-                                            <div className='profile-picture-container review'>
-                                                <img src={photographerPortfolio.user.picture} alt="Profile" />
-                                            </div>
-                                            <div className='profile-information review' >
-                                                <h3 className='full-name review'>{review.user.firstname} {review.user.lastname}</h3>
-                                                <Rating
-                                                    className='rating-stat review'
-                                                    initialValue={review.rating}
-                                                    size={20}
-                                                    allowFraction={true}
-                                                    emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
-                                                    fillIcon={<GoStarFill color="#FACC15" size={20} />}
-                                                    readonly
-                                                />
-                                            </div>
-                                        </div>
-                                        <p>"{review.description}"</p>
-                                    </div>))}
-
-
-                            </div>
+                            <ReviewsSlider reviews={photographerPortfolio.reviews} />
                         </div>
                     </section>
                 </>
@@ -268,7 +242,6 @@ const ViewPortfolio = () => {
             }
         </>
     )
-
 }
 
 export default ViewPortfolio

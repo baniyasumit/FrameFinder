@@ -19,6 +19,8 @@
     "react-router-dom": "^7.6.2",
     "react-scripts": "5.0.1",
     "react-simple-star-rating": "^5.1.7",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1",
     "sonner": "^2.0.5",
     "web-vitals": "^2.1.4",
     "zustand": "^5.0.6"

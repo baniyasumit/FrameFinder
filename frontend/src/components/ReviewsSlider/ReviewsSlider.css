@@ -1,0 +1,50 @@
+.reviews-container {
+    width: 100%; 
+    margin: auto;
+}
+
+.slick-slide {
+  padding: 0 10px; /* space between slides */
+}
+
+.review-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0px 5px 5px rgba(186, 186, 186, 0.068);
+    border: none;
+    padding: 1.5rem;
+    min-height: 200px;
+}
+
+.photographer-profile-information.review {
+    display: flex; 
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-picture-container.review {
+    width: 3.2rem;
+    height: 3.2rem;
+}
+
+.profile-information.review {
+    display: flex;
+    flex-direction: column;
+    gap: unset;
+}
+
+.full-name.review {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: unset;
+    line-height: 25px;
+}
+
+.review-container > p {
+    margin: unset;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.35rem;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.646);
+}

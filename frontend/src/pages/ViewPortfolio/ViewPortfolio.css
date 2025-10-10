@@ -395,54 +395,6 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     margin-bottom: 3rem;
 }
 
-.reviews-container{
-   
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 2rem;
-}
-
-.review-container{
-    background-color: white;
-    flex-basis: 350px;
-    flex-grow: 1;
-    border-radius: 10px;
-    box-shadow: 0 0px 10px 10px rgba(186, 186, 186, 0.068);
-    border: none;
-    padding: 1.5rem;
-}
-
-.photographer-profile-information.review{
-    gap: 8px;
-}
-.profile-picture-container.review{
-    width: 3.2rem;
-    height: 3.2rem;
-}
-
-.profile-information.review{
-    gap: unset;
-}
-
-.full-name.review{
-    font-size: 1rem;
-    font-weight: 500;
-    margin: unset;
-    line-height: 25px;
-}
-
-.review-container > p {
-    margin: unset;
-    margin-top: 10px;
-    font-size: 0.95rem;
-    line-height: 1.35rem;
-    text-align: justify;
-    color: rgba(0, 0, 0, 0.646);
-   
-}
-
 
 @media (max-width: 1022px) {
     .container.basic-information-content{

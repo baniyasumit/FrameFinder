@@ -37,3 +37,25 @@ export const Confirmation = ({ title, message, extraInfo, onConfirm, setShowConf
     )
 }
 
+
+export const PaymentInfo = ({ title, message, extraInfo, onConfirm, onCancel, onPayLater }) => {
+    const modelRef = useRef();
+
+    return (
+        <div className="confirmation-overlay">
+            <form className="confirmation-modal" ref={modelRef}>
+                <div className="confirmation-header">
+                    <h1 className="confirmation-title">{title}</h1>
+                </div>
+
+                <span className="confirmation-message">{message}</span>
+                <span className="confirmation-extra">{extraInfo}</span>
+                <div className='buttons-container'>
+                    <button type="button" className="confirmation-button submit" onClick={onConfirm}>Proceed</button>
+                    <button type="button" className="confirmation-button cancel" onClick={onPayLater}>Pay Later</button>
+                    <button type="button" className="confirmation-button cancel" onClick={onCancel}>Cancel</button>
+                </div>
+            </form>
+        </div>
+    )
+}

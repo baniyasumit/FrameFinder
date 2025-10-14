@@ -28,6 +28,7 @@ import ViewBooking from './pages/ViewBooking/ViewBooking.js';
 import ViewBookingPhotographer from './pages/ViewBooking/ViewBookingPhotographer.js';
 import ViewBookings from './pages/ViewBookings/ViewBookings.js';
 import ViewBookingsPhotographer from './pages/ViewBookings/ViewBookingsPhotographer.js';
+import Payment from './pages/Payment/Payment.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -82,6 +83,7 @@ const App = () => {
             <Route path='/create-booking/:portfolioId' element={<CreateBooking />} />
             <Route path='/bookings' element={<ViewBookings />} />
             <Route path='/view-booking/:bookingId' element={<ViewBooking />} />
+            <Route path='/checkout/:bookingId' element={<Payment />} />
           </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client', 'photographer']} />}>

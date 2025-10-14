@@ -1,7 +1,6 @@
 import Booking from "../models/Booking.js";
 import Portfolio from "../models/Portfolio.js";
 import Review from "../models/Review.js";
-import mongoose from 'mongoose';
 
 export const checkReviewStatus = async (req, res) => {
     try {

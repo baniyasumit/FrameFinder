@@ -1,5 +1,4 @@
 import express from "express";
-import { changeBookingStatus, checkAvailability, createBooking, getBookingInformation, getBookingInformationPhotographer, getBookings, getBookingsPhotographer, getTotalBookings } from "../controllers/BookingController.js";
 import authMiddleware from "../middlewares/AuthMiddleware.js";
 import authorizeRoles from "../middlewares/AuthorizeRoles.js";
 import { checkReviewStatus, createReview } from "../controllers/ReviewController.js";

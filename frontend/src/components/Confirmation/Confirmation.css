@@ -18,7 +18,7 @@
     background: #91d5e357; 
     border-radius: 1rem;
     padding: 2rem;
-    width: 320px;
+    width: 500px;
     max-width: 90%;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
@@ -56,7 +56,7 @@
 .confirmation-message{
     font-size:0.8rem;
     display: block;
-    text-align:center;
+    text-align:left;
     margin: 1rem 0rem;
     color: rgb(220, 113, 113);
 

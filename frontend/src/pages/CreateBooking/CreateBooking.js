@@ -87,8 +87,6 @@ const CreateBooking = () => {
         try {
             const response = await createBooking(bookingData, portfolioId);
             console.log(response.message);
-            toast.success(response.message);
-            console.log("GHelllo")
             if (response.bookingId) {
                 navigate(`/view-booking/${response.bookingId}`, { replace: true })
             }

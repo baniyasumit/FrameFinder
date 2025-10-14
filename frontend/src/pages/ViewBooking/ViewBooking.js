@@ -11,7 +11,8 @@ import { toast } from 'sonner';
 import { RxCross2 } from 'react-icons/rx';
 import ReviewModal from '../../components/ReviewModal/ReviewModal';
 import { checkReviewStatus } from './../../services/ReviewService';
-import { Confirmation } from '../../components/Confirmation/Confirmation';
+import { Confirmation, PaymentInfo } from '../../components/Confirmation/Confirmation';
+import { getPaymentStatus } from '../../services/TransactionService';
 
 const ViewBooking = () => {
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
@@ -21,6 +22,8 @@ const ViewBooking = () => {
 
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [showCancelConfirmation, setShowCancelConfirmation] = useState(false)
+
+    const [showPaymentRequirement, setShowPaymentRequirement] = useState(false);
 
     useEffect(() => {
         const reviewStatusCheck = async () => {
@@ -51,11 +54,10 @@ const ViewBooking = () => {
     }, [setPhotographerPortfolio, bookingId, navigate]);
 
     const handleStatus = async (status) => {
+        console.log(status)
         try {
             await changeBookingStatus(bookingId, status)
-            if (status === 'accepted') { toast.success('Booking Confirmed') }
-            else if (status === 'declined') { toast.success('Booking Declined') }
-            else if (status === 'cancelled') {
+            if (status === 'cancelled') {
                 toast.success('Booking Cancelled')
                 setShowCancelConfirmation(false)
             }
@@ -68,6 +70,23 @@ const ViewBooking = () => {
         }
     }
 
+    useEffect(() => {
+        const fetchPaymentStatus = async () => {
+            try {
+                const result = await getPaymentStatus(bookingId);
+
+                if (result.shouldPay === true) {
+                    toast.info('You will have to pay 30% in advance in order to request photographer.')
+                    setShowPaymentRequirement(true)
+                }
+            } catch (error) {
+                console.error("Load Payment Status Error: ", error)
+                toast.error(error)
+            }
+        };
+        fetchPaymentStatus();
+    }, [setPhotographerPortfolio, bookingId, navigate]);
+
     return (
         <>
             {showReviewModal && <ReviewModal setShowReviewModal={setShowReviewModal} bookingId={bookingId} />}
@@ -75,6 +94,14 @@ const ViewBooking = () => {
                 message="If you cancel the booking. You will be be charged 5% of total amount and be refunded."
                 setShowConfirmation={setShowCancelConfirmation}
                 onConfirm={() => handleStatus('cancelled')} />}
+            {showPaymentRequirement && <PaymentInfo title="Do you want to continue?"
+                message="To send the booking request you have to pay 30% of the total amount.
+                If you decide to cancel or photographer declines your request, the amount will be refunded with some charges(only if cancelled by the you)."
+                onCancel={() => handleStatus('cancelled')}
+                onConfirm={() => navigate(`/checkout/${bookingId}`)}
+                onPayLater={() => navigate('/bookings')} />
+            }
+
             {(!photographerPortfolio || !booking) ? (
                 <p>Loading portfolio...</p>
             ) : (
@@ -208,11 +235,17 @@ const ViewBooking = () => {
                             </div>
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary'>Payment Status</h2>
-                                <p>Payment <span className={`payment-status summary ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
+                                <p>Payment <span className={`payment-status summary 
+                                    ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
                                 {booking?.payment.status === 'partial' &&
-                                    <p>Paid <span>${booking.payment.paid}</span></p>
+                                    <>
+                                        <p>Paid <span>${booking.payment.paid}</span></p>
+                                        <p>Remaining <span>${booking.payment.remaining}</span></p>
+                                    </>
                                 }
-                                <p className='total-fee'>Remaining <span >${booking.payment.remaining}</span></p>
+                                {booking?.payment.status === 'paid' &&
+                                    <p className='total-fee'>Paid <span >${booking.payment.remaining}</span></p>
+                                }
 
 
                             </div>

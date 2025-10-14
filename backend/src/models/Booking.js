@@ -74,7 +74,8 @@ const bookingSchema = new mongoose.Schema({
             type: Number,
             required: true,
             default: 1
-        }, total: {
+        },
+        total: {
             type: Number,
         }
     },

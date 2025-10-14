@@ -71,6 +71,18 @@ export const intiatePayment = async (req, res) => {
         if (existingPayment) {
             payment = existingPayment;
         } else {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: Math.round(amount * 100),
+                currency: "usd",
+                metadata: {
+                    bookingId,
+                    photographerId,
+                    clientId,
+                    paymentType,
+                },
+                automatic_payment_methods: { enabled: true }
+            });
+
             payment = await Payment.create({
                 sender: clientId,
                 receiver: photographerId,
@@ -81,13 +93,12 @@ export const intiatePayment = async (req, res) => {
                 stripePaymentIntentId: paymentIntent.id,
                 clientSecret: paymentIntent.client_secret,
                 paymentType,
-
             });
         }
 
         return res.status(200).json({
             message: "Payment Initiated",
-            clientSecret: paymentIntent.client_secret,
+            clientSecret: payment.stripePaymentIntentId,
             paymentId: payment._id,
         });
     } catch (error) {
@@ -106,9 +117,7 @@ export const updateAfterPayment = async (req, res) => {
         const payment = await Payment.findOne({ booking: bookingId, paymentType: 'booking_fee' })
 
         const existingWallet = await Wallet.findOne({ user: payment.receiver });
-        console.log(payment.stripePaymentIntentId)
         const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
-        console.log(paymentIntent.status, payment.paymentStatus)
         if (paymentIntent.status === 'succeeded' && payment.paymentStatus !== 'succeeded') {
             payment.paymentStatus = 'succeeded'
 

@@ -24,16 +24,14 @@ const PaymentForm = ({ amount, bookingId }) => {
             elements,
             redirect: "if_required",
         });
-        console.log("Intent ID", paymentIntent.id)
         if (stripeError) {
             setError(stripeError.message);
         } else if (paymentIntent && paymentIntent.status === "succeeded") {
             try {
-                const result = updateAfterPayment(bookingId);
-                console.log(result)
-                toast.success('Booking successful')
-                navigate(`/view-booking/${bookingId}`)
-                toast.success("Payment successful!");
+                const result = await updateAfterPayment(bookingId);
+                console.log(result.message)
+                toast.success('Payment as well as Booking successful')
+                navigate(`/view-booking/${bookingId}`, { replace: true })
             } catch (err) {
                 console.error("Save error:", err);
                 toast.error(err, {

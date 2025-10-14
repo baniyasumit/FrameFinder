@@ -61,7 +61,7 @@ export const createBooking = async (req, res) => {
 
         await booking.save();
 
-        return res.status(201).json({ message: "Booked Succesfully", bookingId: booking._id })
+        return res.status(201).json({ message: "Booking Created", bookingId: booking._id })
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ message: "Server Error" });

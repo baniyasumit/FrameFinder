@@ -8,8 +8,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const getPaymentStatus = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
-
         const booking = await Booking.findById(bookingId)
+
         let shouldPay = false;
         if (booking.bookingStatus.status !== 'pending') {
             return res.status(200).json({
@@ -18,6 +18,7 @@ export const getPaymentStatus = async (req, res) => {
 
             });
         }
+
         const payment = await Payment.findOne({ booking: bookingId, paymentType: 'booking_fee' })
 
         if (!payment) {
@@ -98,7 +99,7 @@ export const intiatePayment = async (req, res) => {
 
         return res.status(200).json({
             message: "Payment Initiated",
-            clientSecret: payment.stripePaymentIntentId,
+            clientSecret: payment.clientSecret,
             paymentId: payment._id,
         });
     } catch (error) {
@@ -111,7 +112,6 @@ export const updateAfterPayment = async (req, res) => {
     try {
 
         const bookingId = req.params.bookingId;
-
         const booking = await Booking.findById(bookingId)
 
         const payment = await Payment.findOne({ booking: bookingId, paymentType: 'booking_fee' })
@@ -120,6 +120,7 @@ export const updateAfterPayment = async (req, res) => {
         const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
         if (paymentIntent.status === 'succeeded' && payment.paymentStatus !== 'succeeded') {
             payment.paymentStatus = 'succeeded'
+            payment.clientSecret = null
 
             booking.payment.status = 'partial'
             booking.payment.paid = payment.amount;

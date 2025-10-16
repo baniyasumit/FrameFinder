@@ -1,17 +1,19 @@
 .payment-page {
   display: flex;
   gap: 30px;
-  max-width: 900px;
+  max-width: 1215px;
   margin: 50px auto;
-  flex-wrap: wrap;
+  padding: 0 10px;
+  flex-wrap: wrap-reverse;
+ 
 }
 
 .payment-form-container {
   flex: 2;
   min-width: 300px;
   padding: 30px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  border: 1px solid #0000001e;
+  border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   background-color: #fff;
 }
@@ -20,9 +22,9 @@
   flex: 1;
   min-width: 200px;
   padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  background-color: #fafafa;
+  border: 1px solid #0000001e;
+  border-radius: 15px;
+  background-color: white;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
@@ -35,6 +37,8 @@
 .payment-summary p {
   font-size: 16px;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .payment-heading {

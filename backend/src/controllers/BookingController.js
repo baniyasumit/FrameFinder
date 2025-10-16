@@ -1,6 +1,10 @@
+import path from "path";
 import Booking from "../models/Booking.js";
 import Portfolio from "../models/Portfolio.js";
 import Service from "../models/Service.js";
+
+import mongoose from "mongoose"
+const { ObjectId } = mongoose.Types;
 
 export const createBooking = async (req, res) => {
     try {
@@ -87,12 +91,13 @@ export const checkAvailability = async (req, res) => {
 
 export const getTotalBookings = async (req, res) => {
     try {
+        const userId = req.user.id;
         const { bookingStatus = '' } = req.query;
 
         const limit = 20;
 
         let filter = {};
-
+        filter["user"] = userId;
         if (bookingStatus && bookingStatus !== 'declined') {
             filter["bookingStatus.status"] = bookingStatus;
         } else if (bookingStatus === 'declined') {
@@ -100,10 +105,8 @@ export const getTotalBookings = async (req, res) => {
             filter["bookingStatus.status"] = { $in: status };
         } else if (bookingStatus === 'upcoming') {
             const today = new Date();
-            filter = {
-                "bookingStatus.status": "accepted",
-                "sessionStartDate": { $gte: today },
-            };
+            filter["bookingStatus.status"] = 'accepted';
+            filter["sessionStartDate"] = { $gte: today };
         }
         const total = await Booking.countDocuments(filter);
         return res.status(200).json({
@@ -116,8 +119,53 @@ export const getTotalBookings = async (req, res) => {
     }
 }
 
+export const getTotalBookingsPhotographer = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const userObjectId = new ObjectId(userId);
+        const { bookingStatus = '' } = req.query;
+
+        const limit = 20;
+        const today = new Date();
+        let matchStage = { "payment.status": { $ne: "unpaid" } };
+
+        if (bookingStatus === 'completed' || bookingStatus === 'pending') {
+            matchStage["bookingStatus.status"] = bookingStatus;
+        } else if (bookingStatus === 'declined') {
+            matchStage["bookingStatus.status"] = { $in: ["declined", "cancelled"] };
+        } else if (bookingStatus === 'upcoming') {
+            matchStage["bookingStatus.status"] = 'accepted';
+            matchStage["sessionStartDate"] = { $gte: today };
+        }
+
+        const totalResult = await Booking.aggregate([
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "portfolios",
+                    localField: "portfolio",
+                    foreignField: "_id",
+                    as: "portfolio"
+                }
+            },
+            { $unwind: "$portfolio" },
+            { $match: { "portfolio.user": userObjectId } },
+            { $count: "total" }
+        ]);
+        const total = totalResult[0]?.total || 0;
+        return res.status(200).json({
+            message: "Booking List retrived successfully",
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
 export const getBookings = async (req, res) => {
     try {
+        const userId = req.user.id;
         const { pageNum = 1, bookingStatus = '' } = req.query;
 
         const page = parseInt(pageNum);
@@ -125,7 +173,7 @@ export const getBookings = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let filter = {};
-
+        filter["user"] = userId;
         if (bookingStatus && bookingStatus !== 'declined') {
             console.log("Booking Status", bookingStatus);
             filter["bookingStatus.status"] = bookingStatus;
@@ -134,10 +182,8 @@ export const getBookings = async (req, res) => {
             filter["bookingStatus.status"] = { $in: status };
         } else if (bookingStatus === 'upcoming') {
             const today = new Date();
-            filter = {
-                "bookingStatus.status": "accepted",
-                "sessionStartDate": { $gte: today },
-            };
+            filter["bookingStatus.status"] = 'accepted';
+            filter["sessionStartDate"] = { $gte: today };
         }
 
         let query = Booking.find(filter).populate({
@@ -159,17 +205,9 @@ export const getBookings = async (req, res) => {
 
         const bookings = await query;
 
-
-
-        const total = await Booking.countDocuments(filter);
         return res.status(200).json({
             message: "Booking List retrived successfully",
-            bookings,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                totalBookings: total,
-            },
+            bookings
         });
     } catch (error) {
         console.error(error.message);
@@ -179,52 +217,60 @@ export const getBookings = async (req, res) => {
 
 export const getBookingsPhotographer = async (req, res) => {
     try {
+        const userId = req.user.id;
+        const userObjectId = new ObjectId(userId);
         const { pageNum = 1, bookingStatus = '' } = req.query;
-
         const page = parseInt(pageNum);
         const limit = 20;
         const skip = (page - 1) * limit;
 
-        let filter = {};
+        const today = new Date();
+        let matchStage = { "payment.status": { $ne: "unpaid" } };
 
-        if (bookingStatus && bookingStatus !== 'declined') {
-            console.log("Booking Status", bookingStatus);
-            filter["bookingStatus.status"] = bookingStatus;
+        if (bookingStatus === 'completed' || bookingStatus === 'pending') {
+            matchStage["bookingStatus.status"] = bookingStatus;
         } else if (bookingStatus === 'declined') {
-            const status = ["declined", "cancelled"];
-            filter["bookingStatus.status"] = { $in: status };
+            matchStage["bookingStatus.status"] = { $in: ["declined", "cancelled"] };
         } else if (bookingStatus === 'upcoming') {
-            const today = new Date();
-            filter = {
-                "bookingStatus.status": "accepted",
-                "sessionStartDate": { $gte: today },
-            };
+            matchStage["bookingStatus.status"] = 'accepted';
+            matchStage["sessionStartDate"] = { $gte: today };
         }
 
-        let query = Booking.find(filter).populate({
-            path: "user",
-            select: "picture",
-        }).skip(skip).limit(limit);
-
-        if (bookingStatus === 'upcoming') {
-            query = query.sort({ sessionStartDate: 1 });
-        }
-        else {
-            query = query.sort({ createdAt: -1 });
-        }
-
-        const bookings = await query;
-
-
-        const total = await Booking.countDocuments(filter);
-        return res.status(200).json({
-            message: "Booking List retrived successfully",
-            bookings,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                totalBookings: total,
+        // Get bookings
+        const bookings = await Booking.aggregate([
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "portfolios",
+                    localField: "portfolio",
+                    foreignField: "_id",
+                    as: "portfolio"
+                }
             },
+            { $unwind: "$portfolio" },
+            { $match: { "portfolio.user": userObjectId } },
+
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+                        { $project: { firstname: 1, lastname: 1, picture: 1 } }
+                    ],
+                    as: "user"
+                }
+            },
+            { $unwind: "$user" },
+            { $sort: bookingStatus === 'upcoming' ? { sessionStartDate: 1 } : { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+
+        ]);
+
+        return res.status(200).json({
+            message: "Booking List retrieved successfully",
+            bookings,
         });
     } catch (error) {
         console.error(error.message);

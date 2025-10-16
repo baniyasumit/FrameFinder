@@ -82,6 +82,7 @@ const Browse = () => {
         const loadPortfolios = async () => {
             try {
                 const results = await getBrowsePortfolio(searchParams.toString());
+                console.log(results)
                 setPortfolios(results)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)
@@ -311,14 +312,14 @@ const Browse = () => {
                                             <div className='photographer-rating-stats'>
                                                 <Rating
                                                     className='photographer-rating-stat'
-                                                    initialValue={portfolio.ratingStats.averageRating}
+                                                    initialValue={portfolio.ratingStats?.averageRating}
                                                     size={16}
                                                     allowFraction
                                                     emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
                                                     fillIcon={<GoStarFill color="#FACC15" size={15} />}
                                                     readonly
                                                 />
-                                                <span>{portfolio.ratingStats.averageRating} ({portfolio.ratingStats.totalReviews} reviews)</span>
+                                                <span>{portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</span>
                                             </div>
                                         </div>
                                     </div>

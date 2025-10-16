@@ -3,7 +3,7 @@ import './ViewBookings.css'
 import { FaCalendar, FaClock, FaLocationArrow, FaMessage } from 'react-icons/fa6';
 import { AiOutlineProfile } from 'react-icons/ai';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getBookingsPhotographer, getTotalBookings } from './../../services/BookingService';
+import { getBookingsPhotographer, getTotalBookingsPhotographer } from './../../services/BookingService';
 
 const ViewBookingsPhotographer = () => {
     const [activeTab, setActiveTab] = useState("");
@@ -30,7 +30,7 @@ const ViewBookingsPhotographer = () => {
     useEffect(() => {
         const loadTotalBookings = async () => {
             try {
-                const result = await getTotalBookings(searchParams.toString());
+                const result = await getTotalBookingsPhotographer(searchParams.toString());
 
                 const totalPages = result.totalPages
                 setPagination((prev) => ({ ...prev, totalPages: totalPages }))

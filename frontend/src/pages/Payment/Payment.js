@@ -11,12 +11,15 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 const Payment = () => {
     const { bookingId } = useParams();
     const [clientSecret, setClientSecret] = useState("");
+    const [totalCharge, setTotalCharge] = useState()
     const didFetch = useRef(false);
     useEffect(() => {
 
         const fetchClientSecret = async () => {
             const result = await initatePayment(bookingId);
-            setClientSecret(result.clientSecret);
+            console.log(result)
+            setTotalCharge(result.totalCharge);
+            setClientSecret(result.clientSecret)
         };
 
         if (!didFetch.current) {
@@ -29,7 +32,7 @@ const Payment = () => {
 
     return (
         <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm bookingId={bookingId} />
+            <PaymentForm bookingId={bookingId} totalCharge={totalCharge} />
         </Elements>
     );
 };

@@ -44,6 +44,17 @@ export const getBookings = async (query) => {
     }
 }
 
+export const getTotalBookingsPhotographer = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/booking/photographer/get-total-bookings?${query || ''}`)
+
+        return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
 export const getBookingsPhotographer = async (query) => {
     try {
         const response = await ApiInstance.get(`/api/booking/photographer/get-bookings?${query || ''}`)

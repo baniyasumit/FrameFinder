@@ -100,6 +100,7 @@ export const intiatePayment = async (req, res) => {
         return res.status(200).json({
             message: "Payment Initiated",
             clientSecret: payment.clientSecret,
+            totalCharge: booking.totalCharge,
             paymentId: payment._id,
         });
     } catch (error) {

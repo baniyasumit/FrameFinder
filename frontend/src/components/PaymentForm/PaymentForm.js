@@ -5,12 +5,13 @@ import './PaymentForm.css';
 import { useNavigate } from 'react-router-dom';
 import { updateAfterPayment } from '../../services/TransactionService';
 
-const PaymentForm = ({ amount, bookingId }) => {
+const PaymentForm = ({ totalCharge, bookingId }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,6 +46,17 @@ const PaymentForm = ({ amount, bookingId }) => {
 
     return (
         <div className="payment-page">
+            <div className="payment-summary">
+                <h3>Payment Summary</h3>
+                <p>Duration: <span>{totalCharge.duration} day</span></p>
+                <p>Standard Charge: <span>${totalCharge.standardCharge}</span></p>
+                <p>Package Charge: <span>${totalCharge.packageCharge}</span> </p>
+                <p>Total Charge: <span>${totalCharge.total}</span> </p>
+                <hr></hr>
+                <p>Total to Pay(30%):  <span>${totalCharge.total * 0.30}</span></p>
+                <p>You are charged the 30% of total amount. This will be refunded if the photographer doesn't accept or decides to decline.</p>
+                <p>Note: You will be charge 5% of the total amount if you decide to cancel after the photographer has accepted your offer.</p>
+            </div>
             <div className="payment-form-container">
                 <h2 className="payment-heading">Complete Your Payment</h2>
                 <form onSubmit={handleSubmit} className="payment-form">
@@ -58,12 +70,7 @@ const PaymentForm = ({ amount, bookingId }) => {
                 </form>
             </div>
 
-            <div className="payment-summary">
-                <h3>Payment Summary</h3>
-                <p>Booking Fee (30%): ${(amount * 0.3)}</p>
-                <p>Platform Fee (5%): ${(amount * 0.05)}</p>
-                <p><strong>Total to Pay: ${amount}</strong></p>
-            </div>
+
         </div>
     );
 };

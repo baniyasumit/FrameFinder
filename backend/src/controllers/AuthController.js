@@ -207,7 +207,7 @@ export const sendOTPEmail = async (req, res) => {
             purpose,
             used: false,
         });
-        console.log("SEND START")
+
         await sendOtpEmail(user.email, code);
 
         res.status(200).json({ message: "OTP sent successfully" });

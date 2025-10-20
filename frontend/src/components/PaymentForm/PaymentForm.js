@@ -53,9 +53,13 @@ const PaymentForm = ({ totalCharge, bookingId }) => {
                 <p>Package Charge: <span>${totalCharge.packageCharge}</span> </p>
                 <p>Total Charge: <span>${totalCharge.total}</span> </p>
                 <hr></hr>
-                <p>Total to Pay(30%):  <span>${totalCharge.total * 0.30}</span></p>
-                <p>You are charged the 30% of total amount. This will be refunded if the photographer doesn't accept or decides to decline.</p>
-                <p>Note: You will be charge 5% of the total amount if you decide to cancel after the photographer has accepted your offer.</p>
+                <p className='total'>To Pay:</p>
+                <p className='total'>30% of Total Charge:  <span>${totalCharge.total * 0.30}</span></p>
+                <p className='total'>Stripe processing Charge(4%):  <span>${(totalCharge.total * 0.30) * 0.04}</span> </p>
+                <hr></hr>
+                <p className='total'>Total to Pay(30% of total):  <span>${(totalCharge.total * 0.30) + (totalCharge.total * 0.30) * 0.04}</span></p>
+                <p className='message'>You are charged the 30% of total amount. This will be refunded if the photographer doesn't accept or decides to decline.</p>
+                <p className='message'>Note: You will be charge 5% of the total amount if you decide to cancel after the photographer has accepted your offer.</p>
             </div>
             <div className="payment-form-container">
                 <h2 className="payment-heading">Complete Your Payment</h2>

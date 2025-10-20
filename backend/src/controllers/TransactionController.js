@@ -1,8 +1,8 @@
 import Booking from "../models/Booking.js";
 import Payment from "../models/Payment.js";
+import Wallet from "../models/Wallet.js";
 
 import Stripe from "stripe";
-import Wallet from "../models/Wallet.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const getPaymentStatus = async (req, res) => {
@@ -73,8 +73,8 @@ export const intiatePayment = async (req, res) => {
             payment = existingPayment;
         } else {
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round(amount * 100),
-                currency: "usd",
+                amount: Math.round((amount + (amount * 0.04)) * 100),
+                currency: "aud",
                 metadata: {
                     bookingId,
                     photographerId,
@@ -117,7 +117,6 @@ export const updateAfterPayment = async (req, res) => {
 
         const payment = await Payment.findOne({ booking: bookingId, paymentType: 'booking_fee' })
 
-        const existingWallet = await Wallet.findOne({ user: payment.receiver });
         const paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
         if (paymentIntent.status === 'succeeded' && payment.paymentStatus !== 'succeeded') {
             payment.paymentStatus = 'succeeded'
@@ -127,14 +126,16 @@ export const updateAfterPayment = async (req, res) => {
             booking.payment.paid = payment.amount;
             booking.payment.remaining = payment.amount * (100 / 30) - payment.amount;
 
+            const existingWallet = await Wallet.findOne({ user: payment.receiver })
             if (existingWallet) {
-                existingWallet.stripePaymentIntentId = paymentIntent.id;
                 existingWallet.totalEarned += payment.amount;
+                existingWallet.onHold += payment.amount
                 await existingWallet.save();
             } else {
                 await Wallet.create({
                     user: payment.receiver,
                     totalEarned: payment.amount,
+                    onHold: payment.amount
                 });
             }
             await payment.save();
@@ -151,4 +152,5 @@ export const updateAfterPayment = async (req, res) => {
         res.status(500).json({ message: "Error creating payment" });
     }
 }
+
 

@@ -4,12 +4,12 @@ const paymentSchema = new mongoose.Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true, // Client
+        required: true,
     },
     receiver: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true, // Photographer
+        required: true,
     },
     booking: {
         type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +37,6 @@ const paymentSchema = new mongoose.Schema({
         enum: ["booking_fee", "final_payment"],
         required: true,
     },
-
     paymentStatus: {
         type: String,
         enum: ["pending", "succeeded", "cancelled", "refunded"],
@@ -57,6 +56,15 @@ const paymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    refundInfo: {
+        stripeRefundId: String,
+        amount: Number,
+        reason: {
+            type: String,
+            enum: ["cancelled_by_client", "cancelled_by_photographer"],
+        },
+        refundedOn: Date,
+    }
 });
 
 paymentSchema.pre('save', function (next) {

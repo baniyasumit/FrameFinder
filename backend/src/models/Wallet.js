@@ -12,6 +12,11 @@ const walletSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
+    onHold: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
     totalWithdrawn: {
         type: Number,
         required: true,

@@ -17,7 +17,7 @@ const Payment = () => {
 
         const fetchClientSecret = async () => {
             const result = await initatePayment(bookingId);
-            console.log(result)
+            console.log(result.message)
             setTotalCharge(result.totalCharge);
             setClientSecret(result.clientSecret)
         };

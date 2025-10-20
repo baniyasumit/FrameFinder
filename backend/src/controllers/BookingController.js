@@ -4,7 +4,12 @@ import Portfolio from "../models/Portfolio.js";
 import Service from "../models/Service.js";
 
 import mongoose from "mongoose"
+import Payment from "../models/Payment.js";
 const { ObjectId } = mongoose.Types;
+
+import Stripe from "stripe";
+import Wallet from "../models/Wallet.js";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createBooking = async (req, res) => {
     try {
@@ -345,5 +350,70 @@ export const changeBookingStatus = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+
+export const cancelDeclineBooking = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const booking = req.booking;
+        const role = req.user.role;
+
+        const { status } = req.body;
+        if (!status || status === undefined) return res.status(400).json({ message: "Status required" })
+
+        const payment = await Payment.findOne({ booking: bookingId })
+        let refundAmount;
+        let reason;
+        if (role === 'photographer') {
+            refundAmount = payment.amount;
+            reason = "cancelled_by_photographer"
+        } else if (role === 'client') {
+            refundAmount = payment.netAmount;
+            reason = "cancelled_by_client"
+        }
+
+        let stripeRefund
+        try {
+            stripeRefund = await stripe.refunds.create({
+                payment_intent: payment.stripePaymentIntentId,
+                amount: refundAmount * 100
+            });
+        } catch (stripeError) {
+            console.error("Stripe refund failed:", stripeError);
+            return res.status(500).json({ message: "Stripe refund failed" });
+        }
+
+        booking.bookingStatus.status = status;
+        payment.paymentStatus = "refunded";
+        payment.refundInfo = {
+            amount: refundAmount,
+            refundedAt: new Date(),
+            stripeRefundId: stripeRefund.id,
+            reason: reason
+        };
+
+        const wallet = await Wallet.findOne({ user: payment.receiver });
+
+        if (!wallet) {
+            return res.status(404).json({
+                message: "Wallet Not found"
+            });
+        }
+
+        wallet.onHold -= refundAmount;
+
+        await booking.save();
+        await payment.save()
+        await wallet.save()
+
+        return res.status(200).json({
+            message: "Book Cancelled"
+        });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ message: "Server Error" });
+    }
+}
+
 
 

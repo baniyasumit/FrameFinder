@@ -4,7 +4,7 @@
   max-width: 1215px;
   margin: 50px auto;
   padding: 0 10px;
-  flex-wrap: wrap-reverse;
+  flex-wrap: wrap;
  
 }
 
@@ -39,6 +39,19 @@
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
+}
+
+.payment-summary hr{
+  background-color: rgba(0, 0, 0, 0.194) ;
+}
+
+.payment-summary .total{
+  font-weight: 500;
+}
+
+.payment-summary > .message{
+  color: #5469d4;
+  text-align: justify;
 }
 
 .payment-heading {

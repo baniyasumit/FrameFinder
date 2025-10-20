@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
-import { changeBookingStatus, getBookingInformationPhotographer } from '../../services/BookingService';
+import { cancelDeclineBooking, changeBookingStatus, getBookingInformationPhotographer } from '../../services/BookingService';
 import { useParams } from 'react-router-dom';
 import { FaCalendar, FaClock, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
 import { IoCall, IoCheckmark } from "react-icons/io5";
@@ -28,14 +28,21 @@ const ViewBookingPhotographer = () => {
 
     const handleStatus = async (status) => {
         try {
-            const bookingStatus = await changeBookingStatus(bookingId, status)
-            if (!bookingStatus) return
 
-            if (status === 'accepted') { toast.success('Booking Confirmed') }
-            else if (status === 'declined') { toast.success('Booking Declined') }
-            else if (status === 'cancelled') {
-                toast.success('Booking Cancelled')
-                setShowCancelConfirmation(false)
+
+            if (status === 'accepted') {
+                toast.success('Booking Confirmed')
+                await changeBookingStatus(bookingId, status)
+            }
+            else {
+                await cancelDeclineBooking(bookingId, status)
+                if (status === 'declined') {
+                    toast.success('Booking Declined')
+                }
+                else if (status === 'cancelled') {
+                    toast.success('Booking Cancelled')
+                    setShowCancelConfirmation(false)
+                }
             }
 
         } catch (err) {

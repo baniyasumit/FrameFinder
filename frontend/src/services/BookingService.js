@@ -98,3 +98,13 @@ export const changeBookingStatus = async (bookingId, status) => {
         throw error.response?.data.message || error.message;
     }
 }
+
+export const cancelDeclineBooking = async (bookingId, status) => {
+    try {
+        const response = await ApiInstance.patch(`/api/booking/cancel-decline-booking/${bookingId}`, { 'status': status });
+        return response.data
+    } catch (error) {
+        console.error("Update error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

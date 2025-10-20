@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
-import { changeBookingStatus, getBookingInformation } from '../../services/BookingService';
+import { cancelDeclineBooking, changeBookingStatus, getBookingInformation } from '../../services/BookingService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
@@ -56,11 +56,14 @@ const ViewBooking = () => {
     const handleStatus = async (status) => {
         console.log(status)
         try {
-            await changeBookingStatus(bookingId, status)
             if (status === 'cancelled') {
+                await cancelDeclineBooking(bookingId, status);
                 toast.success('Booking Cancelled')
                 setShowCancelConfirmation(false)
+            } else {
+                await changeBookingStatus(bookingId, status)
             }
+
 
         } catch (err) {
             console.error("Status change Error", err)

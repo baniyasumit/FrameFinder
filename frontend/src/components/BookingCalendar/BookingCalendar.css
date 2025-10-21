@@ -1,0 +1,112 @@
+.react-calendar__tile {
+    pointer-events: none !important;
+    border: 2px solid white !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background: none !important;
+    color: inherit !important;
+}
+
+.react-calendar__tile--active {
+    background: none !important;
+    color: inherit !important;
+}
+
+.react-calendar__tile--now{
+    background-color: rgba(0, 179, 255, 0.24);
+    color: #0e2685;
+}
+
+.calendar-container {
+    width: 100%;
+    text-align: center;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.react-calendar {
+    width: 100%;
+    border: none;
+    font-family: "Inter", sans-serif;
+    border-radius: 12px;
+    padding: 20px 0px;
+}
+
+.react-calendar__tile {
+    padding: 12px 0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.react-calendar__tile:enabled:hover {
+    background-color: #e0e7ff;
+}
+
+.accepted {
+    background-color: #DCFCE7;
+    color: #166556;
+    border-radius: 0px;
+}
+
+.pending {
+    background-color: #FEF9C3 !important;
+    color: #854D0E !important;
+    border-radius: 0px;
+}
+
+.accepted.start-date ,.pending.start-date{
+    border-radius: 12px 0px 0px 12px;
+    border-right: none !important;
+}
+
+.accepted.normal,.pending.normal{
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.accepted.end-date,.pending.end-date{
+    border-radius: 0px 12px 12px 0px;
+    border-left: none !important;
+}
+
+.calendar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.legend-item {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.legend-item.accepted {
+    background-color: #DCFCE7;
+    color: #166556;
+}
+
+.legend-item.pending {
+    background-color: #FEF9C3;
+    color: #854D0E;
+}
+
+.legend-item.available {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.13);
+    color: black;
+}
+.legend-item.today {
+    background-color: rgba(0, 179, 255, 0.24);
+    color: #0e2685;
+}
+
+
+
+
+

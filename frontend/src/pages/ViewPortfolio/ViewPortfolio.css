@@ -6,7 +6,7 @@
 
 .main.basic-information-background{
     background: #2A61EB;
-background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1) 100%);
+    background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1) 100%);
 }
 
 .container{
@@ -197,6 +197,7 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     gap: 25px;
     padding: 10px 15px;
     padding-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .nav-tab {
@@ -351,7 +352,6 @@ background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1)
     align-items: center;
     margin: unset;
 }
-
 
 .view-portfolio-label{
     font-size: 0.85rem;

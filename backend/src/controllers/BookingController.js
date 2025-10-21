@@ -11,6 +11,33 @@ import Stripe from "stripe";
 import Wallet from "../models/Wallet.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+export const getBookingDates = async (req, res) => {
+    try {
+        const { currentMonth, currentYear, portfolioId } = req.query;
+        const today = new Date();
+        const month = currentMonth || today.getMonth() + 1;
+        const year = currentYear || today.getFullYear();
+
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1);
+
+        const bookings = await Booking.find({
+            portfolio: portfolioId,
+            sessionStartDate: { $lt: endDate },
+            sessionEndDate: { $gte: startDate },
+            "bookingStatus.status": { $nin: ["declined", "cancelled"] },
+            "payment.status": { $ne: "unpaid" }
+        }).select('sessionStartDate sessionEndDate bookingStatus.status');
+        return res.status(200).json({
+            message: "Booking Dates fetched succesfully",
+            bookings: bookings
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
 export const createBooking = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -414,6 +441,8 @@ export const cancelDeclineBooking = async (req, res) => {
         return res.status(500).json({ message: "Server Error" });
     }
 }
+
+
 
 
 

@@ -1,5 +1,20 @@
 import { ApiInstance } from "./ApiInstance";
 
+export const getBookingDates = async (currentMonth, currentYear, portfolioId) => {
+    try {
+        const response = await ApiInstance.get('/api/booking/get-booking-dates', {
+            params: {
+                currentMonth,
+                currentYear,
+                portfolioId
+            }
+        });
+        return response.data
+    } catch (error) {
+        console.error("Update error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
 
 export const createBooking = async (formData, portfolioId) => {
     try {

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore';
 import ReviewsSlider from '../../components/ReviewsSlider/ReviewsSlider';
+import BookingCalendar from '../../components/BookingCalendar/BookingCalendar';
 
 const ViewPortfolio = () => {
     const [rating, setRating] = useState(3.5);
@@ -131,6 +132,8 @@ const ViewPortfolio = () => {
                             </div>
                             <form className='booking-form'>
                                 {/* Put a Big Calender in this and it should show the availability */}
+
+                                <BookingCalendar />
                                 <button type="button" className='booking-button' onClick={handelBooking}>Book Now</button>
                                 <button className='booking-message'><FaMessage className='message-icon' />Send Message</button>
                             </form>

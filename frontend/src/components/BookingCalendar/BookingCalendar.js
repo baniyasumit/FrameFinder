@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -7,12 +7,29 @@ import { getBookingDates } from '../../services/BookingService';
 import { useParams } from 'react-router-dom';
 
 
-const BookingCalendar = () => {
+const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setShowCalendar }) => {
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
     const [currentMonth, setCurrentMonth] = useState("");
     const [currentYear, setCurrentYear] = useState("");
 
-    const [bookings, setBookings] = useState("");
+    const [bookings, setBookings] = useState([]);
     const { portfolioId } = useParams();
+
+
+    const calendarRef = useRef(null);
+
+    useEffect(() => {
+        if (typeof setShowCalendar !== "function") return;
+        const handleClickOutside = (event) => {
+            if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+                setShowCalendar(false)
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [setShowCalendar]);
+
 
     useEffect(() => {
         const loadBookingDates = async () => {
@@ -47,6 +64,22 @@ const BookingCalendar = () => {
         return "";
     };
 
+    const tileDisabled = ({ date }) => {
+        const today = date.setHours(0, 0, 0, 0);
+
+        for (const booking of bookings) {
+            const start_date = new Date(booking.sessionStartDate).setHours(0, 0, 0, 0);
+            const end_date = new Date(booking.sessionEndDate).setHours(0, 0, 0, 0);
+            if (today >= start_date && today <= end_date) {
+                if (booking.bookingStatus.status === "accepted" || booking.bookingStatus.status === "pending") {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
     const handleMonthChange = ({ activeStartDate }) => {
         const month = activeStartDate.getMonth() + 1;
         const year = activeStartDate.getFullYear();
@@ -54,16 +87,38 @@ const BookingCalendar = () => {
         setCurrentYear(year);
         console.log(`📅 Showing: ${month} ${year}`);
     };
-    return (
-        <div className="calendar-container">
 
-            <Calendar
+    const handleDayChange = (date) => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0"); // month 0-11
+        const day = String(d.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
+        setSelectedDate(formattedDate);
+        handleChange({ target: { name: name, value: formattedDate } });
+    };
+    return (
+        <div className="calendar-container" ref={calendarRef}>
+            {isEditable ? <Calendar
+                value={selectedDate}
+                onClickDay={handleDayChange}
                 tileClassName={tileClassName}
                 selectRange={false}
                 showNeighboringMonth={false}
-                onClickDay={() => { }}
                 onActiveStartDateChange={handleMonthChange}
-            />
+                tileDisabled={tileDisabled}
+                minDate={minDate}
+            /> :
+                <Calendar
+
+                    onClickDay={() => { }}
+                    tileClassName={tileClassName}
+                    selectRange={false}
+                    showNeighboringMonth={false}
+                    onActiveStartDateChange={handleMonthChange}
+                    className="non-editable"
+                />
+            }
             <div className="calendar-legend">
                 <span className="legend-item today">Current</span>
                 <span className="legend-item accepted">Booked</span>

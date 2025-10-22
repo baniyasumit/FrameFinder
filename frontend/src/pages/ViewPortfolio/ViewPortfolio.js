@@ -131,8 +131,6 @@ const ViewPortfolio = () => {
                                 </div>
                             </div>
                             <form className='booking-form'>
-                                {/* Put a Big Calender in this and it should show the availability */}
-
                                 <BookingCalendar />
                                 <button type="button" className='booking-button' onClick={handelBooking}>Book Now</button>
                                 <button className='booking-message'><FaMessage className='message-icon' />Send Message</button>

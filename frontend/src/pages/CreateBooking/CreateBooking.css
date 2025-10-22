@@ -87,6 +87,7 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1 1 250px;
+     position: relative; 
     
 }
 
@@ -166,6 +167,19 @@
     font-size: 0.9rem;
     text-align: center;
     color: rgba(0, 0, 0, 0.514);
+}
+
+
+.calendar-popup {
+     position: absolute;
+    top: 100%; 
+    left: 0;
+    z-index: 1000; 
+    margin-top: 5px; 
+    border: 1px solid rgba(0, 0, 0, 0.084);
+    background-color: white;
+   border-radius: 20px;
+   padding: 6px;
 }
 
 

@@ -82,7 +82,6 @@ const Browse = () => {
         const loadPortfolios = async () => {
             try {
                 const results = await getBrowsePortfolio(searchParams.toString());
-                console.log(results)
                 setPortfolios(results)
             } catch (error) {
                 console.error("Load Photohrapher Portfolio Error: ", error)

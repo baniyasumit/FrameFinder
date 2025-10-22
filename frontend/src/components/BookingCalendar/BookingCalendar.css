@@ -1,15 +1,19 @@
 .react-calendar__tile {
-    pointer-events: none !important;
     border: 2px solid white !important;
 }
 
-.react-calendar__tile:enabled:hover,
-.react-calendar__tile:enabled:focus {
+.non-editable .react-calendar__tile {
+    pointer-events: none !important;
+}
+
+
+.non-editable .react-calendar__tile:enabled:hover,
+.non-editable .react-calendar__tile:enabled:focus {
     background: none !important;
     color: inherit !important;
 }
 
-.react-calendar__tile--active {
+.non-editable .react-calendar__tile--active {
     background: none !important;
     color: inherit !important;
 }
@@ -45,8 +49,8 @@
 }
 
 .accepted {
-    background-color: #DCFCE7;
-    color: #166556;
+    background-color: #DCFCE7 !important;
+    color: #166556 !important;
     border-radius: 0px;
 }
 

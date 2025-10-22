@@ -8,6 +8,7 @@ import { FaCalendarCheck, FaMessage } from 'react-icons/fa6';
 import { createBooking } from '../../services/BookingService';
 import { toast } from 'sonner';
 import { IoCheckmark } from 'react-icons/io5';
+import BookingCalendar from '../../components/BookingCalendar/BookingCalendar';
 
 
 const CreateBooking = () => {
@@ -33,6 +34,9 @@ const CreateBooking = () => {
     });
 
     const [selectedService, setSelectedService] = useState();
+
+    const [showStartCalendar, setShowStartCalendar] = useState(false);
+    const [showEndCalendar, setShowEndCalendar] = useState(false);
 
     useEffect(() => {
         const loadPortfolio = async () => {
@@ -161,16 +165,36 @@ const CreateBooking = () => {
                                             Start Date
                                         </label>
                                         <input name='sessionStartDate' className='input-field' type='date'
-                                            min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
-                                            value={bookingData.sessionStartDate} onChange={handleChange} />
+                                            value={bookingData.sessionStartDate} onClick={() => setShowStartCalendar(!showStartCalendar)} readOnly />
+                                        {showStartCalendar && (
+                                            <div className="calendar-popup">
+                                                <BookingCalendar
+                                                    isEditable={true}
+                                                    handleChange={handleChange}
+                                                    name={'sessionStartDate'}
+                                                    minDate={new Date(Date.now() + 86400000)}
+                                                    setShowCalendar={setShowStartCalendar}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label' >
                                             End Date
                                         </label>
                                         <input name='sessionEndDate' className='input-field' type='date'
-                                            min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
-                                            value={bookingData.sessionEndDate} onChange={handleChange} />
+                                            value={bookingData.sessionEndDate} onClick={() => setShowEndCalendar(!showEndCalendar)} readOnly />
+                                        {showEndCalendar && (
+                                            <div className="calendar-popup">
+                                                <BookingCalendar
+                                                    isEditable={true}
+                                                    handleChange={handleChange}
+                                                    name={'sessionEndDate'}
+                                                    minDate={bookingData.sessionStartDate ? new Date(bookingData.sessionStartDate) : new Date(Date.now() + 86400000)}
+                                                    setShowCalendar={setShowEndCalendar}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

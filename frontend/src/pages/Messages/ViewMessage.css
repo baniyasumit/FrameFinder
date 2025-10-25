@@ -1,0 +1,133 @@
+.main.message-page{
+    overflow: hidden;
+}
+
+.container.message-page{
+    flex-direction: column;
+    display: flex;
+    gap: 10px;
+    height: calc(100vh - 7.5vh);
+    justify-content: space-between;
+}
+
+.card.message-page{
+    padding: 10px;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 0 5px 1px rgba(141, 141, 141, 0.749);
+    z-index: 999;
+}
+
+.profile-information.message-page{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.profile-picture-container.message-page{
+    width: 4rem;
+    height: 4rem;
+}
+
+.profile-basic-details.message-page{
+    padding: 5px;
+}
+
+.profile-basic-details.message-page > h2{
+    margin: unset;
+    font-weight: 500;
+    font-size: 1.3rem;
+}
+
+.profile-basic-details.message-page > p{
+    margin: unset;
+}
+
+.messages-container.message-page{
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.messages-container.message-page > .empty-message{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.empty-message > p{
+    margin: unset;
+    margin-bottom: 20px;
+}
+
+.messages-wrapper{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: 100%;
+    gap:10px;
+    
+}
+
+.message-container{
+    display: flex;
+    justify-content: right;
+}
+
+.message-container.right{
+    justify-content: left;
+}
+
+.message-box{
+    width: fit-content;
+    background-color: rgba(0, 0, 0, 0.18);
+    padding: 10px;
+    border-radius: 15px;
+    color: black;
+}
+
+.message-box.right{
+    background-color: #2563eb;
+    color: white;
+}
+
+.message-box > p{
+    margin: unset;
+}
+
+.scroll-bottom-spacer {
+  margin-top: auto;
+}
+
+.message-input-container.message-page{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.message-input{
+    border: none;
+    padding: 10px;
+    width: 100%;
+}
+
+.message-input:focus{
+    outline: none;
+}
+
+.send-button{
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    border: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.send-button:hover{
+    transform: scale(1.05);
+}
+

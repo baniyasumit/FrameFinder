@@ -29,6 +29,8 @@ import ViewBookingPhotographer from './pages/ViewBooking/ViewBookingPhotographer
 import ViewBookings from './pages/ViewBookings/ViewBookings.js';
 import ViewBookingsPhotographer from './pages/ViewBookings/ViewBookingsPhotographer.js';
 import Payment from './pages/Payment/Payment.js';
+import ViewMessages from './pages/Messages/ViewMessages.js';
+import ViewMessage from './pages/Messages/ViewMessage.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -89,6 +91,9 @@ const App = () => {
         <Route element={<RoleRoute allowedRoles={['client', 'photographer']} />}>
           <Route element={<DynamicLayout />}>
             <Route path='/profile' element={<Profile />} />
+            <Route path='/messages' element={<ViewMessages />} />
+            <Route path='/message/:bookingId' element={<ViewMessage />} />
+
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

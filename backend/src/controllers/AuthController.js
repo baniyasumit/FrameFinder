@@ -173,7 +173,7 @@ export const getUserProfile = async (req, res) => {
     try {
 
         const userId = req.user.id
-        const user = await User.findOne({ _id: userId }, { password: 0, _id: 0, __v: 0, pictureSecretUrl: 0, resetPasswordToken: 0, resetPasswordExpires: 0 });
+        const user = await User.findOne({ _id: userId }, { password: 0, __v: 0, pictureSecretUrl: 0, resetPasswordToken: 0, resetPasswordExpires: 0 });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }

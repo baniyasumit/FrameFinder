@@ -9,6 +9,7 @@ import portfolioRoutes from './routes/PortfolioRoutes.js';
 import bookingRoutes from './routes/BookingRoutes.js';
 import reviewRoutes from './routes/ReviewRoutes.js';
 import transactionRoutes from './routes/TransactionRoutes.js';
+import messageRoutes from './routes/MessageRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -32,6 +33,7 @@ app.use("/api/portfolio", portfolioRoutes)
 app.use("/api/booking", bookingRoutes)
 app.use("/api/review", reviewRoutes)
 app.use("/api/transaction", transactionRoutes)
+app.use("/api/message", messageRoutes)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

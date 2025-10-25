@@ -11,7 +11,16 @@ const bookingMiddlware = async (req, res, next) => {
     let booking;
     try {
         if (role === "client") {
-            booking = await Booking.findOne({ _id: bookingId, user: userId });
+            booking = await Booking.findOne({ _id: bookingId, user: userId })
+                .populate({
+                    path: "portfolio",
+                    select: "user",
+                    populate: {
+                        path: "user",
+                        select: "firstname lastname"
+                    }
+                });
+
         } else if (role === "photographer") {
             const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
             const userObjectId = new mongoose.Types.ObjectId(userId);
@@ -27,10 +36,20 @@ const bookingMiddlware = async (req, res, next) => {
                 },
                 { $unwind: "$portfolio" },
                 { $match: { "portfolio.user": userObjectId } },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "portfolio.user",
+                        foreignField: "_id",
+                        as: "portfolio.user"
+                    }
+                },
+                { $unwind: "$portfolio.user" },
                 { $limit: 1 },
             ]);
+
             if (bookings.length > 0) {
-                // Convert plain object to Mongoose document
+
                 booking = Booking.hydrate(bookings[0]);
             } else {
                 booking = null;
@@ -38,14 +57,14 @@ const bookingMiddlware = async (req, res, next) => {
         }
 
         if (!booking) {
-            return res.status(404).json({ message: "Booking not found" });
+            return res.status(404).json({ message: "Booking doesn't exist or you are not authroized" });
         }
 
         req.booking = booking
 
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Server Error" });
+        return res.status(401).json({ message: "Server Error Middleware" });
     }
 };
 

@@ -1,5 +1,27 @@
 import { ApiInstance } from "./ApiInstance";
 
+
+export const getTotalMessages = async () => {
+    try {
+        const response = await ApiInstance.get('/api/message/get-total-messages');
+        return response.data
+    } catch (error) {
+        console.error(" Eror fetching total messages:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
+export const getMessageList = async (query) => {
+    try {
+        const response = await ApiInstance.get(`/api/message/get-message-list?${query || ''}`)
+
+        return response.data
+    } catch (error) {
+        console.error("Save error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+
 export const getMessages = async (bookingId, pageNum) => {
     try {
         const response = await ApiInstance.get(`/api/message/get-messages/${bookingId}?pageNum=${pageNum}`);

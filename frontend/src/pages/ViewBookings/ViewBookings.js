@@ -170,9 +170,9 @@ const ViewBookings = () => {
                                         </Link>
 
 
-                                        <button className='booking-button message bookings-page'>
+                                        <Link className='booking-button message bookings-page' to={`/message/${booking._id}`} >
                                             <FaMessage className='message-icon' />Message
-                                        </button>
+                                        </Link>
 
                                     </div>
                                 </div>

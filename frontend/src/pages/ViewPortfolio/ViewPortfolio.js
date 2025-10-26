@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './ViewPortfolio.css'
-import { FaMessage } from "react-icons/fa6";
+
 import { GoStar, GoStarFill } from "react-icons/go";
 import { Rating } from "react-simple-star-rating";
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
@@ -133,7 +133,7 @@ const ViewPortfolio = () => {
                             <form className='booking-form'>
                                 <BookingCalendar />
                                 <button type="button" className='booking-button' onClick={handelBooking}>Book Now</button>
-                                <button className='booking-message'><FaMessage className='message-icon' />Send Message</button>
+                                {/*  <button className='booking-message'><FaMessage className='message-icon' />Send Message</button> */}
                             </form>
 
                         </div>

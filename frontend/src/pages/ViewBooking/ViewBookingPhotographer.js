@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
 import { cancelDeclineBooking, changeBookingStatus, getBookingInformationPhotographer } from '../../services/BookingService';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { FaCalendar, FaClock, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
 import { IoCall, IoCheckmark } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
@@ -84,7 +84,7 @@ const ViewBookingPhotographer = () => {
                                         </div>
                                         <div className='contact-button-container'>
                                             {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
-                                                <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                                <Link type="button" className='booking-button' to={`/message/${booking._id}`}><FaMessage className='message-icon' />Send Message</Link>
 
                                             }
                                         </div>
@@ -204,7 +204,7 @@ const ViewBookingPhotographer = () => {
                                     <div className='container booking-page summary'>
                                         <h2 className='container-heading summary contact'>Contact Client</h2>
 
-                                        <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                        <Link type="button" className='booking-button' to={`/message/${booking._id}`}><FaMessage className='message-icon' />Send Message</Link>
                                         <button type="button" className='booking-message' onClick={() => window.open(`tel:${booking?.phoneNumber}`, "_self")}><IoCall />Call</button>
 
                                     </div>

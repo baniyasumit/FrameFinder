@@ -3,6 +3,8 @@ import './ViewMessages.css'
 import { FaMessage } from 'react-icons/fa6';
 import { AiOutlineProfile } from 'react-icons/ai';
 import { Link, useSearchParams } from 'react-router-dom';
+import { getMessageList, getTotalMessages } from '../../services/MessageServices';
+import useAuthStore from '../../stateManagement/useAuthStore';
 
 const ViewMessages = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -17,6 +19,7 @@ const ViewMessages = () => {
 
     const [messages, setMessages] = useState();
 
+    const { user } = useAuthStore();
 
 
     useEffect(() => {
@@ -25,12 +28,12 @@ const ViewMessages = () => {
             pageNum: searchParams.get('pageNum') || 1,
         }));
     }, [searchParams])
-    /* useEffect(() => {
+    useEffect(() => {
         const loadTotalMessages = async () => {
             try {
-                const result = await getTotalMessages(searchParams.toString());
+                const result = await getTotalMessages();
                 const totalPages = result.totalPages
-                setPagination((prev) => ({ ...prev, totalPages: totalPages }))
+                setPagination({ totalPages: totalPages })
                 const currentPage = parseInt(params.pageNum);
                 let start = Math.max(1, currentPage - 1);
                 let end = Math.min(totalPages, start + 2);
@@ -53,10 +56,11 @@ const ViewMessages = () => {
         loadTotalMessages();
     }, [params.pageNum, searchParams])
 
+
     useEffect(() => {
         const loadMessages = async () => {
             try {
-                const results = await getMessages(searchParams.toString());
+                const results = await getMessageList(searchParams.toString());
                 setMessages(results.messages)
             } catch (error) {
                 console.error("Load  Error: ", error)
@@ -65,7 +69,7 @@ const ViewMessages = () => {
         };
         loadMessages();
     }, [searchParams]);
- */
+
 
 
     const handlePagination = (e) => {
@@ -84,86 +88,35 @@ const ViewMessages = () => {
                 </section>
 
                 <section className='messages-content messages-list'>
-                    {/* {messages?.map((message, index) => (
-                        <div className='message-card' key={index}>
+                    {messages?.map((message, index) => (
+                        <div className='message-card' key={index} >
                             <div className='profile-picture-container '>
-                                <img src={message.sender.picture} alt="Profile" />
+                                <img src={message.chatBuddy.picture} alt="Profile" />
                             </div>
-                            <div className='profile-information booking-page' >
-                                <div className='service-price-container bookings-page'>
-                                    <h1 className='service-name bookings-page'>
-                                        {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
-                                    </h1>
-                                    <p>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
-                                </div>
+                            <div className='profile-information messages-page' >
+                                <h1 className='full-name messages-page'>
+                                    {message.chatBuddy.firstname} {message.chatBuddy.lastname}
+                                </h1>
                                 <div className='details-contact-container'>
-                                    <div className='booking-details bookings-page'>
-                                        <p className='full-name bookings-page'>with {booking.portfolio.user.firstname} {booking.portfolio.user.lastname}</p>
-                                        <div className='mini-booking-details'>
-                                            <div className='mini-booking-detail'>
-                                                <FaCalendar />{new Date(booking.sessionStartDate).toLocaleDateString("en-US", {
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    year: "numeric"
-                                                })}
-                                            </div>
-                                            <div className='mini-booking-detail'>
-                                                <FaClock /> {new Date(booking.sessionStartDate).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })}
-                                            </div>
-                                            <div className='mini-booking-detail'>
-                                                <FaLocationArrow /> {booking.venueName}, {booking.city}, {booking.state}
-                                            </div>
-
-                                        </div>
+                                    <div className='message-details messages-page'>
+                                        <p className='text-message message-page'>{`${message.isSender === true ? 'You: ' : ''}`}{message.latestMessage.text}</p>
                                     </div>
-                                    <div className='contact-button-container bookings-page'>
+                                    <div className='contact-button-container messages-page'>
 
-                                        <Link type="button" className='booking-button bookings-page' to={`/view-booking/${booking._id}`}>
+                                        <Link type="button" className='booking-button messages-page' to={`${user.role === 'client' ? '' : '/photographer'}/view-booking/${message.latestMessage.booking}`}>
                                             <AiOutlineProfile />View Details
                                         </Link>
 
-
-                                        <button className='booking-button message bookings-page'>
+                                        <Link className='booking-button message messages-page' to={`/message/${message.latestMessage.booking}`}>
                                             <FaMessage className='message-icon' />Message
-                                        </button>
+                                        </Link>
 
                                     </div>
                                 </div>
 
                             </div>
                         </div>
-                    ))} */}
-                    <div className='message-card' >
-                        <div className='profile-picture-container '>
-                            <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1759996125/h9ypyt8vm0eezusm0sh0.jpg' alt="Profile" />
-                        </div>
-                        <div className='profile-information messages-page' >
-                            <h1 className='full-name messages-page'>
-                                Amit Baniya
-                            </h1>
-                            <div className='details-contact-container'>
-                                <div className='message-details messages-page'>
-                                    <p className='text-message message-page'>Hello</p>
-                                </div>
-                                <div className='contact-button-container messages-page'>
-
-                                    <Link type="button" className='booking-button messages-page'>
-                                        <AiOutlineProfile />View Details
-                                    </Link>
-
-                                    <button className='booking-button message messages-page'>
-                                        <FaMessage className='message-icon' />Message
-                                    </button>
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+                    ))}
                 </section>
 
                 <section className='bookings-content pagination'>

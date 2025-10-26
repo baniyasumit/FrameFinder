@@ -4,7 +4,7 @@ import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { getPhotographerPortfolio } from '../../services/PortfolioServices';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaCalendarCheck, FaMessage } from 'react-icons/fa6';
+import { FaCalendarCheck } from 'react-icons/fa6';
 import { createBooking } from '../../services/BookingService';
 import { toast } from 'sonner';
 import { IoCheckmark } from 'react-icons/io5';
@@ -324,7 +324,7 @@ const CreateBooking = () => {
                                 ))}
                             </div>
                             <button type="button" className='booking-button' onClick={handleBooking}><FaCalendarCheck />Book Now</button>
-                            <button type="button" className='booking-message'><FaMessage className='message-icon' />Send Message</button>
+                            {/* <button type="button" className='booking-message'><FaMessage className='message-icon' />Send Message</button> */}
                             <p>You won't be charged until the photographer accepts your booking</p>
                         </div>
                     </section>

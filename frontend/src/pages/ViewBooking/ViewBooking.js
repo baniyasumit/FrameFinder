@@ -140,7 +140,7 @@ const ViewBooking = () => {
                                         </div>
                                         <div className='contact-button-container'>
                                             {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
-                                                <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                                <Link type="button" className='booking-button' to={`/message/${booking._id}`}><FaMessage className='message-icon' />Send Message</Link>
                                             }
 
                                             <Link className='booking-message' to={`/view-portfolio/${photographerPortfolio._id}`}><AiOutlineProfile />View Profile</Link>
@@ -267,7 +267,7 @@ const ViewBooking = () => {
                                 <div className='container booking-page summary'>
                                     <h2 className='container-heading summary contact'>Contact Photographer</h2>
                                     {booking?.bookingStatus.status === 'accepted' && <>
-                                        <button type="button" className='booking-button'><FaMessage className='message-icon' />Send Message</button>
+                                        <Link type="button" className='booking-button' to={`/message/${booking._id}`}><FaMessage className='message-icon' />Send Message</Link>
 
                                         <button type="button" className='booking-message' onClick={() => window.open(`tel:${photographerPortfolio?.user.phoneNumber}`, "_self")}><IoCall />Call</button>
                                     </>

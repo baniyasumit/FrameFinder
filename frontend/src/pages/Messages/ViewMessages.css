@@ -55,7 +55,7 @@
 }
 
 .profile-information.messages-page{
-    width:100%
+    flex:1;
 }
 
 .full-name.messages-page{

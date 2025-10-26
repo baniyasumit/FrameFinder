@@ -81,6 +81,7 @@ const Header = () => {
                   <div className='profile-dropdown' >
                     <Link className='view-profile-navigate' to="/profile">View Profile</Link>
                     <Link className='view-profile-navigate' to="/bookings">View Bookings</Link>
+                    <Link className='view-profile-navigate' to="/messages">View Messages</Link>
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}

@@ -40,7 +40,6 @@ export const checkAvailability = async (bookingForm) => {
 export const getTotalBookings = async (query) => {
     try {
         const response = await ApiInstance.get(`/api/booking/get-total-bookings?${query || ''}`)
-
         return response.data
     } catch (error) {
         console.error("Save error:", error);

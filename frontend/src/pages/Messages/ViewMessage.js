@@ -28,7 +28,7 @@ const ViewMessage = () => {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [pageNum, messages]);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -72,7 +72,14 @@ const ViewMessage = () => {
             const response = await createMessage(bookingId, newMessage);
 
             setMessages(prev => [...prev, response.newMessage]);
-
+            setTimeout(() => {
+                if (chatContainerRef.current) {
+                    chatContainerRef.current.scrollTo({
+                        top: chatContainerRef.current.scrollHeight,
+                        behavior: "smooth", // smooth scroll animation
+                    });
+                }
+            }, 50);
             setNewMessage("");
 
         } catch (err) {
@@ -96,7 +103,7 @@ const ViewMessage = () => {
             <div className='container message-page'>
                 <section className='profile-information card message-page '>
                     <div className='profile-picture-container message-page'>
-                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1759996125/h9ypyt8vm0eezusm0sh0.jpg' alt="Profile" />
+                        <img src={chatBuddy?.picture} alt="Profile" />
                     </div>
                     <div className='profile-basic-details message-page'>
                         <h2>{chatBuddy?.firstname} {chatBuddy?.lastname}</h2>

@@ -122,3 +122,13 @@ export const cancelDeclineBooking = async (bookingId, status) => {
         throw error.response?.data.message || error.message;
     }
 }
+
+export const endBookedEvent = async (bookingId) => {
+    try {
+        const response = await ApiInstance.patch(`/api/booking/complete-booking/${bookingId}`);
+        return response.data
+    } catch (error) {
+        console.error("Update error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

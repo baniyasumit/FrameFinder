@@ -443,6 +443,33 @@ export const cancelDeclineBooking = async (req, res) => {
 }
 
 
+export const endBookedEvent = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const bookingId = req.params.bookingId;
+        const booking = req.booking;
+
+        const wallet = await Wallet.findOne({ user: userId })
+        if (!wallet) return res.status(404).json({ message: "Wallet not found" })
+
+        const payment = await Payment.findOne({ booking: bookingId })
+        booking.bookingStatus.status = 'completed'
+        wallet.onHold -= payment.netAmount;
+        wallet.availableBalance += payment.netAmount;
+
+        await booking.save()
+        await wallet.save()
+
+        return res.status(200).json({
+            message: "Booking Completed and wallet updated"
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
+
 
 
 

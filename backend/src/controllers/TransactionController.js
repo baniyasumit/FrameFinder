@@ -128,14 +128,14 @@ export const updateAfterPayment = async (req, res) => {
 
             const existingWallet = await Wallet.findOne({ user: payment.receiver })
             if (existingWallet) {
-                existingWallet.totalEarned += payment.amount;
-                existingWallet.onHold += payment.amount
+                existingWallet.totalEarned += payment.netAmount;
+                existingWallet.onHold += payment.netAmount
                 await existingWallet.save();
             } else {
                 await Wallet.create({
                     user: payment.receiver,
-                    totalEarned: payment.amount,
-                    onHold: payment.amount
+                    totalEarned: payment.netAmount,
+                    onHold: payment.netAmount
                 });
             }
             await payment.save();

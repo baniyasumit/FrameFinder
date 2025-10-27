@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import './ViewBooking.css'
-import { cancelDeclineBooking, changeBookingStatus, getBookingInformationPhotographer } from '../../services/BookingService';
-import { Link, useParams } from 'react-router-dom';
+import { cancelDeclineBooking, changeBookingStatus, endBookedEvent, getBookingInformationPhotographer } from '../../services/BookingService';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FaCalendar, FaClock, FaLocationArrow, FaMessage, FaPeopleGroup } from 'react-icons/fa6';
 import { IoCall, IoCheckmark } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from 'sonner';
-import { Confirmation } from '../../components/Confirmation/Confirmation';
+import { CompleteDialog, Confirmation } from '../../components/Confirmation/Confirmation';
 
 const ViewBookingPhotographer = () => {
     const [booking, setBooking] = useState();
     const { bookingId } = useParams();
 
     const [showCancelConfirmation, setShowCancelConfirmation] = useState(false)
+    const [showCompleteDialog, setShowCompleteDialog] = useState(false)
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadBookingInformation = async () => {
             try {
                 const bookingInformation = await getBookingInformationPhotographer(bookingId);
                 setBooking(bookingInformation)
+
             } catch (error) {
                 console.error("Load Booking Error: ", error)
             }
@@ -26,13 +30,29 @@ const ViewBookingPhotographer = () => {
         loadBookingInformation();
     }, [bookingId]);
 
+    useEffect(() => {
+        if (booking) {
+            const today = new Date();
+            const endDate = new Date(booking.sessionEndDate);
+
+            if (endDate <= today && booking.bookingStatus.status === 'accepted') {
+                setShowCompleteDialog(true)
+            }
+        }
+    }, [booking]);
+
     const handleStatus = async (status) => {
         try {
-
-
+            console.log(status)
             if (status === 'accepted') {
                 toast.success('Booking Confirmed')
                 await changeBookingStatus(bookingId, status)
+            }
+            else if (status === 'completed') {
+                console.log("Gello")
+                await endBookedEvent(bookingId)
+                toast.success('Event Ended and wallet has been updated.')
+                setShowCompleteDialog(false)
             }
             else {
                 await cancelDeclineBooking(bookingId, status)
@@ -57,10 +77,17 @@ const ViewBookingPhotographer = () => {
 
     return (
         <>
+
             {showCancelConfirmation && <Confirmation title="Are you sure you want to cancel the booking?"
                 message="If you cancel the booking your ranking might decline."
                 setShowConfirmation={setShowCancelConfirmation}
                 onConfirm={() => handleStatus('cancelled')} />}
+            {showCompleteDialog && <CompleteDialog title="Has the event ended?"
+                message="Only click Yes if the event is completed. If not just click go back."
+                onConfirm={() => handleStatus('completed')}
+                onGoBack={() => navigate('/photographer/bookings')}
+                setShowConfirmation={setShowCompleteDialog} />
+            }
             {!booking ? (
                 <p>Loading booking information...</p>
             ) : (

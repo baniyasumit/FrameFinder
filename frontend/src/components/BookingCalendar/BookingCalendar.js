@@ -10,15 +10,13 @@ import { useParams } from 'react-router-dom';
 const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setShowCalendar }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    const [currentMonth, setCurrentMonth] = useState("");
-    const [currentYear, setCurrentYear] = useState("");
+    const [currentMonth, setCurrentMonth] = useState(minDate?.getMonth() + 1 || "");
+    const [currentYear, setCurrentYear] = useState(minDate?.getFullYear() || "");
 
     const [bookings, setBookings] = useState([]);
     const { portfolioId } = useParams();
 
-
     const calendarRef = useRef(null);
-
     useEffect(() => {
         if (typeof setShowCalendar !== "function") return;
         const handleClickOutside = (event) => {
@@ -29,7 +27,6 @@ const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setS
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [setShowCalendar]);
-
 
     useEffect(() => {
         const loadBookingDates = async () => {
@@ -94,7 +91,7 @@ const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setS
         const month = String(d.getMonth() + 1).padStart(2, "0"); // month 0-11
         const day = String(d.getDate()).padStart(2, "0");
         const formattedDate = `${year}-${month}-${day}`;
-        setSelectedDate(formattedDate);
+        setSelectedDate(date);
         handleChange({ target: { name: name, value: formattedDate } });
     };
     return (

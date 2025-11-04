@@ -1,0 +1,331 @@
+.main.dashboard-page{
+    background-color: #F9FAFB;
+}
+
+.container.dashboard-page{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.heading-container.dashboard-page{
+    margin-top: 1.5rem;
+}
+
+
+.heading-container.dashboard-page > p, .heading-container.dashboard-page > h1  {
+    margin: unset;
+}
+
+.statistics-container.dashboard-page {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px
+}
+
+.card{
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.048);
+    padding: 24px 30px;
+}
+
+.statistic-card{
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-basis: 250px;
+    justify-content: space-between;
+}
+
+.statistics-card-content{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.statistics-card-content p, .statistics-card-content>h3{
+    margin: unset;
+
+}
+
+.statistics-card-content > h3{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.475);
+}
+
+.statistic-number{
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.statistic-percentage{
+    color: rgba(0, 0, 0, 0.511);
+    font-size: 0.8rem;
+}
+
+.statistic-percentage.increase{
+    color: #50BA77;
+    font-size: 0.8rem;
+}
+
+.statistic-percentage.decrease{
+    color: #EF4444;
+    font-size: 0.8rem;
+}
+
+.statistics-card-icon{
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.statistics-card-icon.total-bookings{
+    color: #2563EB;
+    background-color: #DBEAFE;
+}
+
+.statistics-card-icon.monthly-revenue{
+    color: #16A34A;
+    background-color: #DCFCE7;
+}
+
+.statistics-card-icon.profile-views{
+    color: #9333EA;
+    background-color: #F3E8FF;
+}
+
+.statistics-card-icon.client-rating{
+    color: #CA8A04;
+    background-color: #FEF9C3;
+}
+
+.charts.dashboard-page{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.charts.dashboard-page > .card{
+    flex-basis: 500px;
+    flex-grow: 1;
+}
+
+.charts.dashboard-page > .pie-chart{
+    flex-basis: 200px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.card.line-graph h2, .card.pie-chart h2{
+    font-size: 1.25rem;
+    margin-top: unset;
+}
+
+.card.line-graph > .heading-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.filter-bar-graph{
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.228)
+}
+
+.pie-chart-label-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pie-chart-label{
+    margin: unset;
+    flex: 50%;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.662);
+}
+
+.pie-chart-label > span{
+    color: #EA4335;
+    opacity: 80%;
+}
+
+.pie-chart-label > .Pending{
+    color: #F4B400;
+    
+}
+.pie-chart-label > .Accepted{
+    color: #4285F4;
+    
+}
+.pie-chart-label > .Completed{
+    color: #34A853;
+    
+}
+
+.bookings-messages.dashboard-page{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.bookings-messages.dashboard-page > .card{
+    flex-basis: 500px;
+    flex-grow: 1;
+}
+
+.bookings-messages.dashboard-page .card-heading-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card-heading-section > h2{
+    margin: unset;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+}
+
+.card-heading-section > a{
+    text-decoration: none;
+    color: #2563ED;
+}
+
+.client-profile-information{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.027);
+    border-radius: 10px;
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+}
+
+.client-profile-information > .profile-picture-container{
+    width: 3rem;
+    height: 3rem;
+}
+
+.client-profile-information > .profile-information{
+    gap:0px;
+}
+
+.profile-information > .full-name.dashboard-page{
+    font-size: 1rem;
+    font-weight: 500;
+    margin: unset;
+}
+
+.profile-information >span{
+    font-size: 0.9rem;
+    opacity: 60%;
+}
+
+.client-booking-status.dashboard-page{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-grow: 1;
+}
+
+.profile-information.view-messages-section > span{
+    width: 300px;
+    white-space: nowrap;     /* don’t wrap to a new line */
+    overflow: hidden;        /* hide overflowing text */
+    text-overflow: ellipsis;
+}
+
+.message-created-time{
+    font-size: 0.8rem;
+    opacity: 50%;
+}
+
+.card.quick-actions > h2{
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+}
+
+.quick-actions-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.quick-actions-card{
+    flex-basis: 250px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid rgba(89, 89, 89, 0.167);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: black;
+}
+
+.quick-actions-card > div{
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #DBEAFE;
+    color: #2563EB;
+}
+
+.quick-actions-card > h3{
+    margin-bottom: unset;
+    font-weight: 500;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.quick-actions-card > .view-messages{
+    color: #16A34A;
+    background-color: #DCFCE7;
+}
+
+.quick-actions-card > .update-portfolio{
+    color: #9333EA;
+    background-color: #F3E8FF;
+}
+
+
+.quick-actions-card > .analytics{
+    color: #CA8A04;
+    background-color: #FEF9C3;
+}
+
+.view-bookings-card:hover{
+    border-color: #2563EB;
+    background-color: #EFF6FF;
+
+}
+
+.view-messages-card:hover{
+    border-color: #16A34A;
+    background-color: #f0fdf4c3;
+}
+
+.update-portfolio-card:hover{
+    border-color: #9333EA;
+    background-color: #FAF5FF;
+}
+
+
+.analytics-card:hover{
+    border-color: #CA8A04;
+    background-color: #FEFCE8;
+}
+

@@ -208,7 +208,6 @@ const Browse = () => {
                 <h1 className='filter-heading'>Find Your Perfect Photographer</h1>
                 <p>Browse through 500+ verified professionals.</p>
                 <div className='filter-container'>
-
                     <div className='filter-types-line'>
                         <div className='filter-type'>
                             <label className='filter-label'>Location</label>
@@ -246,8 +245,6 @@ const Browse = () => {
                                 <option value="portrait">Portrait</option>
                             </select>
                         </div>
-
-
                     </div>
                     <div className='filter-types-line'>
                         <div className='filter-type'>
@@ -340,92 +337,6 @@ const Browse = () => {
                                 </div>
                             </div>
                         ))}
-                        <div className='photographer-listing-card'>
-                            <div className='listing-image-container'>
-                                <div>Available</div>
-                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1754678707/portfolio-pictures/gbrq8ieigcokh2ozciag.jpg' alt='Portfolio' />
-                            </div>
-                            <div className='listing-information-container'>
-                                <div className='photographer-profile-information'>
-                                    <div className='photographer-profile-picture'>
-                                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1754678707/portfolio-pictures/gbrq8ieigcokh2ozciag.jpg' alt="Profile" />
-                                    </div>
-                                    <div className='photographer-profile-basic-information' >
-                                        <h3 className='photographer-full-name'>Aayusha Lmaichhane</h3>
-                                        <div className='photographer-rating-stats'>
-                                            <Rating
-                                                className='photographer-rating-stat'
-                                                initialValue={4.9}
-                                                size={16}
-                                                allowFraction
-                                                emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
-                                                fillIcon={<GoStarFill color="#FACC15" size={15} />}
-                                                readonly
-                                            />
-                                            <span>{4.9} (127 reviews)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className='photographer-message'>
-                                    Capturing timeless moments for couples around the world.
-                                </p>
-                                <p className='photographer-price-container'>
-                                    <span className='price'>$800</span>
-                                    <span >per session</span>
-                                </p>
-                                <div className='photographer-specializations-container'>
-
-                                    <button className="photographer-specialization wedding">Wedding</button>
-                                    <button className="photographer-specialization potrait">Potrait</button>
-
-                                </div>
-                                <button className='photographer-profile-button'>View Profile</button>
-                            </div>
-                        </div>
-                        <div className='photographer-listing-card'>
-                            <div className='listing-image-container'>
-                                <div>Available</div>
-                                <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1754678707/portfolio-pictures/gbrq8ieigcokh2ozciag.jpg' alt='Portfolio' />
-                            </div>
-                            <div className='listing-information-container'>
-                                <div className='photographer-profile-information'>
-                                    <div className='photographer-profile-picture'>
-                                        <img src='https://res.cloudinary.com/dcplldqtr/image/upload/v1754678707/portfolio-pictures/gbrq8ieigcokh2ozciag.jpg' alt="Profile" />
-                                    </div>
-                                    <div className='photographer-profile-basic-information' >
-                                        <h3 className='photographer-full-name'>Aayusha Lmaichhane</h3>
-                                        <div className='photographer-rating-stats'>
-                                            <Rating
-                                                className='photographer-rating-stat'
-                                                initialValue={4.9}
-                                                size={16}
-                                                allowFraction
-                                                emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
-                                                fillIcon={<GoStarFill color="#FACC15" size={15} />}
-                                                readonly
-                                            />
-                                            <span>{4.9} (127 reviews)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className='photographer-message'>
-                                    Capturing timeless moments for couples around the world.
-                                    Capturing timeless moments for couples around the world.
-                                    Capturing timeless moments for couples around the world.
-                                </p>
-                                <p className='photographer-price-container'>
-                                    <span className='price'>$800</span>
-                                    <span >per session</span>
-                                </p>
-                                <div className='photographer-specializations-container'>
-
-                                    <button className="photographer-specialization wedding">Wedding</button>
-                                    <button className="photographer-specialization portrait">Potrait</button>
-
-                                </div>
-                                <button className='photographer-profile-button'>View Profile</button>
-                            </div>
-                        </div>
 
                     </div>
                 </div >

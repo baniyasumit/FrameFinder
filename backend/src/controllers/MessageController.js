@@ -40,10 +40,10 @@ export const getMessages = async (req, res) => {
     try {
         const userId = req.user.id;
         const bookingId = req.params.bookingId;
-        const { pageNum = 1 } = req.query;
+        const { pageNum = 1, pageLimit = 15 } = req.query;
         const booking = req.booking;
         const page = parseInt(pageNum);
-        const limit = 15;
+        const limit = parseInt(pageLimit);
         const skip = (page - 1) * limit;
 
         let chatBuddyId;
@@ -122,28 +122,33 @@ export const getMessageList = async (req, res) => {
                     ]
                 }
             },
-            { $sort: { createdAt: -1 } },
-            {
-                $group: {
-                    _id: "$bookingId",
-                    latestMessage: { $first: "$$ROOT" }
-                }
-            },
             {
                 $addFields: {
                     chatBuddyId: {
                         $cond: [
-                            { $eq: ["$latestMessage.sender", userId] },
-                            "$latestMessage.receiver",
-                            "$latestMessage.sender"
+                            { $eq: ["$sender", userId] },
+                            "$receiver",
+                            "$sender"
                         ]
-                    }
+                    },
+                    isSender: { $eq: ["$sender", userId] }
                 }
             },
+            { $sort: { createdAt: -1 } }, // latest messages first
+            {
+                $group: {
+                    _id: "$chatBuddyId",       // one entry per user
+                    latestMessage: { $first: "$$ROOT" },
+                    isSender: { $first: "$isSender" }
+                }
+            },
+            { $sort: { "latestMessage.createdAt": -1 } }, // sort by latest message date
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
             {
                 $lookup: {
                     from: "users",
-                    localField: "chatBuddyId",
+                    localField: "_id",
                     foreignField: "_id",
                     as: "chatBuddy"
                 }
@@ -152,20 +157,19 @@ export const getMessageList = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    latestMessage: 1,
-                    isSender: { $eq: ["$latestMessage.sender", userId] },
                     chatBuddy: {
                         _id: 1,
                         firstname: 1,
                         lastname: 1,
                         picture: 1
-                    }
+                    },
+                    isSender: 1,
+                    latestMessage: 1
                 }
-            },
-            { $sort: { createdAt: -1 } },
-            { $skip: skip },
-            { $limit: limit }
+            }
         ]);
+
+
 
         return res.status(200).json({
             message: "Message List Fetched", messages,

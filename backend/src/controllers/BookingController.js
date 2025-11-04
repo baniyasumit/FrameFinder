@@ -1,10 +1,9 @@
-import path from "path";
 import Booking from "../models/Booking.js";
 import Portfolio from "../models/Portfolio.js";
 import Service from "../models/Service.js";
+import Payment from "../models/Payment.js";
 
 import mongoose from "mongoose"
-import Payment from "../models/Payment.js";
 const { ObjectId } = mongoose.Types;
 
 import Stripe from "stripe";
@@ -251,9 +250,9 @@ export const getBookingsPhotographer = async (req, res) => {
     try {
         const userId = req.user.id;
         const userObjectId = new ObjectId(userId);
-        const { pageNum = 1, bookingStatus = '' } = req.query;
+        const { pageNum = 1, bookingStatus = '', pageLimit = 20 } = req.query;
         const page = parseInt(pageNum);
-        const limit = 20;
+        const limit = parseInt(pageLimit);
         const skip = (page - 1) * limit;
 
         const today = new Date();
@@ -427,7 +426,7 @@ export const cancelDeclineBooking = async (req, res) => {
             });
         }
 
-        wallet.onHold -= refundAmount;
+        wallet.onHold -= payment.netAmount;
 
         await booking.save();
         await payment.save()

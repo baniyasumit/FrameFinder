@@ -266,7 +266,7 @@
     
 }
 
-.view-portfolio-gallery-image-container {
+.view-portfolio-gallery-image-container,.view-portfolio-gallery-add-image {
     flex-grow: 1;
     flex-basis: 21rem;
     height: 16rem;
@@ -279,6 +279,7 @@
 }
 
 
+
 .view-portfolio-gallery-image{
     object-fit: cover;
     height: 100%;
@@ -287,8 +288,23 @@
     transition: transform 0.3s ease-in-out;
 }
 
+.view-portfolio-gallery-add-image{
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    border: 1px dashed rgba(0, 0, 0, 0.577);
+    color: rgba(0, 0, 0, 0.464);
+    transition: transform 0.3s ease-in-out;
+}
+
 .view-portfolio-gallery-image-container:hover > .view-portfolio-gallery-image{
  transform: scale(1.1);
+}
+
+.view-portfolio-gallery-add-image:hover{
+    transform: scale(1.03);
 }
 
 .main.view-portfolio-about{
@@ -407,10 +423,6 @@
 
     .container.about{
         grid-template-columns: 1fr;
-    }
-
-    .container.reviews{
-       padding: 3rem 10px;
     }
 
 

@@ -55,11 +55,15 @@
 }
 
 .profile-information.messages-page{
-    flex:1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
 }
 
 .full-name.messages-page{
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: 500;
     margin:unset;
 }
@@ -79,5 +83,17 @@
 
 .text-message.message-page{
     margin: unset;
+}
+
+
+
+.booking-button.messages-page{
+    height: 3rem;
+}
+
+@media screen and (max-width:400px) { 
+    .booking-button.messages-page > span{
+        display: none;
+    }
 }
 

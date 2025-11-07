@@ -129,7 +129,7 @@ const ViewBookingsPhotographer = () => {
                 <section className='bookings-content booking-list'>
                     {bookings?.map((booking, index) => (
                         <div className='booking-card' key={index}>
-                            <div className='profile-picture-container '>
+                            <div className='profile-picture-container bookings-page'>
                                 <img src={booking.user.picture} alt="Profile" />
                             </div>
                             <div className='profile-information booking-page' >

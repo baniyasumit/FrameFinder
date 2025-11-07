@@ -183,7 +183,7 @@ const ViewPortfolio = () => {
                                         }}>
                                         <img src={picture.url} className='view-portfolio-gallery-image' alt='gallery-image' />
                                     </div>)}
-                                <button className='portfolio-gallery-add-image' onClick={() => setShowGalleryOverlay(true)}>View All</button>
+                                <button className='view-portfolio-gallery-add-image' onClick={() => setShowGalleryOverlay(true)}>View All</button>
                             </div>
 
                         </div>

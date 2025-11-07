@@ -94,24 +94,26 @@ const ViewMessages = () => {
                                 <img src={message.chatBuddy.picture} alt="Profile" />
                             </div>
                             <div className='profile-information messages-page' >
-                                <h1 className='full-name messages-page'>
-                                    {message.chatBuddy.firstname} {message.chatBuddy.lastname}
-                                </h1>
-                                <div className='details-contact-container'>
-                                    <div className='message-details messages-page'>
-                                        <p className='text-message message-page'>{`${message.isSender === true ? 'You: ' : ''}`}{message.latestMessage.text}</p>
+                                <div>
+                                    <h1 className='full-name messages-page'>
+                                        {message.chatBuddy.firstname} {message.chatBuddy.lastname}
+                                    </h1>
+                                    <div className='details-contact-container'>
+                                        <div className='message-details messages-page'>
+                                            <p className='text-message message-page'>{`${message.isSender === true ? 'You: ' : ''}`}{message.latestMessage.text}</p>
+                                        </div>
                                     </div>
-                                    <div className='contact-button-container messages-page'>
+                                </div>
+                                <div className='contact-button-container messages-page'>
 
-                                        <Link type="button" className='booking-button messages-page' to={`${user.role === 'client' ? '' : '/photographer'}/view-booking/${message.latestMessage.booking}`}>
-                                            <AiOutlineProfile />View Details
-                                        </Link>
+                                    <Link type="button" className='booking-button messages-page' to={`${user.role === 'client' ? '' : '/photographer'}/view-booking/${message.latestMessage.booking}`}>
+                                        <AiOutlineProfile /><span>View Details</span>
+                                    </Link>
 
-                                        <Link className='booking-button message messages-page' to={`/message/${message.latestMessage.booking}`}>
-                                            <FaMessage className='message-icon' />Message
-                                        </Link>
+                                    <Link className='booking-button message messages-page' to={`/message/${message.latestMessage.booking}`}>
+                                        <FaMessage className='message-icon' /><span>Message</span>
+                                    </Link>
 
-                                    </div>
                                 </div>
 
                             </div>

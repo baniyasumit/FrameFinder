@@ -292,8 +292,8 @@
 }
 
 .quick-actions-card > .view-messages{
-    color: #16A34A;
-    background-color: #DCFCE7;
+    color: #CA8A04;
+    background-color: #FEF9C3;
 }
 
 .quick-actions-card > .update-portfolio{
@@ -302,9 +302,9 @@
 }
 
 
-.quick-actions-card > .analytics{
-    color: #CA8A04;
-    background-color: #FEF9C3;
+.quick-actions-card > .wallet{
+    color: #16A34A;
+    background-color: #DCFCE7;
 }
 
 .view-bookings-card:hover{
@@ -314,8 +314,8 @@
 }
 
 .view-messages-card:hover{
-    border-color: #16A34A;
-    background-color: #f0fdf4c3;
+    border-color: #CA8A04;
+    background-color: #FEFCE8;
 }
 
 .update-portfolio-card:hover{
@@ -324,8 +324,8 @@
 }
 
 
-.analytics-card:hover{
-    border-color: #CA8A04;
-    background-color: #FEFCE8;
+.wallet-card:hover{
+    border-color: #16A34A;
+    background-color: #f0fdf4c3;
 }
 

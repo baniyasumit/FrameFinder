@@ -11,6 +11,7 @@ import reviewRoutes from './routes/ReviewRoutes.js';
 import transactionRoutes from './routes/TransactionRoutes.js';
 import messageRoutes from './routes/MessageRoutes.js';
 import dashboardRoutes from './routes/DashboardRoutes.js';
+import walletRoutes from './routes/WalletRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -36,6 +37,7 @@ app.use("/api/review", reviewRoutes)
 app.use("/api/transaction", transactionRoutes)
 app.use("/api/message", messageRoutes)
 app.use("/api/dashboard", dashboardRoutes)
+app.use("/api/wallet", walletRoutes)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

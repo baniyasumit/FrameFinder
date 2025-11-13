@@ -31,6 +31,7 @@ import ViewBookingsPhotographer from './pages/ViewBookings/ViewBookingsPhotograp
 import Payment from './pages/Payment/Payment.js';
 import ViewMessages from './pages/Messages/ViewMessages.js';
 import ViewMessage from './pages/Messages/ViewMessage.js';
+import WalletTransaction from './pages/WallatTransaction/WalletTransaction.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -78,6 +79,7 @@ const App = () => {
             <Route path='/photographer/portfolio' element={<Portfolio />} />
             <Route path='/photographer/bookings' element={<ViewBookingsPhotographer />} />
             <Route path='/photographer/view-booking/:bookingId' element={<ViewBookingPhotographer />} />
+            <Route path='/photographer/wallet' element={<WalletTransaction />} />
           </Route>
         </Route>
         <Route element={<RoleRoute allowedRoles={['client']} />}>
@@ -93,7 +95,6 @@ const App = () => {
             <Route path='/profile' element={<Profile />} />
             <Route path='/messages' element={<ViewMessages />} />
             <Route path='/message/:bookingId' element={<ViewMessage />} />
-
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />

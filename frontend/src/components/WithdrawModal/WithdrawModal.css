@@ -1,0 +1,66 @@
+.withdraw-header{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+}
+
+.withdraw-title{
+    font-size: 1.5rem;
+}
+
+.withdraw-message{
+    font-size: 0.8rem;
+    color: #943434;
+}
+
+.submit-button-container.withdraw-modal{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 10px;
+}
+
+.stripe-account{
+    border: 1px solid black;
+    margin: unset;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stripe-account.not-connected{
+    border-color: #da9898;
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.stripe-account.connected{
+    border-color: #94e8b2;
+    background-color: #DCFCE7;
+    color: #166556;
+}
+
+.loader {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #FFF;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 

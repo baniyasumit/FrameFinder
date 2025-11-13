@@ -120,9 +120,9 @@
 .spinner.gallery{
     color:white;
     font-size: 2rem;
-  
+
 }
 
-  ::-webkit-scrollbar{
+::-webkit-scrollbar{
     width: 0px;
-  }
+}

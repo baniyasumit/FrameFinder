@@ -7,6 +7,11 @@ const walletSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    stripeId: {
+        type: String,
+        required: true,
+        default: ""
+    },
     totalEarned: {
         type: Number,
         required: true,

@@ -81,6 +81,7 @@ const PhotographerHeader = () => {
                                 {profileMenuOpen && (
                                     <div className='profile-dropdown' >
                                         <Link className='view-profile-navigate' to="/profile">View Profile</Link>
+                                        <Link className='view-profile-navigate' to="/photographer/wallet">View Wallet</Link>
                                         <button onClick={handleLogout}>Logout</button>
                                     </div>
                                 )}

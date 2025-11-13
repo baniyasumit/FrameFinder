@@ -326,10 +326,10 @@ const Dashboard = () => {
                                 <div className='update-portfolio'><FaUserEdit /></div>
                                 <h3>Edit Portfolio</h3>
                             </Link>
-                            <a className='quick-actions-card analytics-card' href="#statistics">
-                                <div className='analytics'><MdOutlineAnalytics /></div>
-                                <h3>View Analytics</h3>
-                            </a>
+                            <Link className='quick-actions-card wallet-card' to="/photographer/wallet">
+                                <div className='wallet'><FaDollarSign /></div>
+                                <h3>View Wallet</h3>
+                            </Link >
                         </div>
                     </section>
                 </div>

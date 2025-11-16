@@ -93,3 +93,13 @@ export const getSearchedLocations = async (serchTerm) => {
     }
 }
 
+export const getServiceTypes = async () => {
+    try {
+        const response = await ApiInstance.get('/api/portfolio/service-types')
+        return response.data;
+    } catch (error) {
+        console.error("Retrival  error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}
+

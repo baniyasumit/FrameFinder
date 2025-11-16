@@ -264,6 +264,11 @@
     font-size: 12px;
 }
 
+.listing-image-container > div.unavailable{
+     background-color:#c52222;
+    color: white;
+}
+
 .listing-information-container{
     width: 100%;
     height: 100%;

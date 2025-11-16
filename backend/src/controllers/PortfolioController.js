@@ -1,3 +1,4 @@
+import Booking from "../models/Booking.js";
 import Portfolio from "../models/Portfolio.js";
 import PortfolioPicture from "../models/PortfolioPicture.js";
 import Review from "../models/Review.js";
@@ -277,19 +278,40 @@ export const getPhotographerPortfolio = async (req, res) => {
 
 export const getPortfolios = async (req, res) => {
     try {
-        const { long, lat, photographerType, minBudget = 0, maxBudget, sortBy = 'rating', sortByAsc = false } = req.query;
+        const { long, lat, photographerType, minBudget = 0, maxBudget, sortBy = 'rating', sortByAsc = false, checkAvailability = false } = req.query;
         const min = Number(minBudget) || 0;
         const max = maxBudget ? Number(maxBudget) : Infinity;
         const sortOrder = sortByAsc === 'true' ? 1 : -1;
         const maxDistance = 10000;
         const matchStage = {};
 
+
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 1);
+
+        const endDate = new Date(today);
+        endDate.setDate(today.getDate() + 1);
+
+
         if (photographerType && photographerType.trim() !== '') {
             matchStage.serviceTypes = { $regex: new RegExp(photographerType.trim(), 'i') };
         }
 
+
+
+
         const pipeline = [];
-        if (long !== undefined && lat !== undefined && !isNaN(long) && !isNaN(lat) && long !== '' && lat !== '') {
+
+        // GEO NEAR (if location provided)
+        if (
+            long !== undefined &&
+            lat !== undefined &&
+            !isNaN(long) &&
+            !isNaN(lat) &&
+            long !== "" &&
+            lat !== ""
+        ) {
             pipeline.push({
                 $geoNear: {
                     near: {
@@ -303,112 +325,162 @@ export const getPortfolios = async (req, res) => {
                 }
             });
         }
+
+        // -------------------- MATCH STAGE --------------------
+        pipeline.push({ $match: matchStage });
+
+        // -------------------- USER LOOKUP --------------------
         pipeline.push(
             {
-                $match: matchStage
-            },
-
-            // Join user info
-            {
                 $lookup: {
-                    from: 'users',
-                    localField: 'user',
-                    foreignField: '_id',
-                    as: 'user'
+                    from: "users",
+                    localField: "user",
+                    foreignField: "_id",
+                    as: "user"
                 }
             },
-            { $unwind: '$user' },
+            { $unwind: "$user" }
+        );
 
-            // Join services
-            {
-                $lookup: {
-                    from: 'services',
-                    localField: '_id',
-                    foreignField: 'portfolio',
-                    as: 'services'
-                }
-            },
+        // -------------------- SERVICES LOOKUP --------------------
+        pipeline.push({
+            $lookup: {
+                from: "services",
+                localField: "_id",
+                foreignField: "portfolio",
+                as: "services"
+            }
+        });
 
-            // Compute total prices for each service
+        // -------------------- CALCULATE PRICES --------------------
+        pipeline.push(
             {
                 $addFields: {
                     servicePrices: {
                         $map: {
-                            input: '$services',
-                            as: 's',
-                            in: { $add: ['$$s.price', '$standardCharge',] }
+                            input: "$services",
+                            as: "s",
+                            in: { $add: ["$$s.price", "$standardCharge"] }
                         }
                     }
                 }
             },
-
-            // Filter prices by budget
             {
                 $addFields: {
                     filteredPrices: {
                         $filter: {
-                            input: '$servicePrices',
-                            as: 'price',
-                            cond: { $and: [{ $gte: ['$$price', min] }, { $lte: ['$$price', max] }] }
+                            input: "$servicePrices",
+                            as: "price",
+                            cond: {
+                                $and: [
+                                    { $gte: ["$$price", min] },
+                                    { $lte: ["$$price", max] }
+                                ]
+                            }
                         }
                     }
                 }
             },
-
-            // Compute minPrice, maxPrice, and priceRange
             {
                 $addFields: {
-                    minPrice: { $min: '$filteredPrices' },
-                    maxPrice: { $max: '$filteredPrices' },
+                    minPrice: { $min: "$filteredPrices" },
+                    maxPrice: { $max: "$filteredPrices" }
                 }
-            },
+            }
+        );
 
+        // -------------------- BOOKINGS LOOKUP (DATE CHECK) --------------------
+        pipeline.push({
+            $lookup: {
+                from: "bookings",
+                let: { portfolioId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$portfolio", "$$portfolioId"] },
+                                    { $lt: ["$sessionStartDate", new Date(endDate)] },
+                                    { $gt: ["$sessionEndDate", new Date(startDate)] },
+                                    { $not: { $in: ["$bookingStatus.status", ["declined", "cancelled"]] } },
+                                    { $ne: ["$payment.status", "unpaid"] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: { _id: 1 }
+                    }
+                ],
+                as: "conflicts"
+            }
+        });
 
-            // Lookup latest portfolio picture
+        // -------------------- ADD AVAILABILITY --------------------
+        pipeline.push({
+            $addFields: {
+                conflictingBookings: { $size: "$conflicts" },
+                isAvailable: { $eq: [{ $size: "$conflicts" }, 0] }
+            }
+        });
+
+        // -------------------- LATEST PORTFOLIO PICTURE --------------------
+        pipeline.push(
             {
                 $lookup: {
-                    from: 'portfoliopictures',
-                    let: { portfolioId: '$_id' },
+                    from: "portfoliopictures",
+                    let: { portfolioId: "$_id" },
                     pipeline: [
-                        { $match: { $expr: { $eq: ['$portfolio', '$$portfolioId'] } } },
+                        { $match: { $expr: { $eq: ["$portfolio", "$$portfolioId"] } } },
                         { $sort: { createdAt: -1 } },
                         { $limit: 1 },
                         { $project: { _id: 0, url: 1 } }
                     ],
-                    as: 'picture'
+                    as: "picture"
                 }
             },
-            { $addFields: { picture: { $arrayElemAt: ['$picture.url', 0] } } },
-
-
-
-            // Project only required fields
             {
-                $project: {
-                    specialization: 1,
-                    bio: 1,
-                    serviceTypes: 1,
-                    standardCharge: 1,
-                    minPrice: 1,
-                    maxPrice: 1,
-                    'user.firstname': 1,
-                    'user.lastname': 1,
-                    'user.isVerified': 1,
-                    'user.picture': 1,
-                    picture: 1,
-                    distance: 1,
-                    location: 1,
-                    ratingStats: 1,
+                $addFields: {
+                    picture: { $arrayElemAt: ["$picture.url", 0] }
                 }
-            },
-            // Sort
-            {
-                $sort: sortBy === 'price'
-                    ? { minPrice: sortOrder }
-                    : { [sortBy]: sortOrder }
             }
         );
 
+        // -------------------- FINAL PROJECT --------------------
+        pipeline.push({
+            $project: {
+                specialization: 1,
+                bio: 1,
+                serviceTypes: 1,
+                standardCharge: 1,
+                minPrice: 1,
+                maxPrice: 1,
+                "user.firstname": 1,
+                "user.lastname": 1,
+                "user.isVerified": 1,
+                "user.picture": 1,
+                picture: 1,
+                distance: 1,
+                location: 1,
+                ratingStats: 1,
+                conflictingBookings: 1,
+                isAvailable: 1
+            }
+        });
+        // -------------------- SORT --------------------
+        pipeline.push({
+            $sort:
+                sortBy === "price"
+                    ? { minPrice: sortOrder }
+                    : { "ratingStats.averageRating": sortOrder }
+
+        });
+
+
+
+        if (checkAvailability === 'true') {
+            pipeline.push({ $match: { conflictingBookings: 0 } });
+        }
 
         const portfolios = await Portfolio.aggregate(pipeline);
 
@@ -420,6 +492,23 @@ export const getPortfolios = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const getServiceTypes = async (req, res) => {
+    try {
+        const result = await Portfolio.aggregate([
+            { $unwind: "$serviceTypes" },
+            { $group: { _id: null, serviceTypes: { $addToSet: "$serviceTypes" } } },
+            { $project: { _id: 0, serviceTypes: 1 } }
+        ]);
+        const serviceTypes = result[0].serviceTypes || []
+        res.json({
+            message: "Service Types retrieved Successfully",
+            serviceTypes
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 

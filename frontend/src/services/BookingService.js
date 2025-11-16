@@ -26,16 +26,6 @@ export const createBooking = async (formData, portfolioId) => {
     }
 }
 
-export const checkAvailability = async (bookingForm) => {
-    try {
-        const response = await ApiInstance.get("/api/booking/check-availability", { params: bookingForm });
-
-        return response.data
-    } catch (error) {
-        console.error("Save error:", error);
-        throw error.response?.data.message || error.message;
-    }
-}
 
 export const getTotalBookings = async (query) => {
     try {

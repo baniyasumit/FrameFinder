@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaSearch, FaSortAmountDown, FaSortAmountUp, FaStar } from 'react-icons/fa';
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
-import { getBrowsePortfolio, getLocation, getSearchedLocations } from '../../services/PortfolioServices';
+import { getBrowsePortfolio, getLocation, getSearchedLocations, getServiceTypes } from '../../services/PortfolioServices';
 import { MdOutlineMyLocation } from 'react-icons/md';
 import { GrMapLocation } from 'react-icons/gr';
 import Mapbox from '../../components/Mapbox/Mapbox';
@@ -17,8 +17,11 @@ const Browse = () => {
         minBudget: '0',
         maxBudget: '',
         sortBy: 'rating',
-        sortByAsc: false
+        sortByAsc: false,
+        checkAvailability: false,
     })
+
+    const [serviceTypes, setServiceTypes] = useState([]);
 
     const [portfolios, setPortfolios] = useState([])
 
@@ -32,6 +35,20 @@ const Browse = () => {
     const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
     const [showMapboxModal, setShowMapboxModal] = useState(false)
     const locationRef = useRef();
+
+
+    useEffect(() => {
+        const fetchServiceTypes = async () => {
+            try {
+                const data = await getServiceTypes();
+                setServiceTypes(data.serviceTypes);
+            } catch (error) {
+                console.error("Load Location Error: ", error);
+            }
+        };
+
+        fetchServiceTypes();
+    }, [])
 
     useEffect(() => {
         const loadLocation = async () => {
@@ -98,6 +115,10 @@ const Browse = () => {
     };
 
     const handleFilter = () => {
+        if (location.name === '') {
+            setSearchParams({ ...params, long: '', lat: '' });
+            return;
+        }
         setSearchParams({ ...params, long: location.coordinates[0] || '', lat: location.coordinates[1] || '' });
     };
 
@@ -116,6 +137,12 @@ const Browse = () => {
 
     const handleSortOrder = () => {
         const updatedParams = { ...params, sortByAsc: !params.sortByAsc };
+        setParams(updatedParams);
+        setSearchParams({ ...updatedParams })
+    }
+
+    const handleAvailableToday = () => {
+        const updatedParams = { ...params, checkAvailability: !params.checkAvailability };
         setParams(updatedParams);
         setSearchParams({ ...updatedParams })
     }
@@ -239,11 +266,14 @@ const Browse = () => {
                         </div>
                         <div className='filter-type'>
                             <label className='filter-label'>Photographer Type</label>
-                            <select className='filter-input dropdown' name='photographerType' value={params.photographerType} onChange={handleFilterChange}>
-                                <option value="">All Types</option>
-                                <option value="wedding">Wedding</option>
-                                <option value="portrait">Portrait</option>
-                            </select>
+                            {serviceTypes.length !== 0 &&
+                                < select className='filter-input dropdown' name='photographerType' value={params.photographerType} onChange={handleFilterChange}>
+                                    <option value="">All Types</option>
+                                    {serviceTypes.map((type, index) =>
+                                        <option value={type}>{type}</option>
+                                    )}
+                                </select>
+                            }
                         </div>
                     </div>
                     <div className='filter-types-line'>
@@ -269,8 +299,8 @@ const Browse = () => {
                 <div className='filter-nav'>
                     <div className='filter-nav-items'>
                         <span>Filters: </span>
-                        <button className='filter-nav-button'><FaStar />  Top Rated</button>
-                        <button className='filter-nav-button'>Available Today</button>
+                        {/* <button className='filter-nav-button'><FaStar />  Top Rated</button> */}
+                        <button className={`filter-nav-button ${params.checkAvailability === true && 'active'}`} onClick={handleAvailableToday}>Available Tommorrow</button>
                         <button className={`filter-nav-button ${params.maxBudget === '500' && 'active'}`} name='maxBudget' value={500} onClick={handleFilterNav}>Under $500</button>
                     </div>
                     <div className='sort-order-container'>
@@ -288,59 +318,61 @@ const Browse = () => {
 
             </div>
         </section >
-        {portfolios?.length === 0 ? (<>NotFound</>) : (
-            <section className='browse-main photographer-listings-container'>
-                <div className='browse-container photographer-listings-container'>
-                    <div className='photographers-listings'>
-                        {portfolios?.map((portfolio, index) => (
-                            <div className='photographer-listing-card' key={index}>
-                                <div className='listing-image-container'>
-                                    <div>Available</div>
-                                    <img src={portfolio.picture} alt='Portfolio' />
-                                </div>
-                                <div className='listing-information-container'>
-                                    <div className='photographer-profile-information'>
-                                        <div className='photographer-profile-picture'>
-                                            <img src={portfolio.user.picture} alt="Profile" />
-                                        </div>
-                                        <div className='photographer-profile-basic-information' >
-                                            <h3 className='photographer-full-name'>{portfolio.user.firstname} {portfolio.user.lastname}</h3>
-                                            <div className='photographer-rating-stats'>
-                                                <Rating
-                                                    className='photographer-rating-stat'
-                                                    initialValue={portfolio.ratingStats?.averageRating}
-                                                    size={16}
-                                                    allowFraction
-                                                    emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
-                                                    fillIcon={<GoStarFill color="#FACC15" size={15} />}
-                                                    readonly
-                                                />
-                                                <span>{portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</span>
+        {
+            portfolios?.length === 0 ? (<>NotFound</>) : (
+                <section className='browse-main photographer-listings-container'>
+                    <div className='browse-container photographer-listings-container'>
+                        <div className='photographers-listings'>
+                            {portfolios?.map((portfolio, index) => (
+                                <div className='photographer-listing-card' key={index}>
+                                    <div className='listing-image-container'>
+                                        {portfolio.isAvailable ? <div>Available Tommorrow</div> :
+                                            <div className='unavailable'>Unavailable Tommorrow</div>}
+                                        <img src={portfolio.picture} alt='Portfolio' />
+                                    </div>
+                                    <div className='listing-information-container'>
+                                        <div className='photographer-profile-information'>
+                                            <div className='photographer-profile-picture'>
+                                                <img src={portfolio.user.picture} alt="Profile" />
+                                            </div>
+                                            <div className='photographer-profile-basic-information' >
+                                                <h3 className='photographer-full-name'>{portfolio.user.firstname} {portfolio.user.lastname}</h3>
+                                                <div className='photographer-rating-stats'>
+                                                    <Rating
+                                                        className='photographer-rating-stat'
+                                                        initialValue={portfolio.ratingStats?.averageRating}
+                                                        size={16}
+                                                        allowFraction
+                                                        emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
+                                                        fillIcon={<GoStarFill color="#FACC15" size={15} />}
+                                                        readonly
+                                                    />
+                                                    <span>{portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <p className='photographer-message'>
+                                            {portfolio.bio}
+                                        </p>
+                                        <p className='photographer-price-container'>
+                                            <span className='price'>
+                                                {portfolio.minPrice === portfolio.maxPrice ? <>${portfolio.minPrice}</> : <>${portfolio.minPrice} - ${portfolio.maxPrice}</>}
+                                            </span>
+                                            <span >(incl. pkg)</span>
+                                        </p>
+                                        <div className='photographer-specializations-container'>
+                                            {portfolio.serviceTypes?.map((type, index) => (
+                                                <button key={index} className={`photographer-specialization ${type.toLowerCase()}`}>{type}</button>
+                                            ))}
+                                        </div>
+                                        <button className='photographer-profile-button' onClick={() => { navigate(`/view-portfolio/${portfolio._id}`) }}>View Profile</button>
                                     </div>
-                                    <p className='photographer-message'>
-                                        {portfolio.bio}
-                                    </p>
-                                    <p className='photographer-price-container'>
-                                        <span className='price'>
-                                            {portfolio.minPrice === portfolio.maxPrice ? <>${portfolio.minPrice}</> : <>${portfolio.minPrice} - ${portfolio.maxPrice}</>}
-                                        </span>
-                                        <span >(incl. pkg)</span>
-                                    </p>
-                                    <div className='photographer-specializations-container'>
-                                        {portfolio.serviceTypes?.map((type, index) => (
-                                            <button key={index} className={`photographer-specialization ${type.toLowerCase()}`}>{type}</button>
-                                        ))}
-                                    </div>
-                                    <button className='photographer-profile-button' onClick={() => { navigate(`/view-portfolio/${portfolio._id}`) }}>View Profile</button>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
 
-                    </div>
-                </div >
-            </section >)
+                        </div>
+                    </div >
+                </section >)
         }
 
     </>)

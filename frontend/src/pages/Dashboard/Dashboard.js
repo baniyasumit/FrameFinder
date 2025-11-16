@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsCalendar, BsEye, BsStarFill } from "react-icons/bs";
-import { MdMessage, MdOutlineAnalytics } from "react-icons/md";
+import { MdMessage } from "react-icons/md";
 import useAuthStore from './../../stateManagement/useAuthStore';
 import './Dashboard.css'
 import { FaDollarSign, FaDotCircle, FaUserEdit } from 'react-icons/fa';

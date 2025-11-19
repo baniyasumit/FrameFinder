@@ -1,22 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "./NotFound.css"; // <-- external CSS
 
 const NotFound = () => {
     const navigate = useNavigate();
 
     return (
-        <div style={{ textAlign: "center", padding: "2rem" }}>
-            <h1>404 - Page Not Found</h1>
-            <p>Oops! The page you’re looking for doesn’t exist.</p>
-            <button
-                onClick={() => navigate("/")}
-                style={{
-                    padding: "10px 20px",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    marginTop: "20px",
-                }}
-            >
+        <div className="notfound-container">
+            <h1 className="notfound-title">404</h1>
+            <p className="notfound-text">
+                Oops! The page you're trying to reach doesn’t exist or may have been moved.
+            </p>
+
+            <button onClick={() => navigate("/")} className="notfound-btn">
                 Go to Home Page
             </button>
         </div>

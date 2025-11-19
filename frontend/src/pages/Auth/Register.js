@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useAuthStore from '../../stateManagement/useAuthStore';
 
-const Register = ({ handleSubmit }) => {
+const Register = ({ handleSubmit, role }) => {
     const { user } = useAuthStore();
     const [visible, setVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
@@ -90,8 +90,13 @@ const Register = ({ handleSubmit }) => {
                 <div className="auth-header">
                     <h1 className="auth-title">Create an account</h1>
                 </div>
+                {role === 'photographer' ?
+                    <span className='auth-message'>Welcome! Please register a new photographer account.</span>
+                    :
+                    <span className='auth-message'>Welcome! Please register a new client account.</span>
+                }
 
-                <span className='auth-message'>Welcome! Please register a new account.</span>
+
 
                 <div className='name-container'>
                     <input
@@ -188,6 +193,26 @@ const Register = ({ handleSubmit }) => {
                         Sign In
                     </Link>
                 </div>
+                {role === 'photographer' ?
+                    <div className='auth-redirect-option'>
+                        <span>Are you not a photographer? </span>
+                        <Link
+                            className='auth-redirect-link'
+                            to="/register"
+                        >
+                            Register as Client
+                        </Link>
+                    </div>
+                    : <div className='auth-redirect-option'>
+                        <span>Are you a photographer? </span>
+                        <Link
+                            className='auth-redirect-link'
+                            to="/register-photographer"
+                        >
+                            Register as Photographer
+                        </Link>
+                    </div>
+                }
             </form>
         </main>
     );

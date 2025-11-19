@@ -19,7 +19,7 @@ const RegisterClient = () => {
         }
     };
     return (
-        <Register handleSubmit={handleSubmitClient} />
+        <Register handleSubmit={handleSubmitClient} role='client' />
     )
 }
 

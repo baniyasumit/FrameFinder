@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './Browse.css'
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { FaSearch, FaSortAmountDown, FaSortAmountUp, FaStar } from 'react-icons/fa';
+import { FaSearch, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
 import { getBrowsePortfolio, getLocation, getSearchedLocations, getServiceTypes } from '../../services/PortfolioServices';
@@ -124,7 +124,11 @@ const Browse = () => {
 
     const handleFilterNav = (e) => {
         const { name, value } = e.target;
-        const updatedParams = { ...params, [name]: value }
+        let amount = value;
+        if (params.maxBudget === '500') {
+            amount = '';
+        }
+        const updatedParams = { ...params, [name]: amount }
         setParams(updatedParams);
         setSearchParams({ ...updatedParams });
     };
@@ -270,7 +274,7 @@ const Browse = () => {
                                 < select className='filter-input dropdown' name='photographerType' value={params.photographerType} onChange={handleFilterChange}>
                                     <option value="">All Types</option>
                                     {serviceTypes.map((type, index) =>
-                                        <option value={type}>{type}</option>
+                                        <option value={type} key={index}>{type}</option>
                                     )}
                                 </select>
                             }

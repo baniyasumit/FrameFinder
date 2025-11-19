@@ -76,7 +76,6 @@
 .booking-input-line{
     display: flex;
     flex-direction: row;
-   
     gap: 2rem;
     flex-wrap: wrap;
     
@@ -87,7 +86,7 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1 1 250px;
-     position: relative; 
+    position: relative; 
     
 }
 
@@ -171,15 +170,21 @@
 
 
 .calendar-popup {
-     position: absolute;
+    position: absolute;
     top: 100%; 
     left: 0;
     z-index: 1000; 
     margin-top: 5px; 
     border: 1px solid rgba(0, 0, 0, 0.084);
     background-color: white;
-   border-radius: 20px;
-   padding: 6px;
+    border-radius: 20px;
+    padding: 6px;
+}
+
+.error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin: unset;
 }
 
 

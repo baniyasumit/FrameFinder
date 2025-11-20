@@ -492,6 +492,16 @@
     transform: scale(1.0);
 }
 
+.portfolio-error-message {
+    background: #ffdddd;
+    color: #b30000;
+    padding: 12px 15px;
+    border-left: 4px solid #b30000;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
 @media screen and (max-width:925px) {
     .portfolio-gallery-image{
         height: 130%;

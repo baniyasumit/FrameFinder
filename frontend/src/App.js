@@ -98,6 +98,7 @@ const App = () => {
           </Route>
         </Route>
         <Route path='*' element={<NotFound />} />
+        <Route path='/preview/:portfolioId' element={<ViewPortfolio />} />
       </Routes>
     </Router>
   );

@@ -103,22 +103,6 @@ export const createBooking = async (req, res) => {
     }
 }
 
-export const checkAvailability = async (req, res) => {
-    try {
-        const { bookingDate, selectedPackage } = req.query;
-        if (bookingDate)
-            return res.status(200).json({
-                message: "The photographer is available"
-            });
-        else
-            return res.status(404).json({
-                message: "The photographer is not available"
-            });
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: "Server Error" });
-    }
-}
 
 export const getTotalBookings = async (req, res) => {
     try {

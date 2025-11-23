@@ -20,7 +20,7 @@ const RegisterPhotographer = () => {
         }
     };
     return (
-        <Register handleSubmit={handleSubmitPhotographer} />
+        <Register handleSubmit={handleSubmitPhotographer} role='photographer' />
     )
 }
 

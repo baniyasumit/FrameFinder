@@ -4,7 +4,7 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPicture';
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
-import { FaDollarSign, FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
+import { FaDollarSign, FaEdit, FaEye, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
 import { MdEmail, MdOutlineCancel, MdOutlineMyLocation, MdWork } from 'react-icons/md';
 import { getLocation, getPortfolio, getSearchedLocations, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore.js';
 import Mapbox from '../../components/Mapbox/Mapbox.js';
 import { GrMapLocation } from "react-icons/gr";
+import PortfolioPreview from './../../components/PortfolioPreview/PortfolioPreview';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -73,6 +74,10 @@ const Portfolio = () => {
 
     const { setFullImages, setPreviewIndex } = usePortfolioStore();
 
+    const [portfolioError, setPortfolioError] = useState("");
+
+    const [showPreview, setShowPreview] = useState(false)
+
     useEffect(() => {
         if (user) {
             user.picture && setUserImage(user.picture)
@@ -117,6 +122,36 @@ const Portfolio = () => {
         };
         loadPortfolio();
     }, [setFormData]);
+
+    useEffect(() => {
+        const validateInitialPortfolio = () => {
+            if (
+                !formData.firstname ||
+                !formData.lastname ||
+                !formData.email ||
+                !formData.phoneNumber ||
+                !formData.specialization ||
+                !formData.bio ||
+                !formData.about ||
+                !formData.experienceYears ||
+                !formData.happyClients ||
+                !formData.photosTaken ||
+                !formData.standardCharge ||
+                skills.length === 0 ||
+                equipments.length === 0 ||
+                services.length === 0 ||
+                galleryImages.length === 0
+            ) {
+                setPortfolioError(
+                    "You must complete all fields in this portfolio before it can be displayed to clients."
+                );
+            } else {
+                setPortfolioError("");
+            }
+        };
+
+        validateInitialPortfolio();
+    }, [formData, skills, equipments, services, galleryImages]);
 
     const handleChange = (e) => {
 
@@ -257,6 +292,39 @@ const Portfolio = () => {
         setTypes(types.filter((_, i) => i !== index));
     }
 
+
+    const trimPortfolioFields = () => {
+        return {
+            ...formData,
+            firstname: formData.firstname.trim(),
+            lastname: formData.lastname.trim(),
+            email: formData.email.trim(),
+            phoneNumber: formData.phoneNumber.trim(),
+            specialization: formData.specialization.trim(),
+            bio: formData.bio.trim(),
+            about: formData.about.trim(),
+            experienceYears: (formData.experienceYears?.toString() || "").trim(), // convert to string first
+            happyClients: (formData.happyClients?.toString() || "").trim(),
+            photosTaken: (formData.photosTaken?.toString() || "").trim(),
+            standardCharge: typeof formData.standardCharge === "string"
+                ? formData.standardCharge.trim()
+                : formData.standardCharge,
+            skills: skills.map(s => s.trim()),
+            equipments: equipments.map(e => e.trim()),
+            services: services.map(s => ({
+                ...s,
+                title: s.title?.trim() || "",
+                description: s.description?.trim() || "",
+                features: s.features?.map(f => f.trim()) || []
+            })),
+            filteredPictures,
+            types,
+            location
+
+        };
+    };
+
+
     const handleSave = async (e) => {
         e.preventDefault();
         setShowSaveConfirmation(false);
@@ -264,18 +332,10 @@ const Portfolio = () => {
             toast.info("Previous changes are being saved")
             return;
         }
-        const finalFormData = {
-            ...formData,
-            equipments,
-            skills,
-            services,
-            filteredPictures,
-            types,
-            location
-        }
+        const trimmedData = trimPortfolioFields();
         try {
             setIsSaving(true);
-            const response = await savePortfolio(finalFormData);
+            const response = await savePortfolio(trimmedData);
             console.log(response.message);
             toast.success('Portfolio saved successfully.');
             await refreshUser();
@@ -346,12 +406,23 @@ const Portfolio = () => {
                 setShowConfirmation={setShowSaveConfirmation}
                 onConfirm={handleSave} />}
             {showMapboxModal && <Mapbox setShowMapboxModal={setShowMapboxModal} location={location} handleLocationChangeFromMap={handleCoordinatesLocationChange} />}
+            {showPreview && <PortfolioPreview setShowPreview={setShowPreview} url={`/preview/${portfolioId}`} />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>
                     <section className='portfolio-content portfolio-header'>
-                        <h1>Edit Portfolio</h1>
-                        <span>Update your portfolio and profile information.</span>
+                        <div>
+                            <h1>Edit Portfolio</h1>
+                            <span>Update your portfolio and profile information.</span>
+                        </div>
+                        <div className='preview-button-container'>
+                            <button className='preview-button' onClick={() => setShowPreview(true)}>Preview<FaEye /></button>
+                        </div>
                     </section>
+                    {portfolioError && (
+                        <div className="portfolio-error-message">
+                            {portfolioError}
+                        </div>
+                    )}
                     <section className='portfolio-content portfolio-basic-info'>
                         <h2 className='portfolio-section-headers'>Basic Information</h2>
                         <div className='portfolio-basic-info-line portfolio-content-line'>
@@ -683,6 +754,7 @@ const Portfolio = () => {
                             </div>
                         </div>
                     </section>
+
                     <section className='portfolio-content portfolio-actions'>
                         <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowCancelConfirmation(true) }}>Cancel</button>
                         <button className={`portfolio-button ${isSaving ? "is-saving" : ""}`} onClick={() => { handleIsSaving(); !isSaving && setShowSaveConfirmation(true) }}>Save Profile</button>

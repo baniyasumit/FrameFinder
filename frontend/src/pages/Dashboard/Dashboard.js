@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsCalendar, BsEye, BsStarFill } from "react-icons/bs";
-import { MdMessage, MdOutlineAnalytics } from "react-icons/md";
+import { MdMessage } from "react-icons/md";
 import useAuthStore from './../../stateManagement/useAuthStore';
 import './Dashboard.css'
 import { FaDollarSign, FaDotCircle, FaUserEdit } from 'react-icons/fa';
@@ -314,14 +314,6 @@ const Dashboard = () => {
                             Quick Actions
                         </h2>
                         <div className='quick-actions-container'>
-                            <Link className='quick-actions-card view-bookings-card' to={'/photographer/bookings'}>
-                                <div className='view-bookings'><BsCalendar /></div>
-                                <h3>View Bookings</h3>
-                            </Link>
-                            <Link className='quick-actions-card view-messages-card' to={'/messages'}>
-                                <div className='view-messages'><MdMessage /></div>
-                                <h3>View Messages</h3>
-                            </Link>
                             <Link className='quick-actions-card update-portfolio-card' to='/photographer/portfolio'>
                                 <div className='update-portfolio'><FaUserEdit /></div>
                                 <h3>Edit Portfolio</h3>
@@ -330,6 +322,15 @@ const Dashboard = () => {
                                 <div className='wallet'><FaDollarSign /></div>
                                 <h3>View Wallet</h3>
                             </Link >
+                            <Link className='quick-actions-card about-card' to={'/about'}>
+                                <div className='about-us'><BsCalendar /></div>
+                                <h3>About us</h3>
+                            </Link>
+                            <Link className='quick-actions-card contact-card' to={'/contact'}>
+                                <div className='contact-us'><MdMessage /></div>
+                                <h3>Contact Us</h3>
+                            </Link>
+
                         </div>
                     </section>
                 </div>

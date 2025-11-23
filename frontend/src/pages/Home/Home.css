@@ -63,14 +63,13 @@
   box-shadow: 0 10px 30px rgba(4, 31, 182, 0.253);
   text-decoration: none;
   width: fit-content;
- 
-
 }
 
-.browse-button>.search-icon{
+.browse-button>.search-icon-home{
   font-size: 2rem;
   padding-right: 10px;
 }
+
 .browse-button> span{
   font-family: Poppins, sans-serif;
   font-size: 1.2rem;

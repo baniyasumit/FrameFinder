@@ -9,6 +9,7 @@ import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer';
 import { motion } from "framer-motion";
+import useAuthStore from './../../stateManagement/useAuthStore';
 
 const avatarUrls = [
   'https://i.pravatar.cc/40?img=1',
@@ -17,6 +18,8 @@ const avatarUrls = [
 ];
 
 const Home = () => {
+  const { user } = useAuthStore();
+
   return (
     <>
       <main className="home-container">
@@ -42,14 +45,16 @@ const Home = () => {
 
               <div>
                 <Link to="/browse" className='browse-button'>
-                  <IoSearchCircleSharp className='search-icon' />
+                  <IoSearchCircleSharp className='search-icon-home' />
                   <span>Find Photographers</span>
                 </Link>
               </div>
+              {!user &&
+                <p className="signup-photographer">
+                  Are you a photographer? <a href='/register-photographer'>Join our network</a>
+                </p>
+              }
 
-              <p className="signup-photographer">
-                Are you a photographer? <a href='/register-photographer'>Join our network</a>
-              </p>
             </motion.div>
 
             {/* Landing Picture */}

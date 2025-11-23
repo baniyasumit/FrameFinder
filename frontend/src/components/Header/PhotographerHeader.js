@@ -63,11 +63,11 @@ const PhotographerHeader = () => {
                             Sign In
                         </Link> :
                         <div className='photographer-link-container'>
-                            {user?.role === 'photographer' && (
+                            {/*  {user?.role === 'photographer' && (
                                 <Link to="/" className='photographer-link'>
                                     <img className='redirect-image' src={redirection} alt="Redirect to Client" />
                                 </Link>
-                            )}
+                            )} */}
 
                             <div className='nav-user-avatar-container' ref={profileNavRef}>
                                 <div className='nav-user-avatar' onClick={() => setProfileMenuOpen(!profileMenuOpen)}>

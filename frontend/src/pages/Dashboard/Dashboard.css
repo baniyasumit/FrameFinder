@@ -291,7 +291,7 @@
     font-size: 0.9rem;
 }
 
-.quick-actions-card > .view-messages{
+.quick-actions-card > .contact-us{
     color: #CA8A04;
     background-color: #FEF9C3;
 }
@@ -307,13 +307,13 @@
     background-color: #DCFCE7;
 }
 
-.view-bookings-card:hover{
+.about-card:hover{
     border-color: #2563EB;
     background-color: #EFF6FF;
 
 }
 
-.view-messages-card:hover{
+.contact-card:hover{
     border-color: #CA8A04;
     background-color: #FEFCE8;
 }

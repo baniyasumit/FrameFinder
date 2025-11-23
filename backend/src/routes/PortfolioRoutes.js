@@ -1,5 +1,5 @@
 import express from "express";
-import { getPortfolios, getPhotographerPortfolio, getPortfolio, getPortfolioPictures, savePortfolio, uploadPortfolioPictures } from "../controllers/PortfolioController.js";
+import { getPortfolios, getPhotographerPortfolio, getPortfolio, getPortfolioPictures, savePortfolio, uploadPortfolioPictures, getServiceTypes } from "../controllers/PortfolioController.js";
 import authMiddleware from './../middlewares/AuthMiddleware.js';
 import authorizeRoles from './../middlewares/AuthorizeRoles.js';
 import { memoryUpload } from "../config/multerConfig.js";
@@ -13,5 +13,6 @@ router.post("/upload-portfolio-pictures", authMiddleware, authorizeRoles('photog
 router.get("/get-portfolio-pictures/:portfolioId", getPortfolioPictures);
 router.get("/get-portfolio/:portfolioId", getPhotographerPortfolio);
 router.get('/get-portfolios', getPortfolios)
+router.get('/service-types', getServiceTypes)
 
 export default router;

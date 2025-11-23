@@ -38,6 +38,8 @@ const CreateBooking = () => {
     const [showStartCalendar, setShowStartCalendar] = useState(false);
     const [showEndCalendar, setShowEndCalendar] = useState(false);
 
+    const [errors, setErrors] = useState({});
+
     useEffect(() => {
         const loadPortfolio = async () => {
             try {
@@ -88,20 +90,74 @@ const CreateBooking = () => {
 
     const handleBooking = async (e) => {
         e.preventDefault();
+
+        if (!validateBookingFields()) return;
+
         try {
             const response = await createBooking(bookingData, portfolioId);
-            console.log(response.message);
             if (response.bookingId) {
-                navigate(`/view-booking/${response.bookingId}`, { replace: true })
+                navigate(`/view-booking/${response.bookingId}`, { replace: true });
             }
-
         } catch (err) {
             console.error("Save error:", err);
-            toast.error(err, {
-                position: 'top-center',
-            });
+            toast.error("An error occurred while saving.");
         }
-    }
+    };
+
+
+
+    const validateBookingFields = () => {
+        const newErrors = {};
+
+        // Required fields
+        if (!bookingData.sessionStartTime) newErrors.sessionStartTime = "Start time is required";
+
+        if (!bookingData.sessionStartDate) newErrors.sessionStartDate = "Start date is required";
+
+        if (!bookingData.sessionEndDate) newErrors.sessionEndDate = "End date is required";
+
+        if (!bookingData.city) newErrors.city = "City is required";
+
+        if (!bookingData.state) newErrors.state = "State/Province is required";
+
+        if (!bookingData.firstName) newErrors.firstName = "First name is required";
+
+        if (!bookingData.lastName) newErrors.lastName = "Last name is required";
+
+        if (!bookingData.email) newErrors.email = "Email is required";
+        else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(bookingData.email)) {
+                newErrors.email = "Please enter a valid email";
+            }
+        }
+
+        if (!bookingData.phoneNumber) newErrors.phoneNumber = "Phone number is required";
+        else {
+            const phoneRegex = /^[0-9]{7,15}$/;
+            if (!phoneRegex.test(bookingData.phoneNumber)) {
+                newErrors.phoneNumber = "Phone number must be 7-15 digits";
+            }
+        }
+
+        // Date validation
+        if (bookingData.sessionStartDate && bookingData.sessionEndDate) {
+            const start = new Date(bookingData.sessionStartDate);
+            const end = new Date(bookingData.sessionEndDate);
+            if (end < start) {
+                newErrors.sessionEndDate = "End date cannot be before start date";
+            }
+        }
+
+        // Guest number
+        if (bookingData.guestNumber && Number(bookingData.guestNumber) < 0) {
+            newErrors.guestNumber = "Guest number cannot be negative";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
 
     return (
         <>
@@ -157,6 +213,7 @@ const CreateBooking = () => {
                                             Start Time
                                         </label>
                                         <input name='sessionStartTime' className='input-field' type='time' value={bookingData.sessionStartTime} onChange={handleChange} />
+                                        {errors.sessionStartTime && <p className="error">{errors.sessionStartTime}</p>}
                                     </div>
                                 </div>
                                 <div className='booking-input-line'>
@@ -166,6 +223,7 @@ const CreateBooking = () => {
                                         </label>
                                         <input name='sessionStartDate' className='input-field' type='date'
                                             value={bookingData.sessionStartDate} onClick={() => setShowStartCalendar(!showStartCalendar)} readOnly />
+                                        {errors.sessionStartDate && <p className="error">{errors.sessionStartDate}</p>}
                                         {showStartCalendar && (
                                             <div className="calendar-popup">
                                                 <BookingCalendar
@@ -184,6 +242,8 @@ const CreateBooking = () => {
                                         </label>
                                         <input name='sessionEndDate' className='input-field' type='date'
                                             value={bookingData.sessionEndDate} onClick={() => setShowEndCalendar(!showEndCalendar)} readOnly />
+                                        {errors.sessionEndDate && <p className="error">{errors.sessionEndDate}</p>}
+
                                         {showEndCalendar && (
                                             <div className="calendar-popup">
                                                 <BookingCalendar
@@ -220,6 +280,8 @@ const CreateBooking = () => {
                                         <input name='city' className='input-field' placeholder='City'
                                             value={bookingData.city}
                                             onChange={handleChange} />
+                                        {errors.city && <p className="error">{errors.city}</p>}
+
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label'>
@@ -228,6 +290,8 @@ const CreateBooking = () => {
                                         <input name='state' className='input-field' placeholder='State/Province'
                                             value={bookingData.state}
                                             onChange={handleChange} />
+                                        {errors.state && <p className="error">{errors.state}</p>}
+
                                     </div>
                                 </div>
                             </div>
@@ -241,6 +305,8 @@ const CreateBooking = () => {
                                         <input name='firstName' className='input-field' placeholder='First Name'
                                             value={bookingData.firstName}
                                             onChange={handleChange} />
+                                        {errors.firstName && <p className="error">{errors.firstName}</p>}
+
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label' >
@@ -249,6 +315,8 @@ const CreateBooking = () => {
                                         <input name='lastName' className='input-field' placeholder='Last Name'
                                             value={bookingData.lastName}
                                             onChange={handleChange} />
+                                        {errors.lastName && <p className="error">{errors.lastName}</p>}
+
                                     </div>
                                 </div>
 
@@ -260,7 +328,7 @@ const CreateBooking = () => {
                                         <input name='email' className='input-field' placeholder='Email'
                                             value={bookingData.email}
                                             onChange={handleChange} />
-
+                                        {errors.email && <p className="error">{errors.email}</p>}
                                     </div>
                                     <div className='booking-input-container'>
                                         <label className='browse-input-label' >
@@ -269,6 +337,8 @@ const CreateBooking = () => {
                                         <input name='phoneNumber' className='input-field' placeholder='Phone Number'
                                             value={bookingData.phoneNumber}
                                             onChange={handleChange} />
+                                        {errors.phoneNumber && <p className="error">{errors.phoneNumber}</p>}
+
                                     </div>
                                 </div>
                             </div>

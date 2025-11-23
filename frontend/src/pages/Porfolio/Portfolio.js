@@ -4,7 +4,7 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPicture';
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
-import { FaDollarSign, FaEdit, FaPhoneAlt, FaSpinner } from "react-icons/fa";
+import { FaDollarSign, FaEdit, FaEye, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
 import { MdEmail, MdOutlineCancel, MdOutlineMyLocation, MdWork } from 'react-icons/md';
 import { getLocation, getPortfolio, getSearchedLocations, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import usePortfolioStore from '../../stateManagement/usePortfolioStore.js';
 import Mapbox from '../../components/Mapbox/Mapbox.js';
 import { GrMapLocation } from "react-icons/gr";
+import PortfolioPreview from './../../components/PortfolioPreview/PortfolioPreview';
 
 const Portfolio = () => {
     const { user } = useAuthStore();
@@ -74,6 +75,8 @@ const Portfolio = () => {
     const { setFullImages, setPreviewIndex } = usePortfolioStore();
 
     const [portfolioError, setPortfolioError] = useState("");
+
+    const [showPreview, setShowPreview] = useState(false)
 
     useEffect(() => {
         if (user) {
@@ -403,11 +406,17 @@ const Portfolio = () => {
                 setShowConfirmation={setShowSaveConfirmation}
                 onConfirm={handleSave} />}
             {showMapboxModal && <Mapbox setShowMapboxModal={setShowMapboxModal} location={location} handleLocationChangeFromMap={handleCoordinatesLocationChange} />}
+            {showPreview && <PortfolioPreview setShowPreview={setShowPreview} url={`/preview/${portfolioId}`} />}
             <main className='portfolio'>
                 <div className='portfolio-content-container'>
                     <section className='portfolio-content portfolio-header'>
-                        <h1>Edit Portfolio</h1>
-                        <span>Update your portfolio and profile information.</span>
+                        <div>
+                            <h1>Edit Portfolio</h1>
+                            <span>Update your portfolio and profile information.</span>
+                        </div>
+                        <div className='preview-button-container'>
+                            <button className='preview-button' onClick={() => setShowPreview(true)}>Preview<FaEye /></button>
+                        </div>
                     </section>
                     {portfolioError && (
                         <div className="portfolio-error-message">

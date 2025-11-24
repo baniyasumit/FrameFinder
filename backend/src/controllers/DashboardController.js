@@ -15,16 +15,13 @@ export const getTotals = async (req, res) => {
         const firstDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59, 999);
 
-        const bookings = await Booking.aggregate([
-            // Match bookings that are paid and within the last 2 months
+        const totalBookingsPipeline = [
             {
                 $match: {
                     "payment.status": { $ne: "unpaid" },
                     createdAt: { $gte: firstDayOfPreviousMonth, $lte: lastDayOfCurrentMonth }
                 }
             },
-
-            // Lookup portfolio to filter by photographer
             {
                 $lookup: {
                     from: "portfolios",
@@ -35,60 +32,69 @@ export const getTotals = async (req, res) => {
             },
             { $unwind: "$portfolio" },
             { $match: { "portfolio.user": userObjectId } },
-
-            // Lookup user info (client)
-            {
-                $lookup: {
-                    from: "users",
-                    let: { userId: "$user" },
-                    pipeline: [
-                        { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
-                        { $project: { firstname: 1, lastname: 1, picture: 1 } }
-                    ],
-                    as: "user"
-                }
-            },
-            { $unwind: "$user" },
-
-            // Add a label for month category
             {
                 $addFields: {
                     monthCategory: {
                         $cond: [
-                            { $gte: ["$createdAt", firstDayOfCurrentMonth] },
+                            { $gte: ["$bookingStatus.date", firstDayOfCurrentMonth] },
                             "currentMonth",
                             "previousMonth"
                         ]
                     }
                 }
             },
-
-            // Group by month category to count bookings and sum total revenue for completed ones
             {
-                $group: {
+                $group:
+                {
                     _id: "$monthCategory",
                     totalBookings: { $sum: 1 },
-                    totalRevenue: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ["$bookingStatus.status", "completed"] },
-                                "$totalCharge.total",
-                                0
-                            ]
-                        }
-                    }
                 }
             }
-        ]);
+        ];
+
+        const totalRevenuePipeline = [
+            {
+                $match: {
+                    "payment.status": { $ne: "unpaid" },
+                    "bookingStatus.status": "completed",
+                    "bookingStatus.date": { $gte: firstDayOfPreviousMonth, $lte: lastDayOfCurrentMonth }
+                }
+            },
+            {
+                $lookup: {
+                    from: "portfolios",
+                    localField: "portfolio",
+                    foreignField: "_id",
+                    as: "portfolio"
+                }
+            },
+            { $unwind: "$portfolio" },
+            { $match: { "portfolio.user": userObjectId } },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $gte: ["$bookingStatus.date", firstDayOfCurrentMonth] },
+                            "currentMonth",
+                            "previousMonth"
+                        ]
+                    },
+                    totalRevenue: { $sum: "$totalCharge.total" }
+                }
+            }
+        ];
+
+        const bookingsResult = await Booking.aggregate(totalBookingsPipeline);
+        const revenueResult = await Booking.aggregate(totalRevenuePipeline);
 
         const totalBookings = {
-            currentMonth: bookings.find(b => b._id === "currentMonth")?.totalBookings || 0,
-            previousMonth: bookings.find(b => b._id === "previousMonth")?.totalBookings || 0,
+            currentMonth: bookingsResult.find(b => b._id === "currentMonth")?.totalBookings || 0,
+            previousMonth: bookingsResult.find(b => b._id === "previousMonth")?.totalBookings || 0,
         };
 
         const totalRevenue = {
-            currentMonth: bookings.find(b => b._id === "currentMonth")?.totalRevenue || 0,
-            previousMonth: bookings.find(b => b._id === "previousMonth")?.totalRevenue || 0,
+            currentMonth: revenueResult.find(b => b._id === "currentMonth")?.totalRevenue || 0,
+            previousMonth: revenueResult.find(b => b._id === "previousMonth")?.totalRevenue || 0,
         };
 
         // 🧮 Helper for percentage change

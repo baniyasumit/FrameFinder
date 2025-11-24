@@ -114,7 +114,7 @@ const bookingSchema = new mongoose.Schema({
 
 bookingSchema.pre('save', function (next) {
     this.totalCharge.total = (this.totalCharge.duration * this.totalCharge.packageCharge) + this.totalCharge.standardCharge;
-    if (this.isModified('bookingStatus.status')) {
+    if (this.isModified('bookingStatus') || this.isModified('bookingStatus.status')) {
         this.bookingStatus.date = new Date();
     }
     next();

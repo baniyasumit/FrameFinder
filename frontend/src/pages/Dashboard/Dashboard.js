@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { BsCalendar, BsEye, BsStarFill } from "react-icons/bs";
-import { MdMessage } from "react-icons/md";
 import useAuthStore from './../../stateManagement/useAuthStore';
 import './Dashboard.css'
 import { FaDollarSign, FaDotCircle, FaUserEdit } from 'react-icons/fa';
 import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
+import { IoIosPeople } from "react-icons/io";
+import { MdContactSupport } from "react-icons/md";
 import { Link } from 'react-router-dom';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -323,11 +324,11 @@ const Dashboard = () => {
                                 <h3>View Wallet</h3>
                             </Link >
                             <Link className='quick-actions-card about-card' to={'/about'}>
-                                <div className='about-us'><BsCalendar /></div>
+                                <div className='about-us'><IoIosPeople /></div>
                                 <h3>About us</h3>
                             </Link>
                             <Link className='quick-actions-card contact-card' to={'/contact'}>
-                                <div className='contact-us'><MdMessage /></div>
+                                <div className='contact-us'><MdContactSupport /></div>
                                 <h3>Contact Us</h3>
                             </Link>
 

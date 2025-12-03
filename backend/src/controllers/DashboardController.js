@@ -137,7 +137,7 @@ export const getTotalBookingsStatus = async (req, res) => {
         const bookingStatusAggregation = await Booking.aggregate([
             {
                 $match: {
-                    "payment.status": { $ne: "unpaid" }
+                    "payment.status": { $ne: "unpaid" },
                 }
             },
             {
@@ -232,7 +232,7 @@ export const getRevenueData = async (req, res) => {
             {
                 $match: {
                     "payment.status": { $ne: "unpaid" },
-                    createdAt: { $gte: startDate, $lte: endDate },
+                    "bookingStatus.date": { $gte: startDate, $lte: endDate },
                 },
             },
             {
@@ -248,8 +248,8 @@ export const getRevenueData = async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$createdAt" },
-                        month: { $month: "$createdAt" },
+                        year: { $year: "$bookingStatus.date" },
+                        month: { $month: "$bookingStatus.date" },
                     },
                     totalRevenue: {
                         $sum: {
@@ -264,6 +264,7 @@ export const getRevenueData = async (req, res) => {
             },
             { $sort: { "_id.year": 1, "_id.month": 1 } },
         ]);
+
 
         // 3️⃣ Prepare all months in range
         const monthNames = [

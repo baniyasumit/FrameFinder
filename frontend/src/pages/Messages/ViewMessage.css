@@ -6,7 +6,7 @@
     flex-direction: column;
     display: flex;
     gap: 10px;
-    height: calc(100vh - 7.5vh);
+    height: calc(100vh - 8.5vh);
     justify-content: space-between;
 }
 

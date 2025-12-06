@@ -9,8 +9,12 @@ import PortfolioGallery from '../../components/PortfolioGallery/PortfolioGallery
 import usePortfolioStore from '../../stateManagement/usePortfolioStore';
 import ReviewsSlider from '../../components/ReviewsSlider/ReviewsSlider';
 import BookingCalendar from '../../components/BookingCalendar/BookingCalendar';
+import useAuthStore from './../../stateManagement/useAuthStore';
+import { addProfileView, getViewerId } from '../../services/ProfilewViewServices';
 
 const ViewPortfolio = () => {
+    const { user } = useAuthStore();
+
     const [rating, setRating] = useState(3.5);
 
     const [activeTab, setActiveTab] = useState("portfolio");
@@ -33,6 +37,28 @@ const ViewPortfolio = () => {
             section.scrollIntoView({ behavior: "smooth" });
         }
     }
+
+    useEffect(() => {
+        if (!portfolioId) return;
+
+        const sendProfileView = async () => {
+            const viewerId = getViewerId(user);
+            const isAnonymous = !user;
+
+            try {
+                const response = await addProfileView({ viewerId, portfolioId, isAnonymous });
+                console.log("Profile view response:", response);
+
+            } catch (err) {
+                console.error("Error sending profile view:", err);
+            }
+        };
+
+        sendProfileView();
+    }, [portfolioId, user]);
+
+
+
     useEffect(() => {
         const handleScroll = () => {
             if (!portfolioRef.current) return;

@@ -19,10 +19,12 @@ const Dashboard = () => {
     const [totalBookings, setTotalBookings] = useState([]);
     const [totalRevenue, setTotalRevenue] = useState([])
     const [ratingStats, setRatingStats] = useState([])
+    const [profileViews, setProfileViews] = useState([])
 
     const [signs, setSigns] = useState({
         totalSign: 0,
         revenueSign: 0,
+        profileViewSign: 0,
     })
 
     const [revenueData, setRevenueData] = useState([])
@@ -42,9 +44,11 @@ const Dashboard = () => {
                 setTotalBookings(result.totalBookings)
                 setTotalRevenue(result.totalRevenue)
                 setRatingStats(result.ratingStats)
+                setProfileViews(result.profileViews)
                 setSigns((prev) => ({
                     ...prev, totalSign: getPercentChangeSign(result.totalBookings.percentageChange),
-                    revenueSign: getPercentChangeSign(result.totalRevenue.percentageChange)
+                    revenueSign: getPercentChangeSign(result.totalRevenue.percentageChange),
+                    profileViewSign: getPercentChangeSign(result.profileViews.percentageChange)
                 }))
             } catch (error) {
                 console.error("Load Pie Chart Error: ", error)
@@ -161,8 +165,12 @@ const Dashboard = () => {
                                 <h3>
                                     Profile Views
                                 </h3>
-                                <p className='statistic-number'>47</p>
-                                <p className='statistic-percentage'> - 12% from last month</p>
+                                <p className='statistic-number'>{profileViews.currentMonth}</p>
+                                <p className={`statistic-percentage ${signs.profileViewSign === 1 ? 'increase' : ''} ${signs.profileViewSign === -1 ? 'decrease' : ''}`}>
+                                    {signs.profileViewSign === 1 && <FaArrowUpLong />}
+                                    {signs.profileViewSign === -1 && <FaArrowDownLong />}
+                                    {profileViews.percentageChange}% from last month
+                                </p>
                             </div>
                             <div className='statistics-card-icon profile-views'>
                                 <BsEye />

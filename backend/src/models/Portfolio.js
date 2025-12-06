@@ -73,6 +73,10 @@ const portfolioSchema = new mongoose.Schema({
             default: 0
         },
     },
+    profileViews: {
+        type: Number,
+        default: 0
+    }
 })
 
 portfolioSchema.index({ location: "2dsphere" });

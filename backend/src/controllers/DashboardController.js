@@ -2,6 +2,7 @@ import Booking from "../models/Booking.js";
 
 import mongoose from "mongoose"
 import Portfolio from "../models/Portfolio.js";
+import ProfileView from "../models/ProfileView.js";
 const { ObjectId } = mongoose.Types;
 
 export const getTotals = async (req, res) => {
@@ -15,6 +16,9 @@ export const getTotals = async (req, res) => {
         const firstDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59, 999);
 
+        // -------------------------------
+        // 1️⃣ Total Bookings
+        // -------------------------------
         const totalBookingsPipeline = [
             {
                 $match: {
@@ -44,14 +48,16 @@ export const getTotals = async (req, res) => {
                 }
             },
             {
-                $group:
-                {
+                $group: {
                     _id: "$monthCategory",
                     totalBookings: { $sum: 1 },
                 }
             }
         ];
 
+        // -------------------------------
+        // 2️⃣ Total Revenue
+        // -------------------------------
         const totalRevenuePipeline = [
             {
                 $match: {
@@ -84,8 +90,49 @@ export const getTotals = async (req, res) => {
             }
         ];
 
-        const bookingsResult = await Booking.aggregate(totalBookingsPipeline);
-        const revenueResult = await Booking.aggregate(totalRevenuePipeline);
+        // -------------------------------
+        // 3️⃣ Profile Views
+        // -------------------------------
+        const profileViewsPipeline = [
+            {
+                $match: {
+                    viewedAt: { $gte: firstDayOfPreviousMonth, $lte: lastDayOfCurrentMonth }
+                }
+            },
+            {
+                $lookup: {
+                    from: "portfolios",
+                    localField: "portfolioId",
+                    foreignField: "_id",
+                    as: "portfolio"
+                }
+            },
+            { $unwind: "$portfolio" },
+            { $match: { "portfolio.user": userObjectId } },
+            {
+                $addFields: {
+                    monthCategory: {
+                        $cond: [
+                            { $gte: ["$viewedAt", firstDayOfCurrentMonth] },
+                            "currentMonth",
+                            "previousMonth"
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$monthCategory",
+                    totalViews: { $sum: 1 }
+                }
+            }
+        ];
+
+        const [bookingsResult, revenueResult, viewsResult] = await Promise.all([
+            Booking.aggregate(totalBookingsPipeline),
+            Booking.aggregate(totalRevenuePipeline),
+            ProfileView.aggregate(profileViewsPipeline)
+        ]);
 
         const totalBookings = {
             currentMonth: bookingsResult.find(b => b._id === "currentMonth")?.totalBookings || 0,
@@ -97,13 +144,17 @@ export const getTotals = async (req, res) => {
             previousMonth: revenueResult.find(b => b._id === "previousMonth")?.totalRevenue || 0,
         };
 
+        const profileViews = {
+            currentMonth: viewsResult.find(b => b._id === "currentMonth")?.totalViews || 0,
+            previousMonth: viewsResult.find(b => b._id === "previousMonth")?.totalViews || 0,
+        };
+
         // 🧮 Helper for percentage change
         const calculatePercentageChange = (current, previous) => {
             if (previous === 0) return current > 0 ? 100 : 0;
             return (((current - previous) / previous) * 100).toFixed(2);
         };
 
-        // 🧾 Add percentage changes
         totalBookings.percentageChange = calculatePercentageChange(
             totalBookings.currentMonth,
             totalBookings.previousMonth
@@ -114,20 +165,26 @@ export const getTotals = async (req, res) => {
             totalRevenue.previousMonth
         );
 
-        const portfolio = await Portfolio.findOne({ user: userId })
+        profileViews.percentageChange = calculatePercentageChange(
+            profileViews.currentMonth,
+            profileViews.previousMonth
+        );
 
+        const portfolio = await Portfolio.findOne({ user: userId });
 
         return res.status(200).json({
             message: "Dashboard total data successfully fetched",
             totalBookings,
             totalRevenue,
+            profileViews,
             ratingStats: portfolio.ratingStats,
         });
+
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });
     }
-}
+};
 
 export const getTotalBookingsStatus = async (req, res) => {
     try {

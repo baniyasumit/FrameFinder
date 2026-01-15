@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BsCalendar, BsEye, BsStarFill } from "react-icons/bs";
 import useAuthStore from './../../stateManagement/useAuthStore';
 import './Dashboard.css'
-import { FaDollarSign, FaDotCircle, FaUserEdit } from 'react-icons/fa';
+import { FaYenSign, FaDotCircle, FaUserEdit } from 'react-icons/fa';
 import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 import { IoIosPeople } from "react-icons/io";
 import { MdContactSupport } from "react-icons/md";
@@ -150,7 +150,7 @@ const Dashboard = () => {
                                 <h3>
                                     Monthly Revenue
                                 </h3>
-                                <p className='statistic-number'>${totalRevenue.currentMonth}</p>
+                                <p className='statistic-number'>¥{totalRevenue.currentMonth}</p>
                                 <p className={`statistic-percentage ${signs.revenueSign === 1 ? 'increase' : ''} ${signs.revenueSign === -1 ? 'decrease' : ''}`}>
                                     {signs.revenueSign === 1 && <FaArrowUpLong />}
                                     {signs.revenueSign === -1 && <FaArrowDownLong />}
@@ -158,7 +158,7 @@ const Dashboard = () => {
                                 </p>
                             </div>
                             <div className='statistics-card-icon monthly-revenue'>
-                                <FaDollarSign />
+                                <FaYenSign />
                             </div>
                         </div><div className='card statistic-card'>
                             <div className='statistics-card-content'>
@@ -328,7 +328,7 @@ const Dashboard = () => {
                                 <h3>Edit Portfolio</h3>
                             </Link>
                             <Link className='quick-actions-card wallet-card' to="/photographer/wallet">
-                                <div className='wallet'><FaDollarSign /></div>
+                                <div className='wallet'><FaYenSign /></div>
                                 <h3>View Wallet</h3>
                             </Link >
                             <Link className='quick-actions-card about-card' to={'/about'}>

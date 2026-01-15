@@ -244,7 +244,7 @@ const ViewPortfolio = () => {
                                         <div className='package-container' key={index}>
                                             <div className='package-header-section'>
                                                 <h3 className='package-heading'>{service.title}</h3>
-                                                <p className='service-price' >$<span>{service.price}</span> </p>
+                                                <p className='service-price' >¥<span>{service.price}</span> </p>
                                             </div>
                                             <p>{service.description}</p>
                                             <p className='view-portfolio-label '>Includes:</p>

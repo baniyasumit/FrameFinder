@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './WithdrawModal.css'
 import { toast } from 'sonner';
-import { FaDollarSign } from 'react-icons/fa';
+import { FaYenSign } from 'react-icons/fa';
 import { RxCross2 } from 'react-icons/rx';
 import { SiTicktick } from "react-icons/si";
 import { checkTransferability, createStripeAccount, getWalletDetails, withdraw } from '../../services/WalletService';
@@ -107,7 +107,7 @@ const WithdrawModal = ({ setShowWithdrawModal, setSummary }) => {
                         disabled={!stripeAccountCheck}
                     />
 
-                    <span className='service-input-icons price'><span><FaDollarSign /></span></span>
+                    <span className='service-input-icons price'><span><FaYenSign /></span></span>
                 </div>
 
                 <div className='submit-button-container withdraw-modal'>

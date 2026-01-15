@@ -120,7 +120,7 @@ const ViewBooking = () => {
                                         <h1 className='service-name booking-page'>
                                             {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
                                         </h1>
-                                        <p>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
+                                        <p>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
                                     </div>
                                     <div className='rating-contact-container'>
                                         <div className='rating-stats booking-page'>
@@ -242,21 +242,21 @@ const ViewBooking = () => {
                                     ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
                                 {booking?.payment.status === 'partial' &&
                                     <>
-                                        <p>Paid <span>${booking.payment.paid}</span></p>
-                                        <p>Remaining <span>${booking.payment.remaining}</span></p>
+                                        <p>Paid <span>¥{booking.payment.paid}</span></p>
+                                        <p>Remaining <span>¥{booking.payment.remaining}</span></p>
                                     </>
                                 }
                                 {booking?.payment.status === 'paid' &&
-                                    <p className='total-fee'>Paid <span >${booking.payment.remaining}</span></p>
+                                    <p className='total-fee'>Paid <span >¥{booking.payment.remaining}</span></p>
                                 }
 
 
                             </div>
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary'>Payment Summary</h2>
-                                <p>Standard Fee <span>${booking.totalCharge.standardCharge}</span></p>
-                                <p>Package Fee <span>${booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
-                                <p className='total-fee'>Total <span>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
+                                <p>Standard Fee <span>¥{booking.totalCharge.standardCharge}</span></p>
+                                <p>Package Fee <span>¥{booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
+                                <p className='total-fee'>Total <span>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
                                 {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
                                     <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
                                 }

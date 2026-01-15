@@ -207,20 +207,20 @@ const ViewBookingPhotographer = () => {
                             </div>
                             <div className='container booking-page summary'>
                                 <h2 className='container-heading summary'>Pricing Summary</h2>
-                                <p>Standard Fee <span>${booking.totalCharge.standardCharge}</span></p>
-                                <p>Package Fee <span>${booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
-                                <p className='total-fee'>Total <span>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
+                                <p>Standard Fee <span>¥{booking.totalCharge.standardCharge}</span></p>
+                                <p>Package Fee <span>¥{booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
+                                <p className='total-fee'>Total <span>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
 
                             </div>
                             {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
                                 <>
                                     <div className='container booking-page summary'>
                                         <h2 className='container-heading summary'>Payment Status</h2>
-                                        <p>Payment <span className={`payment-status summary ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
+                                        <p>Payment <span className={`payment-status summary ¥{booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
                                         {booking?.payment.status === 'partial' &&
-                                            <p>Paid <span>${booking.payment.paid}</span></p>
+                                            <p>Paid <span>¥{booking.payment.paid}</span></p>
                                         }
-                                        <p className='total-fee'>Remaining <span >${booking.payment.remaining}</span></p>
+                                        <p className='total-fee'>Remaining <span >¥{booking.payment.remaining}</span></p>
 
 
                                     </div>

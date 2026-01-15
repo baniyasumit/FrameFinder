@@ -360,7 +360,7 @@ const Browse = () => {
                                         </p>
                                         <p className='photographer-price-container'>
                                             <span className='price'>
-                                                {portfolio.minPrice === portfolio.maxPrice ? <>${portfolio.minPrice}</> : <>${portfolio.minPrice} - ${portfolio.maxPrice}</>}
+                                                {portfolio.minPrice === portfolio.maxPrice ? <>¥{portfolio.minPrice}</> : <>¥{portfolio.minPrice} - ${portfolio.maxPrice}</>}
                                             </span>
                                             <span >(incl. pkg)</span>
                                         </p>

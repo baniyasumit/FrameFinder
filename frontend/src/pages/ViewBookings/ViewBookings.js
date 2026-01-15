@@ -137,7 +137,7 @@ const ViewBookings = () => {
                                     <h1 className='service-name bookings-page'>
                                         {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
                                     </h1>
-                                    <p>${booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
+                                    <p>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
                                 </div>
                                 <div className='details-contact-container'>
                                     <div className='booking-details bookings-page'>

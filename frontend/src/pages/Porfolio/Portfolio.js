@@ -4,7 +4,7 @@ import profileImage from '../../assets/images/defaultProfile.jpg';
 import useAuthStore from '../../stateManagement/useAuthStore';
 import UploadUserPicture from '../../components/UploadUserPicture/UploadUserPicture';
 import { IoAdd, IoAddCircle, IoCloudUpload, IoLocation, IoPersonSharp } from 'react-icons/io5';
-import { FaDollarSign, FaEdit, FaEye, FaPhoneAlt, FaSpinner } from "react-icons/fa";
+import { FaYenSign, FaEdit, FaEye, FaPhoneAlt, FaSpinner } from "react-icons/fa";
 import { HiCalendarDateRange } from 'react-icons/hi2';
 import { MdEmail, MdOutlineCancel, MdOutlineMyLocation, MdWork } from 'react-icons/md';
 import { getLocation, getPortfolio, getSearchedLocations, savePortfolio, uploadPortfolioPictures } from '../../services/PortfolioServices.js';
@@ -651,7 +651,7 @@ const Portfolio = () => {
                                         <div className='portfolio-service-header'>
                                             <h3 className='portfolio-service-title'>{service.title}</h3>
                                             <div className='service-price-edit-container'>
-                                                <span>${service.price}</span>
+                                                <span>¥{service.price}</span>
                                                 <button className='service-edit-button' onClick={() => { setEditIndex(index); setShowServiceModal(true) }} ><FaEdit /> </button>
                                             </div>
                                         </div>
@@ -677,7 +677,7 @@ const Portfolio = () => {
                                             value={formData.standardCharge}
                                             onChange={handleChange}
                                         />
-                                        <span className='portfolio-input-icons'><FaDollarSign /></span>
+                                        <span className='portfolio-input-icons'><FaYenSign /></span>
                                     </div>
                                 </div>
                             </>
@@ -686,7 +686,7 @@ const Portfolio = () => {
                                 <div className='portfolio-service-header'>
                                     <h3 className='portfolio-service-title'>Wedding Photography package(Sample)</h3>
                                     <div className='service-price-edit-container'>
-                                        <span>$1,500</span>
+                                        <span>¥1,500</span>
                                         <button className='service-edit-button'><FaEdit /> </button>
                                     </div>
                                 </div>

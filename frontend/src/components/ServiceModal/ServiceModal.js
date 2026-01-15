@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import './ServiceModal.css'
 import { MdOutlineCancel } from 'react-icons/md';
 import { IoAddCircle } from 'react-icons/io5';
-import { FaDollarSign } from 'react-icons/fa';
+import { FaYenSign } from 'react-icons/fa';
 
 const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal }) => {
     const modelRef = useRef();
@@ -129,7 +129,7 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
                         onChange={handleChange}
                     />
 
-                    <span className='service-input-icons price'><span><FaDollarSign />  per session/day</span></span>
+                    <span className='service-input-icons price'><span><FaYenSign />  per session/day</span></span>
                 </div>
 
                 <h3>Includes</h3>

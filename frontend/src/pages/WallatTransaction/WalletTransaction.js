@@ -188,25 +188,25 @@ const WalletTransaction = () => {
                         <motion.div className="summary-card earned">
                             <FaMoneyBillWave className="summary-icon" />
                             <h3>Total Earned</h3>
-                            <p>${summary.totalEarned.toFixed(2)}</p>
+                            <p>¥{summary.totalEarned.toFixed(2)}</p>
                         </motion.div>
 
                         <motion.div className="summary-card available">
                             <FaWallet className="summary-icon" />
                             <h3>Available Balance</h3>
-                            <p>${summary.availableBalance.toFixed(2)}</p>
+                            <p>¥{summary.availableBalance.toFixed(2)}</p>
                         </motion.div>
 
                         <motion.div className="summary-card onhold">
                             <FaClock className="summary-icon" />
                             <h3>On Hold</h3>
-                            <p>${summary.onHold.toFixed(2)}</p>
+                            <p>¥{summary.onHold.toFixed(2)}</p>
                         </motion.div>
 
                         <motion.div className="summary-card withdrawn">
                             <FaArrowDown className="summary-icon" />
                             <h3>Total Withdrawn</h3>
-                            <p>${summary.totalWithdrawn.toFixed(2)}</p>
+                            <p>¥{summary.totalWithdrawn.toFixed(2)}</p>
                         </motion.div>
                     </div>
 

@@ -32,6 +32,8 @@ import Payment from './pages/Payment/Payment.js';
 import ViewMessages from './pages/Messages/ViewMessages.js';
 import ViewMessage from './pages/Messages/ViewMessage.js';
 import WalletTransaction from './pages/WallatTransaction/WalletTransaction.js';
+import About from './pages/About/About.js';
+import Contact from './pages/Contact/Contact.js';
 
 const App = () => {
   const { setUser } = useAuthStore();
@@ -71,6 +73,8 @@ const App = () => {
           <Route path='/view-portfolio/:portfolioId' element={<ViewPortfolio />} />
           <Route path='/view-full-picture' element={<ImageFullScreenView />} />
           <Route path='/browse' element={<Browse />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/contact' element={<Contact />} />
         </Route>
 
         <Route element={<RoleRoute allowedRoles={['photographer']} />}>

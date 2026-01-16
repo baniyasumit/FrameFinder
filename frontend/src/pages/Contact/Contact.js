@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./Contact.css";
+import { sendContactEmail } from "../../services/InfoServices";
+
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -8,16 +10,29 @@ const Contact = () => {
         message: "",
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // You can connect this to backend later
-        console.log(formData);
-        alert("Message sent successfully!");
-        setFormData({ name: "", email: "", message: "" });
+        setError("");
+        setSuccess("");
+        setLoading(true);
+
+        try {
+            await sendContactEmail(formData);
+            setSuccess("Message sent successfully!");
+            setFormData({ name: "", email: "", message: "" });
+        } catch (err) {
+            setError(err || "Failed to send message. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,7 +57,10 @@ const Contact = () => {
                     </div>
 
                     {/* Form Section */}
-                    <form className="contact-form slide-up delay" onSubmit={handleSubmit}>
+                    <form
+                        className="contact-form slide-up delay"
+                        onSubmit={handleSubmit}
+                    >
                         <input
                             type="text"
                             name="name"
@@ -70,7 +88,13 @@ const Contact = () => {
                             required
                         />
 
-                        <button type="submit">Send Message</button>
+                        {/* Feedback Messages */}
+                        {error && <p className="form-error">{error}</p>}
+                        {success && <p className="form-success">{success}</p>}
+
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Sending..." : "Send Message"}
+                        </button>
                     </form>
                 </div>
             </div>

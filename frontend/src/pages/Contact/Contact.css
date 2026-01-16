@@ -158,3 +158,13 @@
         grid-template-columns: 1fr;
     }
 }
+
+.form-error {
+    color: #dc2626;
+    font-size: 14px;
+}
+
+.form-success {
+    color: #16a34a;
+    font-size: 14px;
+}

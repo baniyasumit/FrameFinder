@@ -309,9 +309,19 @@ export const getBookingInformation = async (req, res) => {
             return res.status(404).json({ message: "Portfolio not found" });
         }
 
+        let payment = {}
+        if (booking.bookingStatus.status === 'cancelled') {
+            payment = await Payment.findOne({ booking: booking._id })
+                .select(
+                    "-_id paymentStatus paymentType amount platformFee netAmount createdOn lastUpdated refundInfo"
+                )
+                .sort({ createdOn: -1 });
+        }
+        const refundInfo = payment?.refundInfo
         const finalBooking = {
             booking,
             photographerPortfolio,
+            refundInfo
         };
         return res.status(200).json({ message: "Photographer Portfolio retrieved Successfully", bookingInformation: finalBooking });
     } catch (error) {
@@ -397,7 +407,7 @@ export const cancelDeclineBooking = async (req, res) => {
         payment.paymentStatus = "refunded";
         payment.refundInfo = {
             amount: refundAmount,
-            refundedAt: new Date(),
+            refundedOn: new Date(),
             stripeRefundId: stripeRefund.id,
             reason: reason
         };

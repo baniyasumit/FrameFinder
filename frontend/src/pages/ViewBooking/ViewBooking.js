@@ -24,6 +24,7 @@ const ViewBooking = () => {
     const [showCancelConfirmation, setShowCancelConfirmation] = useState(false)
 
     const [showPaymentRequirement, setShowPaymentRequirement] = useState(false);
+    const [refundInfo, setRefundInfo] = useState();
 
     useEffect(() => {
         const reviewStatusCheck = async () => {
@@ -44,6 +45,7 @@ const ViewBooking = () => {
                 const bookingInformation = await getBookingInformation(bookingId);
                 setPhotographerPortfolio(bookingInformation?.photographerPortfolio);
                 setBooking(bookingInformation?.booking)
+                setRefundInfo(bookingInformation?.refundInfo)
             } catch (error) {
                 console.error("Load Booking Error: ", error)
                 toast.error(error)
@@ -70,6 +72,7 @@ const ViewBooking = () => {
         } finally {
             const bookingInformation = await getBookingInformation(bookingId);
             setBooking(bookingInformation?.booking)
+            setRefundInfo(bookingInformation?.refundInfo)
         }
     }
 
@@ -236,34 +239,57 @@ const ViewBooking = () => {
                                     year: "numeric"
                                 })}</span></p>
                             </div>
-                            <div className='container booking-page summary'>
-                                <h2 className='container-heading summary'>Payment Status</h2>
-                                <p>Payment <span className={`payment-status summary 
+                            {!refundInfo && <>
+                                <div className='container booking-page summary'>
+                                    <h2 className='container-heading summary'>Payment Status</h2>
+                                    <p>Payment <span className={`payment-status summary 
                                     ${booking.bookingStatus.status}`} >{booking.payment.status}</span></p>
-                                {booking?.payment.status === 'partial' &&
-                                    <>
-                                        <p>Paid <span>¥{booking.payment.paid}</span></p>
-                                        <p>Remaining <span>¥{booking.payment.remaining}</span></p>
-                                    </>
-                                }
-                                {booking?.payment.status === 'paid' &&
-                                    <p className='total-fee'>Paid <span >¥{booking.payment.remaining}</span></p>
-                                }
+                                    {booking?.payment.status === 'partial' &&
+                                        <>
+                                            <p>Paid <span>¥{booking.payment.paid}</span></p>
+                                            <p>Remaining <span>¥{booking.payment.remaining}</span></p>
+                                        </>
+                                    }
+                                    {booking?.payment.status === 'paid' &&
+                                        <p className='total-fee'>Paid <span >¥{booking.payment.remaining}</span></p>
+                                    }
 
 
-                            </div>
-                            <div className='container booking-page summary'>
-                                <h2 className='container-heading summary'>Payment Summary</h2>
-                                <p>Standard Fee <span>¥{booking.totalCharge.standardCharge}</span></p>
-                                <p>Package Fee <span>¥{booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
-                                <p className='total-fee'>Total <span>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
-                                {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
-                                    <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
-                                }
+                                </div>
+                                <div className='container booking-page summary'>
+                                    <h2 className='container-heading summary'>Payment Summary</h2>
+                                    <p>Standard Fee <span>¥{booking.totalCharge.standardCharge}</span></p>
+                                    <p>Package Fee <span>¥{booking.totalCharge.packageCharge * booking.totalCharge.duration}</span></p>
+                                    <p className='total-fee'>Total <span>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</span></p>
+                                    {booking?.bookingStatus.status !== 'pending' && booking?.bookingStatus.status !== 'cancelled' &&
+                                        <button type="button" className='booking-button pay'><FaCreditCard />Pay Now</button>
+                                    }
 
 
-                            </div>
-                            {(booking?.bookingStatus.status === 'declined' || booking?.bookingStatus.status === 'cancelled') ? (<></>) : (
+                                </div>
+                            </>}
+
+                            {(booking?.bookingStatus.status === 'declined' || booking?.bookingStatus.status === 'cancelled') ? (
+                                <div className='container booking-page summary'>
+                                    <h2 className='container-heading summary'>Payment Status</h2>
+                                    <p>Payment <span className={`payment-status summary pending`} >Refunded</span></p>
+                                    {booking?.payment.status === 'partial' &&
+                                        <>
+                                            <p>Amount <span>¥{refundInfo?.amount}</span></p>
+                                            <p>Refunded On <span>{new Date(refundInfo?.refundedOn).toLocaleDateString("en-US", {
+                                                month: "short",
+                                                day: "numeric",
+                                                year: "numeric"
+                                            })}</span></p>
+                                            <p>Cancelled By <span>{refundInfo?.reason === 'cancelled_by_client' ? 'Client' : 'Photographer'}</span></p>
+                                        </>
+                                    }
+                                    {booking?.payment.status === 'paid' &&
+                                        <p className='total-fee'>Paid <span >¥{booking.payment.remaining}</span></p>
+                                    }
+
+
+                                </div>) : (
                                 <div className='container booking-page summary'>
                                     <h2 className='container-heading summary contact'>Contact Photographer</h2>
                                     {booking?.bookingStatus.status === 'accepted' && <>

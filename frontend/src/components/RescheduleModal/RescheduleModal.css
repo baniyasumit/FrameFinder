@@ -1,0 +1,93 @@
+.reschedule-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.555); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(7px); 
+
+}
+
+.reschedule-modal {
+    position: relative;
+    background: #91d5e357; 
+    background: #ffffff5a; 
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 500px;
+    max-width: 90%;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 0.7rem 0.09rem rgba(39, 40, 40, 0.749);
+    color: #fff;
+    animation: modalZoomIn 0.4s ease-out;
+    font-family: Lexend Deca, sans-serif;
+}
+
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+}
+
+.reschedule-header{
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    justify-content: center;
+    font-family: Inter,sans-serif;
+    margin: 1rem 0rem;
+}
+
+.reschedule-input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1 1 250px;
+    position: relative; 
+    
+}
+
+.reschedule-input-container > label{
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.575);
+}
+
+.reschedule-submit{
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: #2563EB;
+    color: white;
+    margin-top: 10px;
+    
+}
+
+.error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin: unset;
+}
+
+.reschedule-calendar-popup {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    z-index: 1000; 
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(0, 0, 0, 0.084);
+    background-color: white;
+    border-radius: 20px;
+    padding: 6px;
+    width: 100%;
+}

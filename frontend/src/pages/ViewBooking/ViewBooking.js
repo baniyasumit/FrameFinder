@@ -13,6 +13,7 @@ import ReviewModal from '../../components/ReviewModal/ReviewModal';
 import { checkReviewStatus } from './../../services/ReviewService';
 import { Confirmation, PaymentInfo } from '../../components/Confirmation/Confirmation';
 import { getPaymentStatus } from '../../services/TransactionService';
+import RescheduleModal from '../../components/RescheduleModal/RescheduleModal';
 
 const ViewBooking = () => {
     const [photographerPortfolio, setPhotographerPortfolio] = useState();
@@ -25,6 +26,8 @@ const ViewBooking = () => {
 
     const [showPaymentRequirement, setShowPaymentRequirement] = useState(false);
     const [refundInfo, setRefundInfo] = useState();
+
+    const [showRescheduleModal, setShowRescheduleModal] = useState(false)
 
     useEffect(() => {
         const reviewStatusCheck = async () => {
@@ -107,6 +110,15 @@ const ViewBooking = () => {
                 onConfirm={() => navigate(`/checkout/${bookingId}`)}
                 onPayLater={() => navigate('/bookings')} />
             }
+            {showRescheduleModal && <RescheduleModal
+                booking={booking}
+                setShowRescheduleModal={setShowRescheduleModal}
+                setBooking={setBooking}
+            />
+
+            }
+
+
 
             {(!photographerPortfolio || !booking) ? (
                 <p>Loading portfolio...</p>
@@ -301,7 +313,7 @@ const ViewBooking = () => {
                                     {(booking?.bookingStatus.status === 'accepted' || booking?.bookingStatus.status === 'pending') &&
                                         <>
                                             <button type="button" className='booking-button decline' onClick={() => setShowCancelConfirmation(true)}><RxCross2 />Cancel Booking</button>
-                                            <button type="button" className='booking-message'><FaCalendar />Reschedule</button>
+                                            <button type="button" className='booking-message' onClick={() => setShowRescheduleModal(true)}><FaCalendar />Reschedule</button>
                                         </>
                                     }
 

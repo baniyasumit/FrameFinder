@@ -310,7 +310,7 @@ export const getBookingInformation = async (req, res) => {
         }
 
         let payment = {}
-        if (booking.bookingStatus.status === 'cancelled') {
+        if (booking.bookingStatus.status === 'cancelled' || booking.bookingStatus) {
             payment = await Payment.findOne({ booking: booking._id })
                 .select(
                     "-_id paymentStatus paymentType amount platformFee netAmount createdOn lastUpdated refundInfo"
@@ -461,6 +461,37 @@ export const endBookedEvent = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+export const updateBookingSchedule = async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const { sessionStartTime, sessionStartDate, sessionEndDate } = req.body;
+
+        if (!sessionStartDate || !sessionEndDate || !sessionStartTime) {
+            return res.status(400).json({ message: 'Start date, end date, and start time are required' });
+        }
+
+        // Parse sessionStartDate + sessionStartTime to full Date object
+        const startDateTime = new Date(`${sessionStartDate}T${sessionStartTime}:00`);
+
+        // Find booking
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        // Update booking
+        booking.sessionStartDate = startDateTime;
+        booking.sessionEndDate = sessionEndDate;
+
+        await booking.save();
+
+        return res.status(200).json({ message: 'Booking schedule updated', booking });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ message: 'Server Error' });
+    }
+};
 
 
 

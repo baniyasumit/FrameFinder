@@ -7,7 +7,7 @@ import { getBookingDates } from '../../services/BookingService';
 import { useParams } from 'react-router-dom';
 
 
-const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setShowCalendar }) => {
+const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setShowCalendar, portfolio }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const [currentMonth, setCurrentMonth] = useState(minDate?.getMonth() + 1 || "");
@@ -31,7 +31,8 @@ const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setS
     useEffect(() => {
         const loadBookingDates = async () => {
             try {
-                const result = await getBookingDates(currentMonth, currentYear, portfolioId);
+                const portfolio_id = portfolioId ? portfolioId : portfolio
+                const result = await getBookingDates(currentMonth, currentYear, portfolio_id);
                 setBookings(result.bookings)
             } catch (error) {
                 console.error("Error getting the booking dates: ", error)
@@ -39,7 +40,7 @@ const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setS
             }
         };
         loadBookingDates();
-    }, [currentMonth, currentYear, portfolioId]);
+    }, [currentMonth, currentYear, portfolioId, portfolio]);
 
 
     const tileClassName = ({ date }) => {

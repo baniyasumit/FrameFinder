@@ -1,5 +1,5 @@
 import express from "express";
-import { cancelDeclineBooking, changeBookingStatus, createBooking, endBookedEvent, getBookingDates, getBookingInformation, getBookingInformationPhotographer, getBookings, getBookingsPhotographer, getTotalBookings, getTotalBookingsPhotographer } from "../controllers/BookingController.js";
+import { cancelDeclineBooking, changeBookingStatus, createBooking, endBookedEvent, getBookingDates, getBookingInformation, getBookingInformationPhotographer, getBookings, getBookingsPhotographer, getTotalBookings, getTotalBookingsPhotographer, updateBookingSchedule } from "../controllers/BookingController.js";
 import authMiddleware from "../middlewares/AuthMiddleware.js";
 import authorizeRoles from "../middlewares/AuthorizeRoles.js";
 import bookingMiddlware from './../middlewares/BookingMiddleware.js';
@@ -17,5 +17,6 @@ router.get('/photographer/get-booking/:bookingId', authMiddleware, authorizeRole
 router.patch('/change-booking-status/:bookingId', authMiddleware, authorizeRoles('client', 'photographer'), changeBookingStatus)
 router.patch('/cancel-decline-booking/:bookingId', authMiddleware, authorizeRoles('client', 'photographer'), bookingMiddlware, cancelDeclineBooking)
 router.patch('/complete-booking/:bookingId', authMiddleware, authorizeRoles('photographer'), bookingMiddlware, endBookedEvent)
+router.patch('/reschedule/:bookingId', authMiddleware, authorizeRoles('client'), updateBookingSchedule);
 
 export default router

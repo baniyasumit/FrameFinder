@@ -122,3 +122,13 @@ export const endBookedEvent = async (bookingId) => {
         throw error.response?.data.message || error.message;
     }
 }
+
+export const updateBookingSchedule = async (bookingId, formData) => {
+    try {
+        const response = await ApiInstance.patch(`/api/booking/reschedule/${bookingId}`, formData);
+        return response.data
+    } catch (error) {
+        console.error("Update error:", error);
+        throw error.response?.data.message || error.message;
+    }
+}

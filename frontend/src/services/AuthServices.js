@@ -1,5 +1,5 @@
 import { isSafari } from "../utils/detectBrowser";
-import { ApiInstance, storeTokenForSafari } from "./ApiInstance";
+import { ApiInstance, logoutUserSafari, storeTokenForSafari } from "./ApiInstance";
 
 export const loginUser = async (credentials) => {
     try {
@@ -31,6 +31,10 @@ export const registerUser = async (credentials, role) => {
 
 export const logoutUser = async () => {
     try {
+        if (isSafari()) {
+            logoutUserSafari();
+            return { message: "Logged out successfully (Safari)" };
+        }
         const response = await ApiInstance.post("/api/auth/logout");
         return response.data;
     }

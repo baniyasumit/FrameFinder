@@ -59,4 +59,22 @@ export const storeTokenForSafari = (token) => {
     ApiInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
+export const logoutUserSafari = () => {
+    try {
+        // 1️⃣ Clear token from Axios default headers
+        delete ApiInstance.defaults.headers.common['Authorization'];
+
+        // 2️⃣ Clear token from localStorage (Safari only)
+        localStorage.removeItem('token');
+
+        // 3️⃣ Optionally, call backend to clear HttpOnly cookie for other browsers
+        ApiInstance.post('/api/auth/logout').catch(err => console.error(err));
+
+        // 4️⃣ Any additional frontend logout logic (redirect, clear state, etc.)
+        console.log("Logged out successfully");
+    } catch (err) {
+        console.error("Logout error:", err);
+    }
+};
+
 export { ApiInstance, setupInterceptors };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { verifyOtp, changeEmail, sendOTPEmail } from "../../services/AuthServices";
+import { verifyOtp, sendOTPEmail } from "../../services/AuthServices";
 import useAuthStore from "../../stateManagement/useAuthStore";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import './Auth.css'

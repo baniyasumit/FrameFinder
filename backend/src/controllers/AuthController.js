@@ -12,7 +12,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 export const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, safari } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" });
@@ -36,7 +36,17 @@ export const loginUser = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        res.status(200).json({ message: "User Logged in Successfully" });
+        if (safari) {
+            return res.status(200).json({
+                message: "User Logged in Successfully",
+                token,
+            });
+        }
+
+
+        res.status(200).json({
+            message: "User Logged in Successfully",
+        });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });

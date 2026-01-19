@@ -1,7 +1,11 @@
+
 import axios from "axios";
+import { isSafari } from "../utils/detectBrowser.js";
 
-const API_URL = process.env.REACT_APP_API_URL
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+// Axios instance
 const ApiInstance = axios.create({
     baseURL: API_URL,
     withCredentials: true,
@@ -9,10 +13,17 @@ const ApiInstance = axios.create({
 
 ApiInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `${token}`;
+        let token;
+
+
+        if (isSafari()) {
+            token = localStorage.getItem("token");
         }
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -29,6 +40,7 @@ const setupInterceptors = (logout) => {
                 console.log("Unauthorized (401) - Logging out...");
                 logout();
             }
+
             if (status === 403) {
                 console.log("Forbidden (403) - User role not authorized.");
             }
@@ -38,5 +50,13 @@ const setupInterceptors = (logout) => {
     );
 };
 
+
+export const storeTokenForSafari = (token) => {
+    if (isSafari()) {
+        localStorage.setItem("token", token);
+    }
+
+    ApiInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+};
 
 export { ApiInstance, setupInterceptors };

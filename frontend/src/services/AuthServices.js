@@ -1,8 +1,16 @@
-import { ApiInstance } from "./ApiInstance";
+import { isSafari } from "../utils/detectBrowser";
+import { ApiInstance, storeTokenForSafari } from "./ApiInstance";
 
 export const loginUser = async (credentials) => {
     try {
-        const response = await ApiInstance.post("/api/auth/login", credentials);
+        const payload = {
+            ...credentials,
+            safari: isSafari() // true if Safari, false otherwise
+        };
+        const response = await ApiInstance.post("/api/auth/login", payload);
+        const token = response.data?.token;
+
+        storeTokenForSafari(token);
         return response.data;
     } catch (error) {
         console.error("Login error:", error);

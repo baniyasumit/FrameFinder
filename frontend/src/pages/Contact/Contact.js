@@ -52,7 +52,7 @@ const Contact = () => {
                     <div className="contact-info slide-up">
                         <h2>Get in Touch</h2>
                         <p>Email: support@framefinder.com</p>
-                        <p>Phone: +977 98XXXXXXX</p>
+                        <p>Phone: +81 20XXXXXXXX</p>
                         <p>Location: Nepal</p>
                     </div>
 

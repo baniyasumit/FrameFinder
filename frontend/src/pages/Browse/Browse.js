@@ -305,7 +305,7 @@ const Browse = () => {
                         <span>Filters: </span>
                         {/* <button className='filter-nav-button'><FaStar />  Top Rated</button> */}
                         <button className={`filter-nav-button ${params.checkAvailability === true && 'active'}`} onClick={handleAvailableToday}>Available Tommorrow</button>
-                        <button className={`filter-nav-button ${params.maxBudget === '500' && 'active'}`} name='maxBudget' value={500} onClick={handleFilterNav}>Under $500</button>
+                        <button className={`filter-nav-button ${params.maxBudget === '7000' && 'active'}`} name='maxBudget' value={500} onClick={handleFilterNav}>Under ¥7000</button>
                     </div>
                     <div className='sort-order-container'>
                         <span>{portfolios.length} photographer found</span>
@@ -360,7 +360,7 @@ const Browse = () => {
                                         </p>
                                         <p className='photographer-price-container'>
                                             <span className='price'>
-                                                {portfolio.minPrice === portfolio.maxPrice ? <>¥{portfolio.minPrice}</> : <>¥{portfolio.minPrice} - ${portfolio.maxPrice}</>}
+                                                {portfolio.minPrice === portfolio.maxPrice ? <>¥{portfolio.minPrice}</> : <>¥{portfolio.minPrice} - ¥{portfolio.maxPrice}</>}
                                             </span>
                                             <span >(incl. pkg)</span>
                                         </p>

@@ -56,8 +56,8 @@ const Register = ({ handleSubmit, role }) => {
 
         if (!formData.phoneNumber) {
             newErrors.phoneNumber = "Phone number is required";
-        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
-            newErrors.phoneNumber = "Phone number must be 10 digits";
+        } else if (!/^\d{11}$/.test(formData.phoneNumber)) {
+            newErrors.phoneNumber = "Phone number must be 11 digits";
         }
 
         if (!formData.password) {

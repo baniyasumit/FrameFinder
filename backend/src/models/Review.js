@@ -7,6 +7,12 @@ const reviewSchema = new mongoose.Schema({
         required: true,
 
     },
+    portfolio: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Portfolio',
+        required: true,
+
+    },
     rating: {
         type: Number,
         required: true

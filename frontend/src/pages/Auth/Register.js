@@ -195,12 +195,12 @@ const Register = ({ handleSubmit, role }) => {
                 </div>
                 {role === 'photographer' ?
                     <div className='auth-redirect-option'>
-                        <span>Are you not a photographer? </span>
+                        <span>Are you looking to book a photographer? </span>
                         <Link
                             className='auth-redirect-link'
                             to="/register"
                         >
-                            Register as Client
+                            Register as a client
                         </Link>
                     </div>
                     : <div className='auth-redirect-option'>
@@ -209,7 +209,7 @@ const Register = ({ handleSubmit, role }) => {
                             className='auth-redirect-link'
                             to="/register-photographer"
                         >
-                            Register as Photographer
+                            Register as a Photographer
                         </Link>
                     </div>
                 }

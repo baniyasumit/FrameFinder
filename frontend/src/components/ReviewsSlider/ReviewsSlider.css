@@ -4,11 +4,6 @@
     overflow: visible;
 }
 
-.slick-slide {
-    padding: 0 10px;
-
-}
-
 .review-container {
     background-color: white;
     border-radius: 10px;
@@ -55,4 +50,14 @@
     line-height: 1.35rem;
     text-align: justify;
     color: rgba(0, 0, 0, 0.646);
+}
+
+/* Optional: Swiper dots */
+.swiper-pagination-bullet {
+    background: #ccc;
+    opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+    background: #000;
 }

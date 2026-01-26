@@ -1,6 +1,7 @@
 import Booking from "../models/Booking.js";
 import Portfolio from "../models/Portfolio.js";
 import Review from "../models/Review.js";
+import mongoose from "mongoose"
 
 export const checkReviewStatus = async (req, res) => {
     try {
@@ -37,45 +38,35 @@ export const createReview = async (req, res) => {
         const bookingId = req.params.bookingId;
         const { rating, description } = req.body;
 
+        const booking = await Booking.findById(bookingId).select('portfolio');
+        const portfolioId = portfoiod._id;
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
         const review = new Review({
             booking: bookingId,
+            portfolio: portfolioId,
             rating,
             description
         });
 
         await review.save();
 
-        const booking = await Booking.findById(bookingId).select('portfolio');
-        const portfolioId = booking.portfolio;
-        console.log('Portfolio ID:', portfolioId);
 
         const result = await Review.aggregate([
-            // 1️⃣ Join Booking data
-            {
-                $lookup: {
-                    from: 'bookings',
-                    localField: 'booking',
-                    foreignField: '_id',
-                    as: 'booking'
-                }
-            },
-            // 2️⃣ Flatten the booking array
-            { $unwind: '$booking' },
-            // 3️⃣ Match only the target portfolio
             {
                 $match: {
-                    'booking.portfolio': portfolioId
+                    portfolio: new mongoose.Types.ObjectId(portfolioId)
                 }
             },
-            // 4️⃣ Group and calculate average rating (no rounding yet)
             {
                 $group: {
-                    _id: '$booking.portfolio',
+                    _id: '$portfolio',
                     totalReviews: { $sum: 1 },
                     averageRating: { $avg: '$rating' }
                 }
             },
-            // 5️⃣ Round the average rating (expression stage)
             {
                 $project: {
                     _id: 0,
@@ -84,6 +75,7 @@ export const createReview = async (req, res) => {
                 }
             }
         ]);
+
 
         const overallRating = result[0] || { averageRating: 0, totalReviews: 0 };
 

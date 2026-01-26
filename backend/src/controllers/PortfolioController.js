@@ -5,6 +5,7 @@ import Review from "../models/Review.js";
 import Service from "../models/Service.js";
 import User from "../models/User.js";
 import cloudinary from './../config/cloudinaryConfig.js';
+import mongoose from "mongoose"
 
 export const savePortfolio = async (req, res) => {
     try {
@@ -221,7 +222,14 @@ export const getPhotographerPortfolio = async (req, res) => {
         const pictures = await PortfolioPicture.find({ portfolio: portfolioId }).select('-_id url').sort('-createdAt').limit(9);
 
         const reviews = await Review.aggregate([
-            // 1️⃣ Join Booking data
+            // 1️⃣ Match reviews for this portfolio (FAST)
+            {
+                $match: {
+                    portfolio: new mongoose.Types.ObjectId(portfolio._id)
+                }
+            },
+
+            // 2️⃣ Lookup booking (only to reach user)
             {
                 $lookup: {
                     from: 'bookings',
@@ -230,15 +238,14 @@ export const getPhotographerPortfolio = async (req, res) => {
                     as: 'booking'
                 }
             },
-            // 2️⃣ Flatten the booking array
-            { $unwind: '$booking' },
-            // 3️⃣ Match only reviews for this portfolio
             {
-                $match: {
-                    'booking.portfolio': portfolio._id
+                $unwind: {
+                    path: '$booking',
+                    preserveNullAndEmptyArrays: false
                 }
             },
-            // 4️⃣ Lookup user info from bookings
+
+            // 3️⃣ Lookup user
             {
                 $lookup: {
                     from: 'users',
@@ -248,12 +255,13 @@ export const getPhotographerPortfolio = async (req, res) => {
                 }
             },
             { $unwind: '$userInfo' },
-            // 5️⃣ Project only the fields we want
+
+            // 4️⃣ Final shape
             {
                 $project: {
                     rating: 1,
                     description: 1,
-                    createdAt: 1,
+                    reviewedAt: 1,
                     user: {
                         firstname: '$userInfo.firstname',
                         lastname: '$userInfo.lastname',
@@ -262,6 +270,9 @@ export const getPhotographerPortfolio = async (req, res) => {
                 }
             }
         ]);
+
+
+
 
         const finalPortfolio = {
             ...portfolio.toObject(),
@@ -402,7 +413,7 @@ export const getPortfolios = async (req, res) => {
                                     { $eq: ["$portfolio", "$$portfolioId"] },
                                     { $lt: ["$sessionStartDate", new Date(endDate)] },
                                     { $gt: ["$sessionEndDate", new Date(startDate)] },
-                                    { $not: { $in: ["$bookingStatus.status", ["declined", "cancelled"]] } },
+                                    { $not: { $in: ["$bookingStatus.status", ["declined", "cancelled", "completed"]] } },
                                     { $ne: ["$payment.status", "unpaid"] }
                                 ]
                             }

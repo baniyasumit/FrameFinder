@@ -467,6 +467,24 @@ export const getPortfolios = async (req, res) => {
                 isAvailable: 1
             }
         });
+
+        // -------------------- Incomplete profile --------------------
+        pipeline.push({
+            $match: {
+                bio: { $exists: true, $type: "string", $ne: "" },
+                specialization: { $exists: true, $type: "string", $ne: "" },
+                serviceTypes: { $exists: true, $type: "array", $ne: [] },
+                standardCharge: { $exists: true, $type: "number" },
+                minPrice: { $ne: null },
+                picture: { $exists: true, $ne: null },
+
+                location: { $exists: true },
+                "location.coordinates.0": { $exists: true },
+                "location.coordinates.1": { $exists: true }
+            }
+        });
+
+
         // -------------------- SORT --------------------
         pipeline.push({
             $sort:

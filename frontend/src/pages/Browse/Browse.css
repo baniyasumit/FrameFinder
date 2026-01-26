@@ -1,15 +1,15 @@
-.browse-main{
+.browse-main {
     height: auto;
     display: flex;
     justify-content: center;
 }
 
-.browse-main.filter{
-    background: linear-gradient(90deg,rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1) 100%);
+.browse-main.filter {
+    background: linear-gradient(90deg, rgba(42, 97, 235, 1) 0%, rgba(145, 52, 234, 1) 100%);
     color: white;
 }
 
-.browse-container{
+.browse-container {
     max-width: 1216px;
     width: 100%;
     padding: 4.5rem 15px;
@@ -21,19 +21,19 @@
 
 }
 
-.filter-heading{
+.filter-heading {
     margin: unset;
     font-size: 2.5rem;
 }
 
-.browse-container > p{
+.browse-container>p {
     font-size: 1.5rem;
     margin: unset;
     margin-bottom: 1.5rem;
     color: rgba(255, 255, 255, 0.733);
 }
 
-.filter-container{
+.filter-container {
     background-color: white;
     color: black;
     display: flex;
@@ -45,24 +45,24 @@
 }
 
 
-.filter-container > .filter-types-line{
+.filter-container>.filter-types-line {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
 }
 
-.filter-type{
+.filter-type {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     gap: 15px;
-     flex-grow: 1;
+    flex-grow: 1;
     width: 15rem;
 }
 
 
 
-.filter-type > .filter-label{
+.filter-type>.filter-label {
     font-family: Inter, sans-serif;
     font-size: 0.95rem;
     color: rgba(0, 0, 0, 0.621);
@@ -70,12 +70,13 @@
     font-weight: 500;
 }
 
-.filter-input-container{
+.filter-input-container {
     width: 100%;
     position: relative;
 }
 
-.filter-type > .filter-input, .filter-input-container > .filter-input{
+.filter-type>.filter-input,
+.filter-input-container>.filter-input {
     padding: 0.8rem;
     font-size: 1rem;
     border: 1px solid rgba(0, 0, 0, 0.132);
@@ -83,19 +84,19 @@
     transition: transform 0.3s ease-in;
 }
 
-.filter-input-container > .filter-input{
+.filter-input-container>.filter-input {
     width: 100%;
 }
 
-.filter-type > .filter-input.dropdown{
+.filter-type>.filter-input.dropdown {
     width: 100%
 }
 
-.filter-type > .filter-input::placeholder{
+.filter-type>.filter-input::placeholder {
     color: rgba(0, 0, 0, 0.285);
 }
 
-.filter-button{
+.filter-button {
     padding: 0.8rem 3rem;
     background-color: #2A61EB;
     color: white;
@@ -109,7 +110,9 @@
     transition: transform 0.3s ease-in;
 }
 
-.filter-type > .filter-input:hover, .filter-type > .filter-button:hover, .filter-input-container > .filter-input:hover{
+.filter-type>.filter-input:hover,
+.filter-type>.filter-button:hover,
+.filter-input-container>.filter-input:hover {
     transform: scale(1.05);
 }
 
@@ -127,17 +130,18 @@
     list-style: none;
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 100;
 }
-.current-location{
+
+.current-location {
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #2563EB;
 }
 
-.current-location.choose{
+.current-location.choose {
     color: lightpink;
 }
 
@@ -152,17 +156,17 @@
 }
 
 
-.browse-main.filter-nav-container{
+.browse-main.filter-nav-container {
     background-color: white;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.096);
 }
 
 
-.browse-container.filter-nav-container{
+.browse-container.filter-nav-container {
     padding: 1.7rem 15px;
 }
 
-.filter-nav{
+.filter-nav {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -170,58 +174,58 @@
     gap: 15px;
 }
 
-.filter-nav-items{
+.filter-nav-items {
     display: flex;
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
 }
 
-.filter-nav-button{
+.filter-nav-button {
     border: none;
     border-radius: 50px;
     padding: 8px 20px;
     color: rgba(0, 0, 0, 0.753);
 }
 
-.filter-nav-button.active{
+.filter-nav-button.active {
     background-color: #2A61EB;
     color: white;
 }
 
-.sort-order-container{
+.sort-order-container {
     display: flex;
     gap: 10px;
     align-items: center;
     color: rgba(0, 0, 0, 0.753);
 }
 
-.sort-order-container > span{
+.sort-order-container>span {
     font-size: 0.8rem;
 
 }
 
-.sort-order-container > select{
+.sort-order-container>select {
     padding: 8px 10px;
     border-radius: 8px;
     border-color: rgba(0, 0, 0, 0.397);
 }
 
-.sort-order-container > button{
+.sort-order-container>button {
     border: none;
     background-color: white;
 }
 
-.browse-main.photographer-listings-container{
- background-color: #F9FAFB;
+.browse-main.photographer-listings-container {
+    background-color: #F9FAFB;
 }
 
-.browse-container.photographer-listings-container{
+.browse-container.photographer-listings-container {
     padding: 2rem 15px;
-   
+
 }
 
-.photographers-listings{
+.photographers-listings {
     display: flex;
     gap: 2rem;
     width: 100%;
@@ -229,7 +233,7 @@
     justify-content: center;
 }
 
-.photographer-listing-card{
+.photographer-listing-card {
     border-radius: 20px;
     background-color: white;
     box-shadow: 0 0 5rem 0.09rem rgba(39, 40, 40, 0.256);
@@ -241,35 +245,35 @@
     overflow: hidden;
 }
 
-.listing-image-container{
+.listing-image-container {
     width: 100%;
     height: 10rem;
     position: relative;
 }
 
-.listing-image-container >img{
+.listing-image-container>img {
     object-fit: cover;
     height: 100%;
     width: 100%;
 }
 
-.listing-image-container > div{
+.listing-image-container>div {
     position: absolute;
     top: 10px;
     right: 12px;
-    background-color:#22C55E;
+    background-color: #22C55E;
     color: white;
     padding: 0.3rem 0.5rem;
     border-radius: 20px;
     font-size: 12px;
 }
 
-.listing-image-container > div.unavailable{
-     background-color:#c52222;
+.listing-image-container>div.unavailable {
+    background-color: #c52222;
     color: white;
 }
 
-.listing-information-container{
+.listing-information-container {
     width: 100%;
     height: 100%;
     padding: 1.2rem;
@@ -278,7 +282,7 @@
     justify-content: space-between;
 }
 
-.photographer-profile-information{
+.photographer-profile-information {
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -286,7 +290,7 @@
     align-items: center;
 }
 
-.photographer-profile-picture{
+.photographer-profile-picture {
     width: 3rem;
     height: 3rem;
     border-radius: 100%;
@@ -295,19 +299,19 @@
 
 }
 
-.photographer-profile-picture  > img{
+.photographer-profile-picture>img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
 }
 
-.photographer-profile-basic-information{
+.photographer-profile-basic-information {
     display: flex;
     flex-direction: column;
 }
 
-.photographer-profile-basic-information > .photographer-full-name{
+.photographer-profile-basic-information>.photographer-full-name {
     font-weight: 600;
     font-size: 1rem;
     font-family: Inter, sans-serif;
@@ -315,41 +319,41 @@
     line-height: 20px;
 }
 
-.photographer-profile-basic-information > .photographer-rating-stats{
+.photographer-profile-basic-information>.photographer-rating-stats {
     display: flex;
     gap: 5px;
-   }
+}
 
-.photographer-rating-stats > span{
+.photographer-rating-stats>span {
     font-size: 0.8rem;
     line-height: 15px;
     color: rgba(0, 0, 0, 0.642);
 }
 
-.listing-information-container > .photographer-message{
+.listing-information-container>.photographer-message {
     text-align: justify;
     font-size: 15px;
     color: rgba(0, 0, 0, 0.795);
 }
 
-.listing-information-container > .photographer-price-container{
+.listing-information-container>.photographer-price-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.photographer-price-container > .price{
+.photographer-price-container>.price {
     font-size: 1.5rem;
     font-weight: 600;
     color: black;
 }
 
-.photographer-price-container > span{
+.photographer-price-container>span {
     color: rgba(0, 0, 0, 0.628);
 
 }
 
-.photographer-specializations-container{
+.photographer-specializations-container {
     display: flex;
     gap: 10px;
     height: auto;
@@ -357,7 +361,7 @@
 }
 
 
-.photographer-specialization{
+.photographer-specialization {
     background-color: #fbffc6;
     color: #b1af4f;
     border-radius: 5px;
@@ -365,17 +369,17 @@
     border: none;
 }
 
-.photographer-specialization.wedding{
+.photographer-specialization.wedding {
     background-color: #F3E8FF;
     color: #a450fe;
 }
 
-.photographer-specialization.portrait{
+.photographer-specialization.portrait {
     background-color: #DBEAFE;
     color: #559efd;
 }
 
-.photographer-profile-button{
+.photographer-profile-button {
     padding: 0.8rem 3rem;
     background-color: #2A61EB;
     color: white;
@@ -390,6 +394,25 @@
     transition: transform 0.3s ease-in;
 }
 
-.photographer-profile-button:hover{
+.photographer-profile-button:hover {
     transform: scale(1.02);
+}
+
+.not-found-message {
+    width: 100%;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6b7280;
+    /* soft gray */
+}
+
+.not-found-message h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.not-found-message p {
+    font-size: 0.95rem;
 }

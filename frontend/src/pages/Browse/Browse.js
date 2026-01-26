@@ -323,7 +323,13 @@ const Browse = () => {
             </div>
         </section >
         {
-            portfolios?.length === 0 ? (<>NotFound</>) : (
+            portfolios?.length === 0 ? (
+                <div className="not-found-message">
+                    <h2>No results found</h2>
+                    <p>
+                        We couldn’t find any portfolios matching your filters.
+                    </p>
+                </div>) : (
                 <section className='browse-main photographer-listings-container'>
                     <div className='browse-container photographer-listings-container'>
                         <div className='photographers-listings'>

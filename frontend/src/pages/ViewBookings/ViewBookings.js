@@ -127,59 +127,73 @@ const ViewBookings = () => {
                     </nav>
                 </section>
                 <section className='bookings-content booking-list'>
-                    {bookings?.map((booking, index) => (
-                        <div className='booking-card' key={index}>
-                            <div className='profile-picture-container bookings-page'>
-                                <img src={booking.portfolio.user.picture} alt="Profile" />
-                            </div>
-                            <div className='profile-information booking-page' >
-                                <div className='service-price-container bookings-page'>
-                                    <h1 className='service-name bookings-page'>
-                                        {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
-                                    </h1>
-                                    <p>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
+
+                    {bookings?.length === 0 ? (
+                        <div className="no-bookings-message">
+                            <h2>No bookings found</h2>
+                            <p>
+                                {activeTab
+                                    ? `You don’t have any ${activeTab} bookings yet.`
+                                    : "You don’t have any bookings yet."}
+                            </p>
+                        </div>
+                    ) : <>
+
+
+                        {bookings?.map((booking, index) => (
+                            <div className='booking-card' key={index}>
+                                <div className='profile-picture-container bookings-page'>
+                                    <img src={booking.portfolio.user.picture} alt="Profile" />
                                 </div>
-                                <div className='details-contact-container'>
-                                    <div className='booking-details bookings-page'>
-                                        <p className='full-name bookings-page'>with {booking.portfolio.user.firstname} {booking.portfolio.user.lastname}</p>
-                                        <div className='mini-booking-details'>
-                                            <div className='mini-booking-detail'>
-                                                <FaCalendar />{new Date(booking.sessionStartDate).toLocaleDateString("en-US", {
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    year: "numeric"
-                                                })}
+                                <div className='profile-information booking-page' >
+                                    <div className='service-price-container bookings-page'>
+                                        <h1 className='service-name bookings-page'>
+                                            {booking?.service.title} <span className={`booking-status ${booking.bookingStatus.status}`} >{booking.bookingStatus.status}</span>
+                                        </h1>
+                                        <p>¥{booking.totalCharge.standardCharge + (booking.totalCharge.duration * booking.totalCharge.packageCharge)}</p>
+                                    </div>
+                                    <div className='details-contact-container'>
+                                        <div className='booking-details bookings-page'>
+                                            <p className='full-name bookings-page'>with {booking.portfolio.user.firstname} {booking.portfolio.user.lastname}</p>
+                                            <div className='mini-booking-details'>
+                                                <div className='mini-booking-detail'>
+                                                    <FaCalendar />{new Date(booking.sessionStartDate).toLocaleDateString("en-US", {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                        year: "numeric"
+                                                    })}
+                                                </div>
+                                                <div className='mini-booking-detail'>
+                                                    <FaClock /> {new Date(booking.sessionStartDate).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })}
+                                                </div>
+                                                <div className='mini-booking-detail'>
+                                                    <FaLocationArrow /> {booking.venueName}, {booking.city}, {booking.state}
+                                                </div>
+
                                             </div>
-                                            <div className='mini-booking-detail'>
-                                                <FaClock /> {new Date(booking.sessionStartDate).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })}
-                                            </div>
-                                            <div className='mini-booking-detail'>
-                                                <FaLocationArrow /> {booking.venueName}, {booking.city}, {booking.state}
-                                            </div>
+                                        </div>
+                                        <div className='contact-button-container bookings-page'>
+
+                                            <Link type="button" className='booking-button bookings-page' to={`/view-booking/${booking._id}`}>
+                                                <AiOutlineProfile />View Details
+                                            </Link>
+
+
+                                            <Link className='booking-button message bookings-page' to={`/message/${booking._id}`} >
+                                                <FaMessage className='message-icon' />Message
+                                            </Link>
 
                                         </div>
                                     </div>
-                                    <div className='contact-button-container bookings-page'>
 
-                                        <Link type="button" className='booking-button bookings-page' to={`/view-booking/${booking._id}`}>
-                                            <AiOutlineProfile />View Details
-                                        </Link>
-
-
-                                        <Link className='booking-button message bookings-page' to={`/message/${booking._id}`} >
-                                            <FaMessage className='message-icon' />Message
-                                        </Link>
-
-                                    </div>
                                 </div>
-
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </>}
                 </section>
 
                 <section className='bookings-content pagination'>

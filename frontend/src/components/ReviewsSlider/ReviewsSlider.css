@@ -1,11 +1,12 @@
 .reviews-container {
-    width: 100%; 
+    width: 100%;
     margin: auto;
     overflow: visible;
 }
 
 .slick-slide {
-  padding: 0 10px; /* space between slides */
+    padding: 0 10px;
+
 }
 
 .review-container {
@@ -17,8 +18,14 @@
     min-height: 200px;
 }
 
+.review-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 .photographer-profile-information.review {
-    display: flex; 
+    display: flex;
     align-items: center;
     gap: 8px;
 }
@@ -41,7 +48,7 @@
     line-height: 25px;
 }
 
-.review-container > p {
+.review-container>p {
     margin: unset;
     margin-top: 10px;
     font-size: 0.95rem;

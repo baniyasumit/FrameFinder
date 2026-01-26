@@ -5,6 +5,7 @@ import { BsCamera2 } from "react-icons/bs";
 import { IoIosPeople } from "react-icons/io";
 import { FaStar, FaClock } from "react-icons/fa6";
 import landingImage from '../../assets/images/landing-image.jpg';
+import landingBackground from '../../assets/images/landingBackground.jpg';
 import StackedAvatars from '../../components/StackedAvatars/StackedAvatars';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer';
@@ -24,7 +25,9 @@ const Home = () => {
     <>
       <main className="home-container">
         {/* Landing Section */}
-        <section className='landing'>
+        <section className='landing'
+          style={{ backgroundImage: `url(${landingBackground})` }}
+        >
           <motion.div
             className='landing-container'
             initial={{ opacity: 0, y: 50 }}

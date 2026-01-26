@@ -11,6 +11,7 @@ import ReviewsSlider from '../../components/ReviewsSlider/ReviewsSlider';
 import BookingCalendar from '../../components/BookingCalendar/BookingCalendar';
 import useAuthStore from './../../stateManagement/useAuthStore';
 import { addProfileView, getViewerId } from '../../services/ProfilewViewServices';
+import profileImage from '../../assets/images/defaultProfile.jpg';
 
 const ViewPortfolio = () => {
     const { user } = useAuthStore();
@@ -97,7 +98,11 @@ const ViewPortfolio = () => {
     return (
         <>
             {!photographerPortfolio ? (
-                <p>Loading portfolio...</p>
+                <section className="main">
+                    <div className="container">
+                        <p>Loading portfolio…</p>
+                    </div>
+                </section>
             ) : (
                 <>
                     {showGalleryOverlay &&
@@ -116,7 +121,11 @@ const ViewPortfolio = () => {
                             <div className='photographer-information'>
                                 <div className='photographer-profile-information'>
                                     <div className='profile-picture-container'>
-                                        <img src={photographerPortfolio?.user.picture} alt="Profile" />
+                                        <img
+                                            src={photographerPortfolio?.user?.picture || profileImage}
+                                            alt="Profile"
+                                        />
+
                                     </div>
                                     <div className='profile-information' >
                                         <h1 className='full-name'>
@@ -199,18 +208,31 @@ const ViewPortfolio = () => {
                             <div>
                                 <h2 ref={portfolioRef} className='view-portfolio-heading'>Portfolio</h2>
                             </div>
-                            <div className='view-portfolio-images-gallery'>
-                                {galleryImages.slice(0, 6).map((picture, index) =>
-                                    <div className='view-portfolio-gallery-image-container' key={picture.url}
-                                        onClick={() => {
-                                            setFullImages([...galleryImages]);
-                                            setPreviewIndex(index);
-                                            navigate('/view-full-picture');
-                                        }}>
-                                        <img src={picture.url} className='view-portfolio-gallery-image' alt='gallery-image' />
-                                    </div>)}
-                                <button className='view-portfolio-gallery-add-image' onClick={() => setShowGalleryOverlay(true)}>View All</button>
-                            </div>
+                            {galleryImages?.length > 0 ? (
+                                <div className="view-portfolio-images-gallery">
+                                    {galleryImages.slice(0, 6).map((picture, index) => (
+                                        <div
+                                            key={picture.url}
+                                            className="view-portfolio-gallery-image-container"
+                                            onClick={() => {
+                                                setFullImages([...galleryImages]);
+                                                setPreviewIndex(index);
+                                                navigate('/view-full-picture');
+                                            }}
+                                        >
+                                            <img src={picture.url} className='view-portfolio-gallery-image' alt="gallery" />
+                                        </div>
+                                    ))}
+                                    <button
+                                        className="view-portfolio-gallery-add-image"
+                                        onClick={() => setShowGalleryOverlay(true)}
+                                    >
+                                        View All
+                                    </button>
+                                </div>
+                            ) : (
+                                <p className="empty-section">No portfolio images uploaded yet.</p>
+                            )}
 
                         </div>
                     </section>
@@ -219,41 +241,55 @@ const ViewPortfolio = () => {
                             <div>
                                 <h2 className='view-portfolio-heading about'>About {photographerPortfolio.user.firstname}</h2>
                                 <p className='photographer-description'>{photographerPortfolio.about}</p>
-                                <div>
-                                    <h2 className='view-portfolio-heading'>Skills & Expertise</h2>
-                                    <ul className='skills-container'>
-                                        {photographerPortfolio.skills.map((skill, index) =>
-                                            <li key={index}>{skill}</li>
-                                        )}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h2 className='view-portfolio-heading'>Equipments</h2>
-                                    <ul className='equipments-container'>
-                                        {photographerPortfolio.equipments.map((equipment, index) =>
-                                            <li key={index}>{equipment}</li>
-                                        )}
-                                    </ul>
-                                </div>
+                                {photographerPortfolio.skills?.length > 0 && (
+                                    <>
+                                        <h2 className="view-portfolio-heading">Skills & Expertise</h2>
+                                        <ul className="skills-container">
+                                            {photographerPortfolio.skills.map((skill, i) => (
+                                                <li key={i}>{skill}</li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+
+                                {photographerPortfolio.equipments?.length > 0 && (
+                                    <>
+                                        <h2 className="view-portfolio-heading">Equipments</h2>
+                                        <ul className="equipments-container">
+                                            {photographerPortfolio.equipments.map((eq, i) => (
+                                                <li key={i}>{eq}</li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+
 
                             </div>
                             <div>
                                 <div className='view-portfolio-packages'>
                                     <h2 className='view-portfolio-heading'>Packages</h2>
-                                    {photographerPortfolio.services.map((service, index) =>
-                                        <div className='package-container' key={index}>
-                                            <div className='package-header-section'>
-                                                <h3 className='package-heading'>{service.title}</h3>
-                                                <p className='service-price' >¥<span>{service.price}</span> </p>
-                                            </div>
-                                            <p>{service.description}</p>
-                                            <p className='view-portfolio-label '>Includes:</p>
-                                            <ul className='services-label'>
-                                                {service.features?.map((feature, index) => (
-                                                    <li key={index}>{feature}</li>
-                                                ))}
-                                            </ul>
-                                        </div>)}
+                                    {photographerPortfolio.services?.length > 0 ? (
+                                        <>
+                                            {
+                                                photographerPortfolio.services.map((service, index) =>
+                                                    <div className='package-container' key={index}>
+                                                        <div className='package-header-section'>
+                                                            <h3 className='package-heading'>{service.title}</h3>
+                                                            <p className='service-price' >¥<span>{service.price}</span> </p>
+                                                        </div>
+                                                        <p>{service.description}</p>
+                                                        <p className='view-portfolio-label '>Includes:</p>
+                                                        <ul className='services-label'>
+                                                            {service.features?.map((feature, index) => (
+                                                                <li key={index}>{feature}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>)
+                                            }
+                                        </>
+                                    ) : (
+                                        <p className="empty-section">No packages available at the moment.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -261,7 +297,11 @@ const ViewPortfolio = () => {
                     <section id='reviews' className='main view-portfolio-reviews'>
                         <div className='container reviews'>
                             <h2 className='view-portfolio-heading reviews'>Client Reviews</h2>
-                            <ReviewsSlider reviews={photographerPortfolio.reviews} />
+                            {photographerPortfolio.reviews?.length > 0 ? (
+                                <ReviewsSlider reviews={photographerPortfolio.reviews} />
+                            ) : (
+                                <p className="empty-section">No client reviews yet.</p>
+                            )}
                         </div>
                     </section>
                 </>

@@ -6,8 +6,18 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Rating } from 'react-simple-star-rating';
 import { GoStar, GoStarFill } from 'react-icons/go';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 
 const ReviewsSlider = ({ reviews }) => {
+    const sliderRef = useRef(null);
+
+    useEffect(() => {
+        setTimeout(() => {
+            sliderRef.current?.slickGoTo(0);
+            window.dispatchEvent(new Event("resize"));
+        }, 100);
+    }, []);
 
     const settings = {
         dots: true,
@@ -42,7 +52,7 @@ const ReviewsSlider = ({ reviews }) => {
 
     return (
         <div className='reviews-container'>
-            <Slider {...settings}>
+            <Slider ref={sliderRef} {...settings}>
                 {reviews.map((review, index) => (
                     <div className='review-container' key={index}>
                         <div className='photographer-profile-information review'>

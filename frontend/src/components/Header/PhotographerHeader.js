@@ -6,6 +6,8 @@ import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { toast } from 'sonner';
 import redirection from "../../assets/images/clientRedirect.png";
+import headerBackground from '../../assets/images/header-background.jpg';
+
 
 const PhotographerHeader = () => {
     const headerRef = useRef(null);
@@ -45,7 +47,7 @@ const PhotographerHeader = () => {
 
     }
     return (
-        <header className="header" ref={headerRef}>
+        <header className="header" ref={headerRef} style={{ backgroundImage: `url(${headerBackground})` }}>
             <section className='header-components'>
                 <Link to="/dashboard" className="logo">
                     <h1>Frame Finder</h1>

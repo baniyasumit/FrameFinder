@@ -21,6 +21,8 @@ const ViewMessages = () => {
 
     const { user } = useAuthStore();
 
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         setParams((prev) => ({
@@ -60,15 +62,19 @@ const ViewMessages = () => {
     useEffect(() => {
         const loadMessages = async () => {
             try {
+                setLoading(true);
                 const results = await getMessageList(searchParams.toString());
-                setMessages(results.messages)
+                setMessages(results.messages || []);
             } catch (error) {
-                console.error("Load  Error: ", error)
-
+                console.error("Load Error: ", error);
+                setMessages([]);
+            } finally {
+                setLoading(false);
             }
         };
         loadMessages();
     }, [searchParams]);
+
 
 
 
@@ -88,6 +94,19 @@ const ViewMessages = () => {
                 </section>
 
                 <section className='messages-content messages-list'>
+                    {loading && (
+                        <div className="empty-state">
+                            <p>Loading messages...</p>
+                        </div>
+                    )}
+
+                    {!loading && messages?.length > 0 && messages?.length === 0 && (
+                        <div className="empty-state">
+                            <h2>No messages found</h2>
+                            <p>You haven’t started any conversations yet.</p>
+                        </div>
+                    )}
+
                     {messages?.map((message, index) => (
                         <div className='message-card' key={index} >
                             <div className='profile-picture-container '>

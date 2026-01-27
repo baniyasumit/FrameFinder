@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Contact.css";
 import { sendContactEmail } from "../../services/InfoServices";
-
+import contactBackground from '../../assets/images/contact-image.jpg';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ const Contact = () => {
     };
 
     return (
-        <div className="contact-wrapper">
+        <div className="contact-wrapper" style={{ backgroundImage: `url(${contactBackground})` }}>
             <div className="contact-container fade-in">
                 <h1 className="contact-title">
                     Contact <span>Us</span>

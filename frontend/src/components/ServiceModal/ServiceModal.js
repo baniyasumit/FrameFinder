@@ -16,19 +16,15 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
     const [featureInput, setFeatureInput] = useState('')
 
     useEffect(() => {
-        if (editIndex === null || editIndex === undefined || !services) {
-            return;
-        }
+        if (editIndex === null || editIndex === undefined || !services) return;
 
-        setServiceData(prev => ({
-            ...prev,
+        setServiceData({
             _id: services[editIndex]._id,
             title: services[editIndex].title,
             description: services[editIndex].description || '',
             price: services[editIndex].price,
-            features: services[editIndex].features
-        }))
-
+            features: services[editIndex].features || [],
+        })
     }, [editIndex, services])
 
     useEffect(() => {
@@ -37,7 +33,6 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
                 setShowServiceModal(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [setShowServiceModal]);
@@ -49,14 +44,10 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
 
     const updateFeature = (e, index) => {
         e.preventDefault();
-
         setServiceData(prev => {
             const updatedFeatures = [...prev.features];
             updatedFeatures[index] = e.target.value;
-            return {
-                ...prev,
-                features: updatedFeatures,
-            };
+            return { ...prev, features: updatedFeatures };
         });
     };
 
@@ -72,7 +63,7 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
 
     const handleRemoveFeature = (e, index) => {
         e.preventDefault();
-        setServiceData((prev) => ({
+        setServiceData(prev => ({
             ...prev,
             features: prev.features.filter((_, i) => i !== index),
         }));
@@ -80,7 +71,6 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         setServices(prev => {
             const updatedServices = [...prev];
             if (editIndex !== null) {
@@ -88,21 +78,30 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
             } else {
                 updatedServices.push(serviceData);
             }
-
             return updatedServices;
         });
         setShowServiceModal(false);
     }
 
+    // ✅ Remove entire service
+    const handleRemoveService = () => {
+        if (editIndex !== null) {
+            setServices(prev => prev.filter((_, i) => i !== editIndex));
+            setShowServiceModal(false);
+        }
+    }
 
     return (
         <div className="service-overlay">
             <form className="service-modal" ref={modelRef} onSubmit={handleSubmit}>
-                <button className="close-icon" onClick={() => setShowServiceModal(false)}>
+                <button type="button" className="close-icon" onClick={() => setShowServiceModal(false)}>
                     ×
                 </button>
+
                 <div className="service-header">
-                    <h1 className="service-title">{editIndex !== null ? <>Edit Service</> : <>Add Service</>}</h1>
+                    <h1 className="service-title">
+                        {editIndex !== null ? 'Edit Service' : 'Add Service'}
+                    </h1>
                 </div>
 
                 <input
@@ -123,30 +122,66 @@ const ServiceModal = ({ services, setServices, editIndex, setShowServiceModal })
                 />
                 <div className='service-inputs-container'>
                     <input type='number'
-                        className='service-inputs' name='price'
+                        className='service-inputs'
+                        name='price'
                         placeholder="Price"
                         value={serviceData.price}
                         onChange={handleChange}
                     />
-
-                    <span className='service-input-icons price'><span><FaYenSign />  per session/day</span></span>
+                    <span className='service-input-icons price'>
+                        <span><FaYenSign /> per session/day</span>
+                    </span>
                 </div>
 
                 <h3>Includes</h3>
                 {serviceData.features.map((feature, index) => (
                     <div className='service-inputs-container' key={index}>
-                        <input className='service-inputs' name='feature' value={feature} onChange={(e) => updateFeature(e, index)} />
-                        <button type="button" className='service-input-icons' onClick={(e) => handleRemoveFeature(e, index)}><MdOutlineCancel /></button>
+                        <input
+                            className='service-inputs'
+                            name='feature'
+                            value={feature}
+                            onChange={(e) => updateFeature(e, index)}
+                        />
+                        <button
+                            type="button"
+                            className='service-input-icons'
+                            onClick={(e) => handleRemoveFeature(e, index)}
+                        >
+                            <MdOutlineCancel />
+                        </button>
                     </div>
                 ))}
+
                 <div className='service-inputs-container'>
-                    <input className='service-inputs ' placeholder='Add feature...' value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} />
-                    <button type="button" className='service-input-icons' name='feature' onClick={handleAddFeature}><IoAddCircle /></button>
+                    <input
+                        className='service-inputs'
+                        placeholder='Add feature...'
+                        value={featureInput}
+                        onChange={(e) => setFeatureInput(e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        className='service-input-icons'
+                        onClick={handleAddFeature}
+                    >
+                        <IoAddCircle />
+                    </button>
                 </div>
+
                 <div className='submit-button-container'>
                     <button type='submit' className='submit-button'>
-                        {editIndex !== null ? <>Save</> : <>Add New</>}
+                        {editIndex !== null ? 'Save' : 'Add New'}
                     </button>
+                    {editIndex !== null && (
+                        <button
+                            type='button'
+                            className='submit-button remove-service'
+                            onClick={handleRemoveService}
+                            style={{ backgroundColor: '#e74c3c', marginLeft: '10px' }}
+                        >
+                            Remove Service
+                        </button>
+                    )}
                 </div>
             </form>
         </div>

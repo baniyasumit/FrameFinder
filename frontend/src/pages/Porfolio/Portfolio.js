@@ -427,8 +427,8 @@ const Portfolio = () => {
     }
 
     const isValidWholeNumber = (value) => {
-        if (value === "") return true; // empty allowed
-        return /^\d+$/.test(value); // only digits
+        if (value === "") return true;
+        return /^\d+$/.test(value);
     };
 
 
@@ -471,9 +471,13 @@ const Portfolio = () => {
                             <h1>Edit Portfolio</h1>
                             <span>Update your portfolio and profile information.</span>
                         </div>
-                        <div className='preview-button-container'>
-                            <button className='preview-button' onClick={() => setShowPreview(true)}>Preview<FaEye /></button>
-                        </div>
+                        {portfolioId && (
+                            <div className='preview-button-container'>
+                                <button className='preview-button' onClick={() => setShowPreview(true)}>
+                                    Preview <FaEye />
+                                </button>
+                            </div>
+                        )}
                     </section>
                     {portfolioError && (
                         <div className="portfolio-error-message">

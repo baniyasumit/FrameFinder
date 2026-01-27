@@ -273,48 +273,66 @@ const Dashboard = () => {
                                 <h2>Recent Bookings</h2>
                                 <Link to={"/photographer/bookings"}>View All</Link>
                             </div>
-                            {bookings.map((booking, index) => (
-                                <Link className='client-profile-information' key={index} to={`/photographer/view-booking/${booking._id}`}>
-                                    <div className='profile-picture-container'>
-                                        <img src={booking.user.picture} alt="Profile" />
-                                    </div>
-                                    <div className='profile-information' >
-                                        <h3 className='full-name dashboard-page'>{booking.firstName} {booking.lastName}</h3>
-                                        <span>{new Date(booking.sessionStartDate).toLocaleDateString("en-US", {
-                                            month: "short",
-                                            day: "numeric",
-                                            year: "numeric"
-                                        })} • {new Date(booking.sessionStartDate).toLocaleTimeString([], {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                        })}</span>
-                                    </div>
-                                    <div className='client-booking-status dashboard-page'>
-                                        <p className={`booking-status ${booking.bookingStatus.status} `}>{booking.bookingStatus.status}</p>
-                                    </div>
-                                </Link>))}
-
+                            {bookings.length === 0 ? (
+                                <div className="empty-state dashboard">
+                                    <p>No recent bookings</p>
+                                    <span>Your latest bookings will appear here.</span>
+                                </div>
+                            ) : (
+                                <>
+                                    {
+                                        bookings.map((booking, index) => (
+                                            <Link className='client-profile-information' key={index} to={`/photographer/view-booking/${booking._id}`}>
+                                                <div className='profile-picture-container'>
+                                                    <img src={booking.user.picture} alt="Profile" />
+                                                </div>
+                                                <div className='profile-information' >
+                                                    <h3 className='full-name dashboard-page'>{booking.firstName} {booking.lastName}</h3>
+                                                    <span>{new Date(booking.sessionStartDate).toLocaleDateString("en-US", {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                        year: "numeric"
+                                                    })} • {new Date(booking.sessionStartDate).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })}</span>
+                                                </div>
+                                                <div className='client-booking-status dashboard-page'>
+                                                    <p className={`booking-status ${booking.bookingStatus.status} `}>{booking.bookingStatus.status}</p>
+                                                </div>
+                                            </Link>))
+                                    }
+                                </>
+                            )}
                         </div>
                         <div className='card view-messages'>
                             <div className='card-heading-section'>
                                 <h2>Recent Messages</h2>
                                 <Link to={"/messages"}>View All</Link>
                             </div>
-                            {messages.map((message, index) => (
-                                <div className='client-profile-information' key={index}>
-                                    <div className='profile-picture-container'>
-                                        <img src={message.chatBuddy.picture} alt="Profile" />
-                                    </div>
-                                    <div className='profile-information view-messages-section' >
-                                        <h3 className='full-name dashboard-page'>{message.chatBuddy.firstname} {message.chatBuddy.lastname}</h3>
-                                        <span>{message.latestMessage.text}</span>
-                                    </div>
-                                    <div className='client-booking-status dashboard-page'>
-                                        <p className='message-created-time'>2 mins ago</p>
-                                    </div>
+                            {messages.length === 0 ? (
+                                <div className="empty-state dashboard">
+                                    <p>No recent messages</p>
+                                    <span>Your conversations will appear here.</span>
                                 </div>
-                            ))}
+                            ) : (<>
+                                {messages.map((message, index) => (
+                                    <div className='client-profile-information' key={index}>
+                                        <div className='profile-picture-container'>
+                                            <img src={message.chatBuddy.picture} alt="Profile" />
+                                        </div>
+                                        <div className='profile-information view-messages-section' >
+                                            <h3 className='full-name dashboard-page'>{message.chatBuddy.firstname} {message.chatBuddy.lastname}</h3>
+                                            <span>{message.latestMessage.text}</span>
+                                        </div>
+                                        <div className='client-booking-status dashboard-page'>
+                                            <p className='message-created-time'>2 mins ago</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>)}
+
 
                         </div>
                     </section>

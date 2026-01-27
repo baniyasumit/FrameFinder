@@ -348,16 +348,24 @@ const Browse = () => {
                                             <div className='photographer-profile-basic-information' >
                                                 <h3 className='photographer-full-name'>{portfolio.user.firstname} {portfolio.user.lastname}</h3>
                                                 <div className='photographer-rating-stats'>
+
                                                     <Rating
                                                         className='photographer-rating-stat'
-                                                        initialValue={portfolio.ratingStats?.averageRating}
+                                                        initialValue={portfolio.ratingStats?.totalReviews > 0 ? portfolio.ratingStats?.averageRating : 0}
                                                         size={16}
                                                         allowFraction
-                                                        emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={15} />}
+                                                        emptyIcon={<GoStar color="rgba(28, 28, 28, 0.5)" size={15} />}
                                                         fillIcon={<GoStarFill color="#FACC15" size={15} />}
                                                         readonly
                                                     />
-                                                    <span>{portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</span>
+
+                                                    <span>
+                                                        {portfolio.ratingStats.totalReviews === 0 ?
+                                                            <></>
+                                                            :
+                                                            <>
+                                                                {portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</>
+                                                        }</span>
                                                 </div>
                                             </div>
                                         </div>

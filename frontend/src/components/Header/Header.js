@@ -6,6 +6,7 @@ import { CgProfile } from "react-icons/cg";
 import useAuthStore from '../../stateManagement/useAuthStore';
 import { toast } from 'sonner';
 import redirection from "../../assets/images/photographerRedirect.png";
+import headerBackground from '../../assets/images/header-background.jpg';
 
 const Header = () => {
   const headerRef = useRef(null);
@@ -45,7 +46,7 @@ const Header = () => {
 
   }
   return (
-    <header className="header" ref={headerRef}>
+    <header className="header" ref={headerRef} style={{ backgroundImage: `url(${headerBackground})` }}>
       <section className='header-components'>
         <Link to="/" className="logo">
           <h1>Frame Finder</h1>
@@ -80,8 +81,11 @@ const Header = () => {
                 {profileMenuOpen && (
                   <div className='profile-dropdown' >
                     <Link className='view-profile-navigate' to="/profile">View Profile</Link>
-                    <Link className='view-profile-navigate' to="/bookings">View Bookings</Link>
-                    <Link className='view-profile-navigate' to="/messages">View Messages</Link>
+                    {user?.role === 'client' && (<>
+                      <Link className='view-profile-navigate' to="/bookings">View Bookings</Link>
+                      <Link className='view-profile-navigate' to="/messages">View Messages</Link>
+                    </>)}
+
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}

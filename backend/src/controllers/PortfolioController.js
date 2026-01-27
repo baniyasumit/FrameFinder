@@ -35,11 +35,13 @@ export const savePortfolio = async (req, res) => {
             specialization, bio, about, experienceYears, happyClients, photosTaken,
             equipments, skills, standardCharge } = req.body;
         const { services, filteredPictures, types } = req.body;
-        let portfolio;
-        portfolio = await Portfolio.findOne({ user: userId });
-        const safeLocation = normalizeLocation(location);
-        if (!portfolio) {
 
+        // Normalize location to avoid geo errors
+        const safeLocation = normalizeLocation(location);
+
+        // Find or create portfolio
+        let portfolio = await Portfolio.findOne({ user: userId });
+        if (!portfolio) {
             portfolio = new Portfolio({
                 user: userId,
                 location: safeLocation,
@@ -54,11 +56,8 @@ export const savePortfolio = async (req, res) => {
                 standardCharge,
                 serviceTypes: types
             });
-
             await portfolio.save();
-
-        }
-        else {
+        } else {
             portfolio.set({
                 location: safeLocation,
                 specialization,
@@ -71,12 +70,11 @@ export const savePortfolio = async (req, res) => {
                 skills,
                 standardCharge,
                 serviceTypes: types
-
-            })
-
+            });
             await portfolio.save();
         }
 
+        // Update user info
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -89,8 +87,20 @@ export const savePortfolio = async (req, res) => {
         user.phoneNumber = phoneNumber;
         await user.save();
 
+        // Handle services: remove deleted, update existing, add new
+        const existingServices = await Service.find({ portfolio: portfolio._id });
+        const frontendServiceIds = services.filter(s => s._id).map(s => s._id.toString());
+
+        // Delete services that are no longer present in frontend
+        const servicesToDelete = existingServices.filter(
+            s => !frontendServiceIds.includes(s._id.toString())
+        );
+        await Promise.all(servicesToDelete.map(s => Service.findByIdAndDelete(s._id)));
+
+        // Update or create services
         const servicePromises = services.map(async (service) => {
             if (service._id) {
+                // Update existing service
                 const serviceModel = await Service.findById(service._id);
                 if (serviceModel) {
                     serviceModel.set({
@@ -103,6 +113,7 @@ export const savePortfolio = async (req, res) => {
                     return serviceModel.save();
                 }
             } else {
+                // Create new service
                 const newService = new Service({
                     portfolio: portfolio._id,
                     title: service.title,
@@ -115,13 +126,14 @@ export const savePortfolio = async (req, res) => {
         });
 
         await Promise.all(servicePromises);
+
+        // Handle deleted pictures
         if (filteredPictures.length) {
             const picturesPromises = filteredPictures.map(async (picture) => {
                 const pictureModel = await PortfolioPicture.findById(picture._id);
 
                 if (pictureModel?.secretUrl) {
-                    const deleteResult = await cloudinary.uploader.destroy(pictureModel.secretUrl);
-                    console.log("Delete result:", deleteResult);
+                    await cloudinary.uploader.destroy(pictureModel.secretUrl);
                 }
 
                 await PortfolioPicture.findByIdAndDelete(picture._id);
@@ -130,13 +142,13 @@ export const savePortfolio = async (req, res) => {
             await Promise.all(picturesPromises);
         }
 
-        return res.status(200).json({ message: "Portfolio Saved Successfull" });
-    }
-    catch (error) {
+        return res.status(200).json({ message: "Portfolio Saved Successfully" });
+    } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server Error" });
     }
-}
+};
+
 
 export const getPortfolio = async (req, res) => {
     try {

@@ -15,11 +15,11 @@ const portfolioSchema = new mongoose.Schema({
         },
         coordinates: {
             type: [Number],
-            required: true
+            default: []
         },
         name: {
             type: String,
-            required: true
+            default: ""
         }
     },
     specialization: {

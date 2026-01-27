@@ -77,6 +77,10 @@ const Portfolio = () => {
     const [portfolioError, setPortfolioError] = useState("");
 
     const [showPreview, setShowPreview] = useState(false)
+    const [validationErrors, setValidationErrors] = useState({});
+
+    const [isDirty, setIsDirty] = useState(false);
+    const markDirty = () => setIsDirty(true);
 
     useEffect(() => {
         if (user) {
@@ -90,6 +94,7 @@ const Portfolio = () => {
             }));
         }
     }, [user])
+
 
     useEffect(() => {
         const loadPortfolio = async () => {
@@ -153,11 +158,41 @@ const Portfolio = () => {
         validateInitialPortfolio();
     }, [formData, skills, equipments, services, galleryImages]);
 
-    const handleChange = (e) => {
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (!isDirty) return;
 
+            e.preventDefault();
+            e.returnValue = ""; // required for Chrome
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [isDirty]);
+
+
+    const handleChange = (e) => {
+        markDirty();
         const { name, value } = e.target;
 
         setFormData((prev) => ({ ...prev, [name]: value }));
+
+        if (
+            ["experienceYears", "happyClients", "photosTaken", "standardCharge"].includes(name)
+        ) {
+            if (!isValidWholeNumber(value)) {
+                setValidationErrors((prev) => ({
+                    ...prev,
+                    [name]: "Please enter a valid number (no +, letters, or symbols)"
+                }));
+            } else {
+                setValidationErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy[name];
+                    return copy;
+                });
+            }
+        }
 
     };
 
@@ -173,6 +208,7 @@ const Portfolio = () => {
     }, [setLocationResults]);
 
     const handleLocationChange = async (e) => {
+        markDirty();
         const value = e.target.value;
         setLocation({ ...location, name: value });
 
@@ -191,6 +227,7 @@ const Portfolio = () => {
 
     const handleCoordinatesLocationChange = async (longitude, latitude) => {
         try {
+
             setCurrentLocationLoading(true);
             const data = await getLocation(longitude, latitude);
             if (data.features.length > 0) {
@@ -231,6 +268,7 @@ const Portfolio = () => {
 
 
     const handleLocationStore = (place) => {
+        markDirty();
         setLocation({
             ...location,
             name: place.place_name,
@@ -244,7 +282,7 @@ const Portfolio = () => {
 
 
     const handleEquipmentSkillChange = (e, index) => {
-
+        markDirty();
         const { name, value } = e.target;
         if (name === "equipment") {
             const newEquipments = [...equipments];
@@ -259,6 +297,7 @@ const Portfolio = () => {
     };
 
     const addEquipmentSkill = (type) => {
+        markDirty();
         if (type === "equipment") {
 
             setEquipments([...equipments, newEquipment]);
@@ -271,6 +310,7 @@ const Portfolio = () => {
     }
 
     const cancelEquipmentSkill = (type, index) => {
+        markDirty();
         if (type === "equipment") {
             setEquipments(equipments.filter((_, i) => i !== index));
 
@@ -280,6 +320,7 @@ const Portfolio = () => {
     }
 
     const handleAddType = (e) => {
+        markDirty();
         if (e.key === 'Enter') {
             const type = newType;
             setTypes([...types, type]);
@@ -289,6 +330,7 @@ const Portfolio = () => {
 
 
     const handleRemoveType = (index) => {
+        markDirty();
         setTypes(types.filter((_, i) => i !== index));
     }
 
@@ -328,11 +370,19 @@ const Portfolio = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         setShowSaveConfirmation(false);
+
+        if (Object.keys(validationErrors).length > 0) {
+            toast.error("Please fix validation errors before saving.");
+            return;
+        }
+
         if (isSaving) {
             toast.info("Previous changes are being saved")
             return;
         }
         const trimmedData = trimPortfolioFields();
+
+
         try {
             setIsSaving(true);
             const response = await savePortfolio(trimmedData);
@@ -340,6 +390,7 @@ const Portfolio = () => {
             toast.success('Portfolio saved successfully.');
             await refreshUser();
             setFilteredPictures([]);
+            setIsDirty(false)
 
             if (uploadFiles.length) {
                 const toastId = toast('Uploading images! This may take a few moments.', {
@@ -374,6 +425,12 @@ const Portfolio = () => {
         navigate('/dashboard')
 
     }
+
+    const isValidWholeNumber = (value) => {
+        if (value === "") return true; // empty allowed
+        return /^\d+$/.test(value); // only digits
+    };
+
 
     return (
         <>
@@ -605,31 +662,49 @@ const Portfolio = () => {
                                 <label className='portfolio-label'>
                                     Years Experience
                                 </label>
-                                <input type='text' className='portfolio-input'
+                                <input
+                                    type='text'
+                                    className={`portfolio-input ${validationErrors.experienceYears ? "input-error" : ""}`}
                                     name='experienceYears'
                                     value={formData.experienceYears}
-                                    onChange={handleChange}>
-                                </input>
+                                    placeholder='5'
+                                    onChange={handleChange}
+                                />
+                                {validationErrors.experienceYears && (
+                                    <span className="error-text">{validationErrors.experienceYears}</span>
+                                )}
                             </div>
                             <div className='photographer-stats'>
                                 <label className='portfolio-label'>
                                     Happy Clients (.approx)
                                 </label>
-                                <input type='text' className='portfolio-input'
+                                <input
+                                    type='text'
+                                    className={`portfolio-input ${validationErrors.happyClients ? "input-error" : ""}`}
                                     name='happyClients'
                                     value={formData.happyClients}
-                                    onChange={handleChange}>
-                                </input>
+                                    placeholder='300'
+                                    onChange={handleChange}
+                                />
+                                {validationErrors.happyClients && (
+                                    <span className="error-text">{validationErrors.happyClients}</span>
+                                )}
                             </div>
                             <div className='photographer-stats'>
                                 <label className='portfolio-label'>
                                     Photos Taken (.approx)
                                 </label>
-                                <input type='text' className='portfolio-input'
+                                <input
+                                    type='text'
+                                    className={`portfolio-input ${validationErrors.photosTaken ? "input-error" : ""}`}
                                     name='photosTaken'
                                     value={formData.photosTaken}
-                                    onChange={handleChange}>
-                                </input>
+                                    placeholder='5000'
+                                    onChange={handleChange}
+                                />
+                                {validationErrors.photosTaken && (
+                                    <span className="error-text">{validationErrors.photosTaken}</span>
+                                )}
                             </div>
                         </div>
                     </section>
@@ -670,15 +745,18 @@ const Portfolio = () => {
                                     </label>
                                     <div className='portfolio-inputs-container standard-charge'>
                                         <input
-                                            className='portfolio-input'
+                                            className={`portfolio-input ${validationErrors.standardCharge ? "input-error" : ""}`}
                                             type="text"
                                             name="standardCharge"
-                                            placeholder="Standard Charge"
+                                            placeholder="5000"
                                             value={formData.standardCharge}
                                             onChange={handleChange}
                                         />
                                         <span className='portfolio-input-icons'><FaYenSign /></span>
                                     </div>
+                                    {validationErrors.photosTaken && (
+                                        <span className="error-text">{validationErrors.standardCharge}</span>
+                                    )}
                                 </div>
                             </>
                             :

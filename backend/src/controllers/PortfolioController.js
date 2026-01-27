@@ -7,6 +7,27 @@ import User from "../models/User.js";
 import cloudinary from './../config/cloudinaryConfig.js';
 import mongoose from "mongoose"
 
+
+const normalizeLocation = (location) => {
+    if (!location) return null;
+
+    if (
+        Array.isArray(location.coordinates) &&
+        location.coordinates.length === 2 &&
+        typeof location.coordinates[0] === "number" &&
+        typeof location.coordinates[1] === "number"
+    ) {
+        return {
+            type: "Point",
+            coordinates: location.coordinates,
+            name: location.name || "",
+        };
+    }
+
+
+    return null;
+};
+
 export const savePortfolio = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -16,11 +37,12 @@ export const savePortfolio = async (req, res) => {
         const { services, filteredPictures, types } = req.body;
         let portfolio;
         portfolio = await Portfolio.findOne({ user: userId });
+        const safeLocation = normalizeLocation(location);
         if (!portfolio) {
 
             portfolio = new Portfolio({
                 user: userId,
-                location,
+                location: safeLocation,
                 specialization,
                 bio,
                 about,
@@ -38,7 +60,7 @@ export const savePortfolio = async (req, res) => {
         }
         else {
             portfolio.set({
-                location,
+                location: safeLocation,
                 specialization,
                 bio,
                 about,
@@ -480,20 +502,20 @@ export const getPortfolios = async (req, res) => {
         });
 
         // -------------------- Incomplete profile --------------------
-        pipeline.push({
-            $match: {
-                bio: { $exists: true, $type: "string", $ne: "" },
-                specialization: { $exists: true, $type: "string", $ne: "" },
-                serviceTypes: { $exists: true, $type: "array", $ne: [] },
-                standardCharge: { $exists: true, $type: "number" },
-                minPrice: { $ne: null },
-                picture: { $exists: true, $ne: null },
-
-                location: { $exists: true },
-                "location.coordinates.0": { $exists: true },
-                "location.coordinates.1": { $exists: true }
-            }
-        });
+        /*  pipeline.push({
+             $match: {
+                 bio: { $exists: true, $type: "string", $ne: "" },
+                 specialization: { $exists: true, $type: "string", $ne: "" },
+                 serviceTypes: { $exists: true, $type: "array", $ne: [] },
+                 standardCharge: { $exists: true, $type: "number" },
+                 minPrice: { $ne: null },
+                 picture: { $exists: true, $ne: null },
+ 
+                 location: { $exists: true },
+                 "location.coordinates.0": { $exists: true },
+                 "location.coordinates.1": { $exists: true }
+             }
+         }); */
 
 
         // -------------------- SORT --------------------

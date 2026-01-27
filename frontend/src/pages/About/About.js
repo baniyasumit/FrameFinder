@@ -1,9 +1,10 @@
 import React from "react";
 import "./About.css";
+import aboutBackground from '../../assets/images/about-image.jpg';
 
 const About = () => {
     return (
-        <div className="about-wrapper">
+        <div className="about-wrapper" style={{ backgroundImage: `url(${aboutBackground})` }}>
             <div className="about-container fade-in">
                 <h1 className="about-title">
                     About <span>FrameFinder</span>

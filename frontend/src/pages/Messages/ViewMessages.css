@@ -1,11 +1,11 @@
-.messages{
+.messages {
     background-color: #F9FAFB;
     height: auto;
     display: flex;
     justify-content: center;
 }
 
-.messages-content-container{
+.messages-content-container {
     max-width: 1216px;
     width: 100%;
     padding: 2.5rem 20px;
@@ -16,7 +16,7 @@
     z-index: 10;
 }
 
-.messages-content{
+.messages-content {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -27,34 +27,35 @@
 }
 
 
-.messages-content.header{
+.messages-content.header {
     background-color: transparent;
     box-shadow: none;
     padding: unset;
 }
-.messages-content.header > h1{
+
+.messages-content.header>h1 {
     font-size: 2rem;
     font-family: Inter, sans-serif;
     margin-top: unset;
     margin-bottom: 10px;
 }
 
-.messages-content.header > span{
+.messages-content.header>span {
     color: rgba(0, 0, 0, 0.68);
     font-size: 1rem;
 }
 
-.messages-content.booking-list{
+.messages-content.booking-list {
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
 }
 
-.message-card{
+.message-card {
     padding: 1.5rem;
     display: flex;
     gap: 20px;
 }
 
-.profile-information.messages-page{
+.profile-information.messages-page {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -62,38 +63,43 @@
     flex-wrap: wrap;
 }
 
-.full-name.messages-page{
+.full-name.messages-page {
     font-size: 1.3rem;
     font-weight: 500;
-    margin:unset;
+    margin: unset;
 }
 
-.details-contact-container{
+.details-contact-container {
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-.message-details.messages-page{
+.message-details.messages-page {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.text-message.message-page{
+.text-message.message-page {
     margin: unset;
 }
 
 
 
-.booking-button.messages-page{
+.booking-button.messages-page {
     height: 3rem;
 }
 
-@media screen and (max-width:400px) { 
-    .booking-button.messages-page > span{
+@media screen and (max-width:400px) {
+    .booking-button.messages-page>span {
         display: none;
     }
 }
 
+.empty-state {
+    padding: 3rem;
+    text-align: center;
+    color: #777;
+}

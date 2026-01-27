@@ -118,7 +118,7 @@ const BookingCalendar = ({ isEditable = false, handleChange, name, minDate, setS
                 />
             }
             <div className="calendar-legend">
-                <span className="legend-item today">Current</span>
+                <span className="legend-item today">Today</span>
                 <span className="legend-item accepted">Booked</span>
                 <span className="legend-item pending">Pending</span>
                 <span className="legend-item available">Available</span>

@@ -361,7 +361,7 @@ const Browse = () => {
 
                                                     <span>
                                                         {portfolio.ratingStats.totalReviews === 0 ?
-                                                            <></>
+                                                            <>No reviews yet.</>
                                                             :
                                                             <>
                                                                 {portfolio.ratingStats?.averageRating} ({portfolio.ratingStats?.totalReviews} reviews)</>

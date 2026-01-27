@@ -132,16 +132,24 @@ const ViewPortfolio = () => {
                                             {photographerPortfolio?.user.firstname} {photographerPortfolio?.user.lastname}
                                         </h1>
                                         <div className='rating-stats'>
+
                                             <Rating
                                                 className='rating-stat'
-                                                initialValue={rating}
+                                                initialValue={photographerPortfolio.ratingStats.totalReviews > 0 ? rating : 0}
                                                 size={20}
                                                 allowFraction
                                                 emptyIcon={<GoStar color="rgba(255,255,255,0.5)" size={20} />}
                                                 fillIcon={<GoStarFill color="#FACC15" size={20} />}
                                                 readonly
                                             />
-                                            <span>{rating} ({photographerPortfolio.ratingStats.totalReviews} reviews)</span>
+                                            <span>
+                                                {photographerPortfolio.ratingStats.totalReviews === 0 ?
+                                                    <>No reviews yet.</>
+                                                    :
+                                                    <>
+                                                        {rating} ({photographerPortfolio.ratingStats?.totalReviews} reviews)</>
+                                                }
+                                            </span>
                                         </div>
                                         <p className='specialization'><span>Specializes in:</span> <strong>{photographerPortfolio.specialization} Photography</strong> </p>
                                     </div>

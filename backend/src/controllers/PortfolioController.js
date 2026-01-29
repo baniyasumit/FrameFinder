@@ -433,7 +433,12 @@ export const getPortfolios = async (req, res) => {
                 }
             }
         );
-
+        // -------------------- DONT SHOW MINPRICE OR MAXPRICE (DATE CHECK) --------------------
+        pipeline.push({
+            $match: {
+                minPrice: { $ne: null }
+            }
+        });
         // -------------------- BOOKINGS LOOKUP (DATE CHECK) --------------------
         pipeline.push({
             $lookup: {

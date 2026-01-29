@@ -3,6 +3,8 @@ import Payment from "../models/Payment.js";
 import Wallet from "../models/Wallet.js";
 
 import Stripe from "stripe";
+import { sendSuccessfulEmail } from "../utils/BookingUtils.js";
+import User from "../models/User.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const getPaymentStatus = async (req, res) => {
@@ -67,23 +69,24 @@ export const intiatePayment = async (req, res) => {
         if (booking.bookingStatus.status !== 'pending') paymentType = "final_payment"
 
         const existingPayment = await Payment.findOne({ booking: bookingId, paymentType: paymentType })
-
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round((amount + (amount * 0.04)) * 100),
+            currency: "aud",
+            metadata: {
+                bookingId,
+                photographerId,
+                clientId,
+                paymentType,
+            },
+            automatic_payment_methods: { enabled: true }
+        });
         let payment;
         if (existingPayment) {
             payment = existingPayment;
+            payment.stripePaymentIntentId = paymentIntent.id
+            payment.clientSecret = paymentIntent.client_secret
+            payment.save()
         } else {
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round((amount + (amount * 0.04)) * 100),
-                currency: "aud",
-                metadata: {
-                    bookingId,
-                    photographerId,
-                    clientId,
-                    paymentType,
-                },
-                automatic_payment_methods: { enabled: true }
-            });
-
             payment = await Payment.create({
                 sender: clientId,
                 receiver: photographerId,
@@ -111,7 +114,6 @@ export const intiatePayment = async (req, res) => {
 
 export const updateAfterPayment = async (req, res) => {
     try {
-
         const bookingId = req.params.bookingId;
         const booking = await Booking.findById(bookingId)
 
@@ -141,7 +143,30 @@ export const updateAfterPayment = async (req, res) => {
             await payment.save();
             await booking.save();
         }
+        const photographer = await User.findById(payment.receiver);
 
+        await sendSuccessfulEmail(
+            booking.email,
+            "pending",
+            photographer.firstname,
+            photographer.lastname,
+            {
+                date: new Date(booking.sessionStartDate).toLocaleDateString([], {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                }),
+                time: new Date(booking.sessionStartDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true
+                }),
+                location: `${booking.venueName}, ${booking.city}, ${booking.state}`,
+                totalAmount: booking.totalCharge.total,
+                paidAmount: booking.payment.paid
+            }
+        );
 
         return res.status(200).json({
             message: "All the neccessary update has been made.",

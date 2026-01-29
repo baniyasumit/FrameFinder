@@ -8,6 +8,8 @@ const { ObjectId } = mongoose.Types;
 
 import Stripe from "stripe";
 import Wallet from "../models/Wallet.js";
+import User from "../models/User.js";
+import { sendSuccessfulEmail } from "../utils/BookingUtils.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const getBookingDates = async (req, res) => {
@@ -351,25 +353,67 @@ export const changeBookingStatus = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
         const { status } = req.body;
-        if (!status || status === undefined) return res.status(400).json({ message: "Status required" })
-        const booking = await Booking.findById(bookingId);
-        if (!booking) return res.status(404).json({ message: "Booking not found" })
+        const userId = req.user.id;
+        if (!status) {
+            return res.status(400).json({ message: "Status required" });
+        }
 
-        const updatedBooking = await Booking.findByIdAndUpdate(
-            bookingId,
-            { 'bookingStatus.status': status },
-            { new: true }
+        if (status !== "accepted") {
+            return res.status(400).json({
+                message: "This endpoint only supports accepting bookings",
+            });
+        }
+
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        const photographer = User.findById(userId)
+
+        // Update booking status
+        booking.bookingStatus.status = "accepted";
+        await booking.save();
+
+        // 📧 Send ACCEPTED email
+        console.log("Hello")
+        await sendSuccessfulEmail(
+            booking.email, // client email
+            "accepted",
+            photographer.firstname,
+            photographer.lastname,
+            {
+                date: new Date(booking.sessionStartDate).toLocaleDateString([], {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                }),
+                time: `${new Date(booking.sessionStartDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })} - ${new Date(booking.sessionEndDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })}`,
+                location: `${booking.venueName}, ${booking.city}, ${booking.state}`,
+                totalAmount: booking.totalCharge.total,
+                paidAmount: booking.payment.paid,
+            }
         );
 
-        if (!updatedBooking) return res.status(404).json({ message: "Booking not found" });
         return res.status(200).json({
-            message: "Book status updated"
+            message: "Booking accepted and email sent",
         });
+
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ message: "Server Error" });
+        return res.status(500).json({ message: "Server Error" });
     }
-}
+};
+
 
 
 export const cancelDeclineBooking = async (req, res) => {
@@ -377,63 +421,105 @@ export const cancelDeclineBooking = async (req, res) => {
         const bookingId = req.params.bookingId;
         const booking = req.booking;
         const role = req.user.role;
+        let userId = req.user.id;
 
         const { status } = req.body;
-        if (!status || status === undefined) return res.status(400).json({ message: "Status required" })
+        if (!status) {
+            return res.status(400).json({ message: "Status required" });
+        }
 
-        const payment = await Payment.findOne({ booking: bookingId })
+        const payment = await Payment.findOne({ booking: bookingId });
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found" });
+        }
+
         let refundAmount;
         let reason;
-        if (role === 'photographer') {
+        let photographer;
+
+        if (role === "photographer") {
             refundAmount = payment.amount;
-            reason = "cancelled_by_photographer"
-        } else if (role === 'client') {
+            reason = "cancelled_by_photographer";
+        }
+        else if (role === "client") {
             refundAmount = payment.netAmount;
-            reason = "cancelled_by_client"
+            reason = "cancelled_by_client";
+            userId = payment.reciever
         }
 
-        let stripeRefund
-        try {
-            stripeRefund = await stripe.refunds.create({
-                payment_intent: payment.stripePaymentIntentId,
-                amount: refundAmount * 100
-            });
-        } catch (stripeError) {
-            console.error("Stripe refund failed:", stripeError);
-            return res.status(500).json({ message: "Stripe refund failed" });
-        }
-
+        photographer = await User.findById(userId);
         booking.bookingStatus.status = status;
-        payment.paymentStatus = "refunded";
-        payment.refundInfo = {
-            amount: refundAmount,
-            refundedOn: new Date(),
-            stripeRefundId: stripeRefund.id,
-            reason: reason
-        };
+        /*  let stripeRefund;
+         try {
+             stripeRefund = await stripe.refunds.create({
+                 payment_intent: payment.stripePaymentIntentId,
+                 amount: refundAmount * 100,
+             });
+         } catch (stripeError) {
+             console.error("Stripe refund failed:", stripeError);
+             return res.status(500).json({ message: "Stripe refund failed" });
+         }
+ 
+         
+ 
+         payment.paymentStatus = "refunded";
+         payment.refundInfo = {
+             amount: refundAmount,
+             refundedOn: new Date(),
+             stripeRefundId: stripeRefund.id,
+             reason,
+         }; */
 
-        const wallet = await Wallet.findOne({ user: payment.receiver });
-
-        if (!wallet) {
-            return res.status(404).json({
-                message: "Wallet Not found"
-            });
-        }
-
-        wallet.onHold -= payment.netAmount;
+        /*   const wallet = await Wallet.findOne({ user: payment.receiver });
+          if (!wallet) {
+              return res.status(404).json({ message: "Wallet not found" });
+          }
+  
+          wallet.onHold -= payment.netAmount; */
 
         await booking.save();
-        await payment.save()
-        await wallet.save()
+        /*  await payment.save();
+         await wallet.save(); */
+
+        console.log("hello")
+        // 🔔 SEND EMAIL AFTER SUCCESSFUL DB UPDATE
+        await sendSuccessfulEmail(
+            booking.email,              // client email
+            status,                     // "cancelled" or "declined"
+            photographer.firstName || photographer.firstname,
+            photographer.lastName || photographer.lastname,
+            {
+                date: new Date(booking.sessionStartDate).toLocaleDateString([], {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                }),
+                time: `${new Date(booking.sessionStartDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })} - ${new Date(booking.sessionEndDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })}`,
+                location: `${booking.venueName}, ${booking.city}, ${booking.state}`,
+                totalAmount: booking.totalCharge.total,
+                paidAmount: booking.payment.paid,
+            }
+        );
 
         return res.status(200).json({
-            message: "Book Cancelled"
+            message: `Booking ${status} successfully`,
         });
+
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ message: "Server Error" });
     }
-}
+};
+
 
 
 export const endBookedEvent = async (req, res) => {

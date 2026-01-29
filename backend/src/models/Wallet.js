@@ -9,7 +9,6 @@ const walletSchema = new mongoose.Schema({
     },
     stripeId: {
         type: String,
-        required: true,
         default: ""
     },
     totalEarned: {
